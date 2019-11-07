@@ -4,7 +4,7 @@ x = 0
 def command(x):
     x = 0  #Placeholder for more actual method
 
-class TestStringMethods(unittest.TestCase):
+class TestCommandsMethods(unittest.TestCase):
 
 
     def test_commandCMP(self):
