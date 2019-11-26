@@ -10,6 +10,7 @@ class Registers: #Obiekt do przechowywania rejsterów CPU"
         self.y = 0  # General Purpose Y
         self.s = 0xff  # Stack Pointer
         self.pc = pc  # Program Counter
+    
 
         # region Związane z flagami, narazie zbędne(?)
         '''self.flagBit = {
