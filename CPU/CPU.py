@@ -11,7 +11,7 @@ print()
 akumulator = 0
 X = 0
 Y = 0
-
+CarryOnMyWaywardSon = 0 #Reszta z Carry
 #N Z C I D V
 
 
@@ -216,6 +216,7 @@ print("SEI robi flagi" , flagi)
 def ADC(pc = pc, x = None, y = None):
     global akumulator
     global flagi
+    global CarryOnMyWaywardSon
     if x and y is not None:
         akumulator = akumulator + pamiec[x][y] + flagi.get("C")
     elif x is not None:
@@ -234,6 +235,7 @@ def ADC(pc = pc, x = None, y = None):
     #Carry
     if akumulator >= 255 and flagi.get("N") == 0:
         flagi.update(C=1)
+        CarryOnMyWaywardSon = akumulator%255
         akumulator = 255
 
     #Zero
@@ -253,32 +255,27 @@ def ADC(pc = pc, x = None, y = None):
         flagi.update(V=0)
 
 
-print("Akumulator", akumulator)
-ADC()
-print("AKUMULATOR:", akumulator)
-'''''
+
+
 def SBC(pc = pc, x = None, y = None):
     SEC()
     global akumulator
-    #reverseC = bin(~(flagi.get('C')))
     if x and y is not None:
-        akumulator = akumulator + pamiec[x][y] + flagi.get("C")
+        akumulator = akumulator - pamiec[x][y] - (255 - CarryOnMyWaywardSon)
     elif x is not None:
-        akumulator = akumulator + pamiec[x][pc_y] + flagi.get("C")
+        akumulator = akumulator - pamiec[x][pc_y] - (255 - CarryOnMyWaywardSon)
     elif y is not None:
-        akumulator = akumulator + pamiec[pc_x][y] + flagi.get("C")
+        akumulator = akumulator - pamiec[pc_x][y] - (255 - CarryOnMyWaywardSon)
     else:
-        akumulator = akumulator + pamiec[pc_x][pc_y] + flagi.get("C")
+        akumulator = akumulator - pamiec[pc_x][pc_y] - (255 - CarryOnMyWaywardSon)
 
-#print(bin(~(flagi.get('C'))))
-'''''
-CLC()
-CLD()
-CLI()
-CLV()
-akumulator = -300
-SEI()
-print("pamiec", pamiec)
-ADC(x=0, y=0)
-print(flagi)
-                                                                                                                        # teraz piszemy ladnie
+                                                                                                       # teraz piszemy ladnie
+print("Akumulator", akumulator)
+ADC()
+print("AKUMULATOR:", akumulator)
+akumulator = 300
+ADC()
+akumulator = 0
+print("po ADC",akumulator, CarryOnMyWaywardSon)
+SBC()
+print("po SBC", pamiec[pc_x][pc_y], akumulator)
