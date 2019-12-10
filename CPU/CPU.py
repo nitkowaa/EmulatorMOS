@@ -2,7 +2,8 @@ import numpy as np
 
 
 pamiec = np.random.randint(2, size=(8, 8))  # Two-dimensional array
-flagi = {"N" : "Not affected" ,"Z" : "Not affected","C" : "Not affected","I" : "Not affected","D" : "Not affected","V" : "Not affected"}
+flagi = {"N" : 0 ,"Z" : 0,"C" : 0,"I" : 0,"D" : 0,"V" : 0}
+
 print("Flagi ",flagi)
 print(pamiec)
 print()
@@ -136,7 +137,7 @@ print(akumulator,X,Y)
 #Tu zaczynamy zerowanie flag
 def CLC(): #zerowanie C
     global flagi
-    flagi.update(C="0")
+    flagi.update(C=0)
 
 print()
 CLC() #CLC
@@ -147,7 +148,7 @@ print("CLC robi flagi" , flagi)
 
 def CLD(): #zerowanie D
     global flagi
-    flagi.update(D="0")
+    flagi.update(D=0)
 
 print()
 CLD() #CLD
@@ -158,7 +159,7 @@ print("CLD robi flagi" , flagi)
 
 def CLI(): #zerowanie I
     global flagi
-    flagi.update(I="0")
+    flagi.update(I=0)
 
 print()
 CLI() #CLI
@@ -170,7 +171,7 @@ print("CLI robi flagi" , flagi)
 
 def CLV(): #zerowanie V
     global flagi
-    flagi.update(V="0")
+    flagi.update(V=0)
 
 print()
 CLV() #CLV
@@ -181,7 +182,7 @@ print("CLV robi flagi" , flagi)
 
 def SED(): #jedynkowanie D
     global flagi
-    flagi.update(D="1")
+    flagi.update(D=1)
 
 print()
 SED() #SED
@@ -192,7 +193,7 @@ print("SED robi flagi" , flagi)
 
 def SEC(): #jedynkowanie C
     global flagi
-    flagi.update(C="1")
+    flagi.update(C=1)
 
 print()
 SEC() #SEC
@@ -203,10 +204,81 @@ print("SEC robi flagi" , flagi)
 
 def SEI(): #jedynkowanie I
     global flagi
-    flagi.update(I="1")
+    flagi.update(I=1)
 
 print()
 SEI() #SEI
 print()
 print("SEI start")
 print("SEI robi flagi" , flagi)
+
+
+def ADC(pc = pc, x = None, y = None):
+    global akumulator
+    global flagi
+    if x and y is not None:
+        akumulator = akumulator + pamiec[x][y] + flagi.get("C")
+    elif x is not None:
+        akumulator = akumulator + pamiec[x][pc_y] + flagi.get("C")
+    elif y is not None:
+        akumulator = akumulator + pamiec[pc_x][y] + flagi.get("C")
+    else:
+        akumulator = akumulator + pamiec[pc_x][pc_y] + flagi.get("C")
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    #Carry
+    if akumulator >= 255 and flagi.get("N") == 0:
+        flagi.update(C=1)
+        akumulator = 255
+
+    #Zero
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    #Overflow
+    if akumulator > 127 and flagi.get("N") == 1:
+        akumulator = 127
+        flagi.update(V=1)
+    elif akumulator < -128 and flagi.get("N") == 1:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+print("Akumulator", akumulator)
+ADC()
+print("AKUMULATOR:", akumulator)
+'''''
+def SBC(pc = pc, x = None, y = None):
+    SEC()
+    global akumulator
+    #reverseC = bin(~(flagi.get('C')))
+    if x and y is not None:
+        akumulator = akumulator + pamiec[x][y] + flagi.get("C")
+    elif x is not None:
+        akumulator = akumulator + pamiec[x][pc_y] + flagi.get("C")
+    elif y is not None:
+        akumulator = akumulator + pamiec[pc_x][y] + flagi.get("C")
+    else:
+        akumulator = akumulator + pamiec[pc_x][pc_y] + flagi.get("C")
+
+#print(bin(~(flagi.get('C'))))
+'''''
+CLC()
+CLD()
+CLI()
+CLV()
+akumulator = -300
+SEI()
+print("pamiec", pamiec)
+ADC(x=0, y=0)
+print(flagi)
+                                                                                                                        # teraz piszemy ladnie
