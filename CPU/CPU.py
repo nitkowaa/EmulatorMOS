@@ -143,7 +143,7 @@ CLC() #CLC
 print()
 print("CLC start")
 print("CLC robi flagi" , flagi)
-flagi.update(C="Not affected")
+
 
 def CLD(): #zerowanie D
     global flagi
@@ -154,7 +154,7 @@ CLD() #CLD
 print()
 print("CLD start")
 print("CLD robi flagi" , flagi)
-flagi.update(D="Not affected")
+
 
 def CLI(): #zerowanie I
     global flagi
@@ -165,7 +165,7 @@ CLI() #CLI
 print()
 print("CLI start")
 print("CLI robi flagi" , flagi)
-flagi.update(I="Not affected")
+
 
 
 def CLV(): #zerowanie V
@@ -177,4 +177,36 @@ CLV() #CLV
 print()
 print("CLV start")
 print("CLV robi flagi" , flagi)
-flagi.update(V="Not affected")
+
+
+def SED(): #jedynkowanie D
+    global flagi
+    flagi.update(D="1")
+
+print()
+SED() #SED
+print()
+print("SED start")
+print("SED robi flagi" , flagi)
+
+
+def SEC(): #jedynkowanie C
+    global flagi
+    flagi.update(C="1")
+
+print()
+SEC() #SEC
+print()
+print("SEC start")
+print("SEC robi flagi" , flagi)
+
+
+def SEI(): #jedynkowanie I
+    global flagi
+    flagi.update(I="1")
+
+print()
+SEI() #SEI
+print()
+print("SEI start")
+print("SEI robi flagi" , flagi)
