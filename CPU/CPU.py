@@ -1,158 +1,251 @@
-import math
-import functools
-
-class Registers:
-    # region Register Structures
-    def __init__(self,pc=0): #program counter
-        self.reset(pc)
-
-    def reset(self,pc=0):
-        self.a = 0  # Accumulator
-        self.x = 0  # General Purpose X
-        self.y = 0  # General Purpose Y
-        self.s = 0xff  # Stack Pointer
-        self.pc = pc  # Program Counter
-    
+import numpy as np
 
 
-        self.flagBit = {
-            'N': 128,  # N - Negative
-            'V': 64,  # V - Overflow
-            'B': 16,  # B - Break Command
-            'D': 8,  # D - Decimal Mode
-            'I': 4,  # I - IRQ Disable
-            'Z': 2,  # Z - Zero
-            'C': 1  # C - Carry
-        }
-
-        self.p = 0b00100100   # Flag Pointer - N|V|1|B|D|I|Z|C
-    #endregion
-
-    # region Status Register
-    def getFlag(self, flag):
-        return bool(self.p & self.flagBit[flag])
-
-    def setFlag(self, flag, v=True):
-        if v:
-            self.p = self.p | self.flagBit[flag]
-        else:
-            self.clearFlag(flag)
-
-    def clearFlag(self, flag):
-        self.p = self.p & (255 - self.flagBit[flag])
-
-    def clearFlags(self):
-        self.p = 0
-
-    def ZN(self, v):
-        """
-        The criteria for Z and N flags are standard.  Z gets set if the
-        value is zero and N gets set to the same value as bit 7 of the value.
-        """
-        self.setFlag('Z', v == 0)
-        self.setFlag('N', v & 0x80)
-
-    def __repr__(self):
-        return "A: %02x X: %02x Y: %02x S: %02x PC: %04x P: %s" % (
-            self.a, self.x, self.y, self.s, self.pc, bin(self.p)[2:].zfill(8)
-        )
-    #endregion
+pamiec = np.random.randint(2, size=(8, 8))  # Two-dimensional array
+flagi = {"N" : 0 ,"Z" : 0,"C" : 0,"I" : 0,"D" : 0,"V" : 0}
 
 
-class CPU:
 
-    def __init__(self, mmu=None, pc=None, stack_page=0x1, magic=0xee):
-        """
-        Parameters
-        ----------
-        mmu: An instance of MMU
-        pc: The starting address of the pc (program counter)
-        stack_page: The index of the page which contains the stack.  The default for
-            a 6502 is page 1 (the stack from 0x0100-0x1ff) but in some varients the
-            stack page may be elsewhere.
-        magic: A value needed for on of the illegal opcodes, XAA.  This value differs
-            between different versions, even of the same CPU.  The default is 0xee.
-        """
-        self.mmu = mmu
-        self.r = Registers()
-        self.cc = 0 # cycle counter - licznik cykli
-        # Which page the stack is in.  0x1 means that the stack is from
-        # 0x100-0x1ff.  In the 6502 this is always true but it's different
-        # for other 65* varients.
-        self.stack_page = stack_page
-        self.magic = magic
-        self.reset()
+akumulator = 0
+X = 0
+Y = 0
+CarryValue = 0 #Zmienna przechowująca nadmiar liczby dodatniej
+#N Z C I D V
 
-        if pc:
-            self.r.pc = pc
-        else:
-            # if pc is none get the address from $FFFD,$FFFC
-            pass
 
-        self._create_ops()
+pc = (np.random.randint(8,size=(2,1))) # musi mieć format macierzy 2 wymiarowej
+pc_x = pc[0][0]
+pc_y = pc[1][0]
 
-    def reset(self):
-        self.r.reset()
-        self.mmu.reset()
 
-        self.running = True
+# Wczytaj miesjce z danego miejsca w pamieci do zmiennej Akumaltora
 
-    def step(self):
-        self.cc = 0
-        # pc = self.r.pc
-        opcode = self.nextByte()
-        self.ops[opcode]()
 
-    def execute(self, instruction):
-        """
-        Execute a single instruction independent of the program in memory.
-        instruction is an array of bytes.
-        """
-        pass
+def LDA(pc = pc,x = None,y = None):
+    global akumulator
+    global X
+    global Y
+    if x and y is not None:
+        X = pamiec[x][y]
+    elif x is not None:
+        akumulator = pamiec[x][pc_y]
+    elif y is not None:
+        akumulator = pamiec [pc_x][y]
+    else:
+        akumulator = pamiec[pc_x][pc_y]
 
-    def nextByte(self):
-        v = self.mmu.read(self.r.pc)
-        self.r.pc += 1
-        return v
+    print('akumulator: ',akumulator)
 
-    def nextWord(self):
-        low = self.nextByte()
-        high = self.nextByte()
-        return (high << 8) + low
+# Wczytaj miesjce z danego miejsca w pamieci do zmiennej X
 
-    def stackPush(self, v):
-        self.mmu.write(self.stack_page*0x100 + self.r.s, v)
-        self.r.s = (self.r.s - 1) & 0xff
 
-    def stackPushWord(self, v):
-        self.stackPush(v >> 8)
-        self.stackPush(v & 0xff)
+def LDX(pc = pc,x = None,y = None):
+    global X
+    if x and y is not None:
+        X = pamiec[x][y]
+    elif x is not None:
+        X = pamiec[x][pc_y]
+    elif y is not None:
+        X = pamiec [pc_x][y]
+    else:
+        X = pamiec[pc_x][pc_y]
 
-    def stackPop(self):
-        v = self.mmu.read(self.stack_page*0x100 + ((self.r.s + 1) & 0xff))
-        self.r.s = (self.r.s + 1) & 0xff
-        return v
+    print('X: ',X)
 
-    def stackPopWord(self):
-        return self.stackPop() + (self.stackPop() << 8)
+# Wczytaj miesjce z danego miejsca w pamieci do zmiennej Y
 
-    def fromBCD(self, v):
-        return (((v & 0xf0) // 0x10) * 10) + (v & 0xf)  # Binary-Coded Decimal, czyli zapis dziesiętny kodowany dwójkowo, kod dwójkowo-dziesiętny
 
-    def toBCD(self, v):
-        return int(math.floor(v/10))*16 + (v % 10) #Binary-Coded Decimal, czyli zapis dziesiętny kodowany dwójkowo, kod dwójkowo-dziesiętny
+def LDY(pc = pc,x = None,y = None):
+    global Y
+    if x and y is not None:
+        Y = pamiec[x][y]
+    elif x is not None:
+        Y = pamiec[x][pc_y]
+    elif y is not None:
+        Y = pamiec [pc_x][y]
+    else:
+        Y = pamiec[pc_x][pc_y]
 
-    def fromTwosCom(self, v): # Kod uzupełnień do dwóch
-        return (v & 0x7f) - (v & 0x80)
+    print('Y: ',Y)
 
-    interrupts = {
-        "ABORT":    0xfff8, #ekstra
-        "COP":      0xfff4, #ekstra
-        "BRK":      0xfffe, #ekstra
-        "IRQ":      0xfffe,  # IRQ-L
-        "NMI":      0xfffa, #NMI-L
-        "RESET":    0xfffc #RESET-L
-    }
 
-    def interruptAddress(self, i):
-        return self.mmu.readWord(self.interrupts[i])
+# Zapisz z Akumaltora do danego miejsca w pamieci do zmiennej
+
+
+def STA(x = None,y = None):
+    global akumulator
+    if x and y is not None:
+        X = pamiec[x][y]
+    elif x is not None:
+        Y = pamiec[x][pc_y]
+    elif y is not None:
+        Y = pamiec [pc_x][y]
+    else:
+        pamiec[pc_x][pc_y] = akumulator
+    akumulator = 0
+    print('pamiec',pamiec[pc_x][pc_y],'akumulator',akumulator)
+# Zapisz z X do danego miejsca w pamieci do zmiennej
+
+
+def STX(x = None,y = None):
+    global X
+    if x and y is not None:
+        X = pamiec[x][y]
+    elif x is not None:
+        Y = pamiec[x][pc_y]
+    elif y is not None:
+        Y = pamiec [pc_x][y]
+    else:
+        pamiec[pc_x][pc_y] = X
+    X = 0
+    print('pamiec',pamiec[pc_x][pc_y],'Wartosc Y',X)
+# Zapisz z Y do danego miejsca w pamieci do zmiennej
+
+
+def STY(x = None,y = None):
+    global Y
+    if x and y is not None:
+        X = pamiec[x][y]
+    elif x is not None:
+        Y = pamiec[x][pc_y]
+    elif y is not None:
+        Y = pamiec [pc_x][y]
+    else:
+        pamiec[pc_x][pc_y] = Y
+    Y = 0
+    print('pamiec',pamiec[pc_x][pc_y],'Wartosc X',Y)
+
+
+def CLC():  # zerowanie C
+    global flagi
+    flagi.update(C=0)
+    print()
+    print("CLC zeruje flagi", flagi)
+    print()
+
+
+
+
+
+def CLD():  # zerowanie D
+    global flagi
+    flagi.update(D=0)
+    print()
+    print("CLD zeruje flagi", flagi)
+    print()
+print()
+
+
+def CLI():  # zerowanie I
+    global flagi
+    flagi.update(I=0)
+    print()
+    print("CLI zeruje flagi", flagi)
+    print()
+
+
+
+
+def CLV():  # zerowanie V
+    global flagi
+    flagi.update(V=0)
+    print()
+    print("CLV zeruje flagi" , flagi)
+    print()
+
+
+
+
+
+
+def SED():  # jedynkowanie D
+    global flagi
+    flagi.update(D=1)
+    print()
+    print("SED ustawia flagi", flagi)
+    print()
+
+
+
+
+
+def SEC():  # jedynkowanie C
+    global flagi
+    flagi.update(C=1)
+    print()
+    print("SEC ustawia flagi", flagi)
+    print()
+
+
+
+
+
+
+def SEI(): # jedynkowanie I
+    global flagi
+    flagi.update(I=1)
+    print()
+    print("SEI ustawia flagi", flagi)
+
+
+
+
+
+
+def ADC(pc = pc, x = None, y = None):
+    global akumulator
+    global flagi
+    global CarryValue
+    if x and y is not None:
+        akumulator = akumulator + pamiec[x][y] + flagi.get("C")
+    elif x is not None:
+        akumulator = akumulator + pamiec[x][pc_y] + flagi.get("C")
+    elif y is not None:
+        akumulator = akumulator + pamiec[pc_x][y] + flagi.get("C")
+    else:
+        akumulator = akumulator + pamiec[pc_x][pc_y] + flagi.get("C")
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    #Carry
+    if akumulator >= 255 and flagi.get("N") == 0:
+        flagi.update(C=1)
+        CarryValue = akumulator%255
+        akumulator = 255
+
+    #Zero
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    #Overflow
+    if akumulator > 127 and flagi.get("N") == 1:
+        akumulator = 127
+        flagi.update(V=1)
+    elif akumulator < -128 and flagi.get("N") == 1:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+
+
+def SBC(pc = pc, x = None, y = None):
+    SEC()
+    global akumulator
+    if x and y is not None:
+        akumulator = akumulator - pamiec[x][y] - (255 - CarryValue)
+    elif x is not None:
+        akumulator = akumulator - pamiec[x][pc_y] - (255 - CarryValue)
+    elif y is not None:
+        akumulator = akumulator - pamiec[pc_x][y] - (255 - CarryValue)
+    else:
+        akumulator = akumulator - pamiec[pc_x][pc_y] - (255 - CarryValue)
+
+                                                                                                       # teraz piszemy ladnie
