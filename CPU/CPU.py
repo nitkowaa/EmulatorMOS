@@ -108,3 +108,8 @@ STA() #STA
 STX() #STX
 STY() #STY
 print(akumulator,X,Y)
+print(pamiec[7])
+for i,x in enumerate(pamiec[0]):
+    if i >= 7:
+        x = 1
+    print(x)
