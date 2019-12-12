@@ -1,5 +1,6 @@
 import numpy as np
 
+
 pamiec = np.random.randint(2, size=(8, 8))  # Two-dimensional array
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
 
@@ -13,6 +14,10 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc = (np.random.randint(8, size=(2, 1)))  # musi mieć format macierzy 2 wymiarowej
 pc_x = pc[0][0]
 pc_y = pc[1][0]
+
+
+def NOP():
+    return None
 
 
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
@@ -214,6 +219,7 @@ def SBC(pc=pc, x=None, y=None):
         akumulator = akumulator - pamiec[pc_x][pc_y] - (255 - CarryValue)
 
 
+#region Do sprawdzenia PROSZE niech ktos madry to sprawdzi
 def DEX(): #Dekrementacja X
     global X
     X = X - 1
@@ -233,7 +239,7 @@ def DEY(): #Dekrementacja Y
 
 def INX(): #Inkrementacja X
     global X
-    X = X +  1
+    X = X + 1
     if X < 0:
         flagi.update(N=1)
     elif X == 0:
@@ -242,12 +248,67 @@ def INX(): #Inkrementacja X
 
 def INY(): #Inkrementacja Y
     global Y
-    Y = Y +  1
+    Y = Y + 1
     if Y < 0:
         flagi.update(N=1)
     elif Y == 0:
         flagi.update(Z=1)
 
 
-def NOP():
-    return None
+def INC():  #Inkrementacja  pamieci
+    global pamiec
+    global flagi
+    if flagi.get("Z") == 1:
+        pamiec[pc_x][pc_y] = (pamiec[pc_x][pc_y]) + 1
+    else:
+        pamiec[pc_x][pc_y] = pamiec[pc_x][pc_y]
+
+def DEC(): #Dekrementacja pamieci
+    global pamiec
+    global flagi
+    if flagi.get("N") == 1:
+        pamiec[pc_x][pc_y] = (pamiec[pc_x][pc_y]) - 1
+    else:
+        pamiec[pc_x][pc_y] = (pamiec[pc_x][pc_y])
+
+
+def AND():  #do sprawdzenia jeszcze; logic 1 = 1
+    global akumulator
+    global pamiec
+    if pamiec[pc_x][pc_y] == 1 and akumulator >= 0:
+        akumulator = 1
+        flagi.update(Z=0)
+        flagi.update(N=1)
+    else:
+        akumulator = 0
+        flagi.update(Z=1)
+        flagi.update(N=0)
+
+
+def ORA():
+    global akumulator
+    global pamiec
+    if pamiec[pc_x][pc_y] == 0 and akumulator <= 0:
+        akumulator = 0
+        flagi.update(Z=1)
+        flagi.update(N=0)
+    else:
+        akumulator = 1
+        flagi.update(Z=0)
+        flagi.update(N=1)
+
+
+def EOR():
+    global akumulator
+    global pamiec
+    if (pamiec[pc_x][pc_y] == 0 and akumulator) <= 0 or (pamiec[pc_x][pc_y] == 1 and akumulator >= 0):
+        akumulator = 0
+        flagi.update(Z=1)
+        flagi.update(N=0)
+    else:
+        akumulator = 1
+        flagi.update(Z=0)
+        flagi.update(N=1)
+
+
+#endregion
