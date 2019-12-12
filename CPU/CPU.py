@@ -71,7 +71,7 @@ def STA(x=None, y=None):
     else:
         pamiec[pc_x][pc_y] = akumulator
     akumulator = 0
-    print('pamiec', pamiec[pc_x][pc_y], 'akumulator', akumulator)
+    print('pamięć', pamiec[pc_x][pc_y], 'akumulator', akumulator)
 
 
 # Zapisz z X do danego miejsca w pamięci do zmiennej
