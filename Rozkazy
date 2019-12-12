@@ -12,10 +12,10 @@ Lista rozkazów:
 11.BRK - Force Interrupt
 12.BVC - Branch if Overflow Clear
 13.BVS - Branch if Overflow Set
-14.CLC - Clear Carry Flag
-15.CLD - Clear Decimal Mode
-16.CLI - Clear Interrupt Disable
-17.CLV - Clear Overflow Flag
+DONE 14.CLC - Clear Carry Flag
+DONE 15.CLD - Clear Decimal Mode
+DONE 16.CLI - Clear Interrupt Disable
+DONE 17.CLV - Clear Overflow Flag
 18.CMP - Compare
 19.CPX - Compare X Register
 20.CPY - Compare Y Register
@@ -28,9 +28,9 @@ Lista rozkazów:
 27.INY - Increment Y Register
 28.JMP - Jump
 29.JSR - Jump to Subroutine
-30.LDA - Load Accumulator
-31.LDX - Load X Register
-32.LDY - Load Y Register
+DONE 30.LDA - Load Accumulator
+DONE 31.LDX - Load X Register
+DONE 32.LDY - Load Y Register
 33.LSR - Logical Shift Right
 34.NOP - No Operation
 35.ORA - Logical Inclusive OR
@@ -43,12 +43,12 @@ Lista rozkazów:
 42.RTI - Return from Interrupt
 43.RTS - Return from Subroutine
 44.SBC - Subtract with Carry
-45.SEC - Set Carry Flag
-46.SED - Set Decimal Flag
-47.SEI - Set Interrupt Disable
-48.STA - Store Accumulator
-49.STX - Store X Register
-50.STY - Store Y Register
+DONE 45.SEC - Set Carry Flag 
+DONE 46.SED - Set Decimal Flag
+DONE 47.SEI - Set Interrupt Disable
+DONE 48.STA - Store Accumulator
+DONE 49.STX - Store X Register
+DONE 50.STY - Store Y Register
 51.TAX - Transfer Accumulator to X
 52.TAY - Transfer Accumulator to Y
 53.TSX - Transfer Stack Pointer to X
