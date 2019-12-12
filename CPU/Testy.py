@@ -3,6 +3,7 @@ from CPU import *
 
 #region przeniesione z CPU
 
+
 #Tutaj znajduje sie wypisanie wartości pamieci i losowego punktu, przeniesione z pliku CPU
 def LosowaniePunktuPamieci():
     print("Flagi ", flagi)
