@@ -217,8 +217,8 @@ def SBC(pc=pc, x=None, y=None):
         akumulator = akumulator - pamiec[pc_x][pc_y] - (255 - CarryValue)
 
 
-#region Do sprawdzenia PROSZE niech ktos madry to sprawdzi
-def DEX(): #Dekrementacja X
+# region Do sprawdzenia PROSZE niech ktoś mądry to sprawdzi
+def DEX():  # Dekrementacja X
     global X
     X = X - 1
     if X < 0:
@@ -226,7 +226,8 @@ def DEX(): #Dekrementacja X
     elif X == 0:
         flagi.update(Z=1)
 
-def DEY(): #Dekrementacja Y
+
+def DEY():  # Dekrementacja Y
     global Y
     Y = Y - 1
     if Y < 0:
@@ -235,7 +236,7 @@ def DEY(): #Dekrementacja Y
         flagi.update(Z=1)
 
 
-def INX(): #Inkrementacja X
+def INX():  # Inkrementacja X
     global X
     X = X + 1
     if X < 0:
@@ -244,7 +245,7 @@ def INX(): #Inkrementacja X
         flagi.update(Z=1)
 
 
-def INY(): #Inkrementacja Y
+def INY():  # Inkrementacja Y
     global Y
     Y = Y + 1
     if Y < 0:
@@ -253,7 +254,7 @@ def INY(): #Inkrementacja Y
         flagi.update(Z=1)
 
 
-def INC():  #Inkrementacja  pamieci
+def INC():  # Inkrementacja  pamięci
     global pamiec
     global flagi
     if flagi.get("Z") == 1:
@@ -262,7 +263,7 @@ def INC():  #Inkrementacja  pamieci
         pamiec[pc_x][pc_y] = pamiec[pc_x][pc_y]
 
         
-def DEC(): #Dekrementacja pamieci
+def DEC():  # Dekrementacja pamięci
     global pamiec
     global flagi
     if flagi.get("N") == 1:
@@ -271,7 +272,7 @@ def DEC(): #Dekrementacja pamieci
         pamiec[pc_x][pc_y] = (pamiec[pc_x][pc_y])
 
 
-def AND():  #do sprawdzenia jeszcze; logic 1 = 1
+def AND():  # do sprawdzenia jeszcze; logic 1 = 1
     global akumulator
     global pamiec
     if pamiec[pc_x][pc_y] == 1 and akumulator >= 0:
