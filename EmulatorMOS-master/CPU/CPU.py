@@ -1,5 +1,6 @@
 import numpy as np
 
+
 pamiec = np.random.randint(2, size=(8, 8))  # Two-dimensional array
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
 
@@ -18,7 +19,7 @@ pc_y = pc[1][0]
 def NOP():
     return None
 
-  
+
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
 def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
     global akumulator
@@ -75,6 +76,7 @@ def STA(x=None, y=None):
     else:
         pamiec[pc_x][pc_y] = akumulator
     akumulator = 0
+    print('pamiec', pamiec[pc_x][pc_y], 'akumulator', akumulator)
 
 
 # Zapisz z X do danego miejsca w pamięci do zmiennej
@@ -161,7 +163,7 @@ def SEI():  # jedynkowanie I
     print()
     print('SEI ustawia flagi', flagi)
 
-    
+
 def ADC(pc=pc, x=None, y=None):
     global akumulator
     global flagi
@@ -261,7 +263,6 @@ def INC():  #Inkrementacja  pamieci
     else:
         pamiec[pc_x][pc_y] = pamiec[pc_x][pc_y]
 
-        
 def DEC(): #Dekrementacja pamieci
     global pamiec
     global flagi
