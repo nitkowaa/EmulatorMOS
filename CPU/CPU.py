@@ -323,45 +323,89 @@ def JMP():  #skok do konkretnej instrukcji, pominięcie innych instrukcji, brak 
 
 # Instrukcje branch zależą od flag
 
+flagi.update(N=1)
 
 def BCS():  # skok jeśli C=1
     global akumulator
     global pamiec
+    global flagi
+    if flagi.get('C') == 1:
+        print("hop")
+    else:
+        print("Nie hop")
 
 
 def BCC():  # skok jeśli C=0
     global akumulator
     global pamiec
+    global flagi
+    if flagi.get('C') == 0:
+        print("hop")
+    else:
+        print("Nie hop")
 
 
 def BEQ():  # skok jeśli Z=1
     global akumulator
     global pamiec
+    global flagi
+    if flagi.get('Z') == 1:
+        print("hop")
+    else:
+        print("Nie hop")
 
 
 def BNE():  # skok jeśli Z=0
     global akumulator
     global pamiec
+    global flagi
+    if flagi.get('Z') == 0:
+        print("hop")
+    else:
+        print("Nie hop")
+
+
+flagi.update(N=0)
 
 
 def BMI():  # skok jeśli N=1
     global akumulator
     global pamiec
-
+    global flagi
+    if flagi.get('N') == 1:
+        print("hop")
+    else:
+        print("Nie hop")
+BMI()
 
 def BPL():  # skok jeśli N=0
     global akumulator
     global pamiec
+    global flagi
+    if flagi.get('N') == 0:
+        print("hop")
+    else:
+        print("Nie hop")
 
 
 def BVS():  # skok jeśli V=1
     global akumulator
     global pamiec
+    global flagi
+    if flagi.get('V') == 1:
+        print("hop")
+    else:
+        print("Nie hop")
 
 
-def BVC():  # skok jeśli N=0
+def BVC():  # skok jeśli V=0
     global akumulator
     global pamiec
+    global flagi
+    if flagi.get('V') == 0:
+        print("hop")
+    else:
+        print("Nie hop")
 
 
 #endregion
