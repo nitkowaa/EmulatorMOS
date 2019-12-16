@@ -316,4 +316,52 @@ def EOR():
         flagi.update(N=1)
 
 
+def JMP():  #skok do konkretnej instrukcji, pominięcie innych instrukcji, brak flag jakichkolwiek
+    global akumulator
+    global pamiec
+
+
+# Instrukcje branch zależą od flag
+
+
+def BCS():  # skok jeśli C=1
+    global akumulator
+    global pamiec
+
+
+def BCC():  # skok jeśli C=0
+    global akumulator
+    global pamiec
+
+
+def BEQ():  # skok jeśli Z=1
+    global akumulator
+    global pamiec
+
+
+def BNE():  # skok jeśli Z=0
+    global akumulator
+    global pamiec
+
+
+def BMI():  # skok jeśli N=1
+    global akumulator
+    global pamiec
+
+
+def BPL():  # skok jeśli N=0
+    global akumulator
+    global pamiec
+
+
+def BVS():  # skok jeśli V=1
+    global akumulator
+    global pamiec
+
+
+def BVC():  # skok jeśli N=0
+    global akumulator
+    global pamiec
+
+
 #endregion
