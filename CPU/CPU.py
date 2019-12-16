@@ -1,24 +1,30 @@
 import numpy as np
 
-pamiec = np.random.randint(2, size=(8, 8))  # Two-dimensional array
+# lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
+pamiec = [0 for x in range(256*256)]
+
+# https://skilldrick.github.io/easy6502/#first-program
+program = ['0xa9', '0x01', '0x8d', '0x00', '0x02', '0xa9', '0x05', '0x8d',
+           '0x01', '0x02', '0xa9', '0x08', '0x8d', '0x02', '0x02']
+
+# NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
 
-
-# Paweł = Przerobienie pamieci na liste (przepisanie), zmiennic nazwe indeksow pamieci z malego x,y na jakieś czytlne i lub j
-# Hubert = Przerobienie polecen na ich rozne warianty  (Rozkmienien jak działaja warianty)
+# Paweł = Przerobienie pamięci na listę (przepisanie),
+# zmienić nazwe indeksów pamięci z małego x,y na jakieś czytelne i lub j
+# Hubert = Przerobienie poleceń na ich różne warianty  (Rozkminienie jak działaja warianty)
 # Kamil = słownik z Tabelki poleceń (przepisanie)
-# Anita = Nowa polecenia w podstawowym wariancie (Rozkminienie)
+# Anita = Nowe polecenia w podstawowym wariancie (Rozkminienie)
 
 akumulator = 0
 X = 0
 Y = 0
 CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
-# N Z C I D V
 
-
-pc = (np.random.randint(8, size=(2, 1)))  # musi mieć format macierzy 2 wymiarowej
-pc_x = pc[0][0]
-pc_y = pc[1][0]
+# program counter: przechowuje dwa indeksy - aktualnie czytane komórki pamięci, np. 1536 i 1537
+pc_low = 1536
+pc_high = pc_low + 1
+pc = (pc_high, pc_low)
 
 
 def NOP():
@@ -33,11 +39,11 @@ def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
     if x and y is not None:
         X = pamiec[x][y]
     elif x is not None:
-        akumulator = pamiec[x][pc_y]
+        akumulator = pamiec[x][pc_low]
     elif y is not None:
-        akumulator = pamiec[pc_x][y]
+        akumulator = pamiec[pc_high][y]
     else:
-        akumulator = pamiec[pc_x][pc_y]
+        akumulator = pamiec[pc_high][pc_low]
     print('akumulator: ', akumulator)
 #region LDA
 def LDA_imm(value):
@@ -102,11 +108,11 @@ def LDX(pc=pc, x=None, y=None):
     if x and y is not None:
         X = pamiec[x][y]
     elif x is not None:
-        X = pamiec[x][pc_y]
+        X = pamiec[x][pc_low]
     elif y is not None:
-        X = pamiec[pc_x][y]
+        X = pamiec[pc_high][y]
     else:
-        X = pamiec[pc_x][pc_y]
+        X = pamiec[pc_high][pc_low]
     print('X: ', X)
 
 
@@ -116,11 +122,11 @@ def LDY(pc=pc, x=None, y=None):
     if x and y is not None:
         Y = pamiec[x][y]
     elif x is not None:
-        Y = pamiec[x][pc_y]
+        Y = pamiec[x][pc_low]
     elif y is not None:
-        Y = pamiec[pc_x][y]
+        Y = pamiec[pc_high][y]
     else:
-        Y = pamiec[pc_x][pc_y]
+        Y = pamiec[pc_high][pc_low]
     print('Y: ', Y)
 
 
@@ -130,11 +136,11 @@ def STA(x=None, y=None):
     if x and y is not None:
         X = pamiec[x][y]
     elif x is not None:
-        Y = pamiec[x][pc_y]
+        Y = pamiec[x][pc_low]
     elif y is not None:
-        Y = pamiec[pc_x][y]
+        Y = pamiec[pc_high][y]
     else:
-        pamiec[pc_x][pc_y] = akumulator
+        pamiec[pc_high][pc_low] = akumulator
     akumulator = 0
 
 
@@ -144,13 +150,13 @@ def STX(x=None, y=None):
     if x and y is not None:
         X = pamiec[x][y]
     elif x is not None:
-        Y = pamiec[x][pc_y]
+        Y = pamiec[x][pc_low]
     elif y is not None:
-        Y = pamiec[pc_x][y]
+        Y = pamiec[pc_high][y]
     else:
-        pamiec[pc_x][pc_y] = X
+        pamiec[pc_high][pc_low] = X
     X = 0
-    print('pamięć', pamiec[pc_x][pc_y], 'Wartość Y', X)
+    print('pamięć', pamiec[pc_high][pc_low], 'Wartość Y', X)
 
 
 # Zapisz z Y do danego miejsca w pamięci do zmiennej
@@ -159,13 +165,13 @@ def STY(x=None, y=None):
     if x and y is not None:
         X = pamiec[x][y]
     elif x is not None:
-        Y = pamiec[x][pc_y]
+        Y = pamiec[x][pc_low]
     elif y is not None:
-        Y = pamiec[pc_x][y]
+        Y = pamiec[pc_high][y]
     else:
-        pamiec[pc_x][pc_y] = Y
+        pamiec[pc_high][pc_low] = Y
     Y = 0
-    print('pamięć', pamiec[pc_x][pc_y], 'Wartość X', Y)
+    print('pamięć', pamiec[pc_high][pc_low], 'Wartość X', Y)
 
 
 def CLC():  # zerowanie C
@@ -230,11 +236,11 @@ def ADC(pc=pc, x=None, y=None):
     if x and y is not None:
         akumulator = akumulator + pamiec[x][y] + flagi.get('C')
     elif x is not None:
-        akumulator = akumulator + pamiec[x][pc_y] + flagi.get('C')
+        akumulator = akumulator + pamiec[x][pc_low] + flagi.get('C')
     elif y is not None:
-        akumulator = akumulator + pamiec[pc_x][y] + flagi.get('C')
+        akumulator = akumulator + pamiec[pc_high][y] + flagi.get('C')
     else:
-        akumulator = akumulator + pamiec[pc_x][pc_y] + flagi.get('C')
+        akumulator = akumulator + pamiec[pc_high][pc_low] + flagi.get('C')
 
     # Negative
     if akumulator < 0:
@@ -271,11 +277,11 @@ def SBC(pc=pc, x=None, y=None):
     if x and y is not None:
         akumulator = akumulator - pamiec[x][y] - (255 - CarryValue)
     elif x is not None:
-        akumulator = akumulator - pamiec[x][pc_y] - (255 - CarryValue)
+        akumulator = akumulator - pamiec[x][pc_low] - (255 - CarryValue)
     elif y is not None:
-        akumulator = akumulator - pamiec[pc_x][y] - (255 - CarryValue)
+        akumulator = akumulator - pamiec[pc_high][y] - (255 - CarryValue)
     else:
-        akumulator = akumulator - pamiec[pc_x][pc_y] - (255 - CarryValue)
+        akumulator = akumulator - pamiec[pc_high][pc_low] - (255 - CarryValue)
 
 
 # region Do sprawdzenia PROSZE niech ktoś mądry to sprawdzi
@@ -319,24 +325,24 @@ def INC():  # Inkrementacja  pamięci
     global pamiec
     global flagi
     if flagi.get("Z") == 1:
-        pamiec[pc_x][pc_y] = (pamiec[pc_x][pc_y]) + 1
+        pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) + 1
     else:
-        pamiec[pc_x][pc_y] = pamiec[pc_x][pc_y]
+        pamiec[pc_high][pc_low] = pamiec[pc_high][pc_low]
 
         
 def DEC():  # Dekrementacja pamięci
     global pamiec
     global flagi
     if flagi.get("N") == 1:
-        pamiec[pc_x][pc_y] = (pamiec[pc_x][pc_y]) - 1
+        pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) - 1
     else:
-        pamiec[pc_x][pc_y] = (pamiec[pc_x][pc_y])
+        pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low])
 
 
 def AND():  # do sprawdzenia jeszcze; logic 1 = 1
     global akumulator
     global pamiec
-    if pamiec[pc_x][pc_y] == 1 and akumulator >= 0:
+    if pamiec[pc_high][pc_low] == 1 and akumulator >= 0:
         akumulator = 1
         flagi.update(Z=0)
         flagi.update(N=1)
@@ -349,7 +355,7 @@ def AND():  # do sprawdzenia jeszcze; logic 1 = 1
 def ORA():
     global akumulator
     global pamiec
-    if pamiec[pc_x][pc_y] == 0 and akumulator <= 0:
+    if pamiec[pc_high][pc_low] == 0 and akumulator <= 0:
         akumulator = 0
         flagi.update(Z=1)
         flagi.update(N=0)
@@ -362,7 +368,7 @@ def ORA():
 def EOR():
     global akumulator
     global pamiec
-    if (pamiec[pc_x][pc_y] == 0 and akumulator) <= 0 or (pamiec[pc_x][pc_y] == 1 and akumulator >= 0):
+    if (pamiec[pc_high][pc_low] == 0 and akumulator) <= 0 or (pamiec[pc_high][pc_low] == 1 and akumulator >= 0):
         akumulator = 0
         flagi.update(Z=1)
         flagi.update(N=0)
