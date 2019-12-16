@@ -3,6 +3,12 @@ import numpy as np
 pamiec = np.random.randint(2, size=(8, 8))  # Two-dimensional array
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
 
+
+# Paweł = Przerobienie pamieci na liste (przepisanie), zmiennic nazwe indeksow pamieci z malego x,y na jakieś czytlne i lub j
+# Hubert = Przerobienie polecen na ich rozne warianty  (Rozkmienien jak działaja warianty)
+# Kamil = słownik z Tabelki poleceń (przepisanie)
+# Anita = Nowa polecenia w podstawowym wariancie (Rozkminienie)
+
 akumulator = 0
 X = 0
 Y = 0
