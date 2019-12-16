@@ -22,9 +22,7 @@ Y = 0
 CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 
 # program counter: przechowuje dwa indeksy - aktualnie czytane komórki pamięci, np. 1536 i 1537
-pc_low = 1536
-pc_high = pc_low + 1
-pc = (pc_high, pc_low)
+pc = {'left': 1536, 'right': 1537}
 
 
 def NOP():
