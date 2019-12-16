@@ -39,8 +39,63 @@ def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
     else:
         akumulator = pamiec[pc_x][pc_y]
     print('akumulator: ', akumulator)
+#region LDA
+def LDA_imm(value):
+    pass
+    global akumulator
+    global  pc_high
+    akumulator = pc_high
+def LDA_abs():
+    pass
 
+def LDA_zpg():
 
+def LDA_abs_x():
+    pass
+
+def LDA_abs_y():
+    pass
+
+def LDA_zpg_x():
+    pass
+
+def LDA_zpg2_y():
+    pass
+
+def LDA_zpg2_x():
+    pass
+
+#endregion LDA
+#region LDX
+def LDX_imm():
+    pass
+
+def LDX_abs():
+    pass
+
+def LDX_zpg():
+
+def LDX_abs_y():
+    pass
+
+def LDX_zpg_y():
+    pass
+#endregion LDX
+#region LDY
+def LDY_imm():
+    pass
+
+def LDY_abs():
+    pass
+
+def LDY_zpg():
+
+def LDY_abs_y():
+    pass
+
+def LDY_zpg_y():
+    pass
+#endregion LDY
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej X
 def LDX(pc=pc, x=None, y=None):
     global X
