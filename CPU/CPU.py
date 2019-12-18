@@ -25,8 +25,8 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc = {'left': 1536, 'right': 1537}
 
 
-def NOP():
-    return None
+# def NOP():
+#     return None
 
   
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
