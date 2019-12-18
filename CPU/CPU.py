@@ -1,6 +1,7 @@
 # coding=utf-8
 import numpy as np
 
+
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
 
