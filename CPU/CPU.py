@@ -24,7 +24,7 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 # program counter: przechowuje dwa indeksy - aktualnie czytane komórki pamięci, np. 1536 i 1537
 pc_low = 1536
 pc_high = pc_low + 1
-pc = (pc_high, pc_low)
+pc = [pc_high, pc_low]
 
 
 def NOP():
@@ -55,6 +55,7 @@ def LDA_abs():
     pass
 
 def LDA_zpg():
+    pass
 
 def LDA_abs_x():
     pass
@@ -80,7 +81,7 @@ def LDX_abs():
     pass
 
 def LDX_zpg():
-
+    pass
 def LDX_abs_y():
     pass
 
