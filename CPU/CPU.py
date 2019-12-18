@@ -30,7 +30,7 @@ def NOP():
 
   
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
-def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
+def LDA(pc=pc, x=None, y=None):
     global akumulator
     global X
     global Y  # nieużywane
@@ -43,64 +43,89 @@ def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
     else:
         akumulator = pamiec[pc_high][pc_low]
     print('akumulator: ', akumulator)
-#region LDA
+
+
+# region LDA
 def LDA_imm(value):
     pass
     global akumulator
-    global  pc_high
+    global pc_high
     akumulator = pc_high
+
+
 def LDA_abs():
     pass
+
 
 def LDA_zpg():
     pass
 
+
 def LDA_abs_x():
     pass
+
 
 def LDA_abs_y():
     pass
 
+
 def LDA_zpg_x():
     pass
+
 
 def LDA_zpg2_y():
     pass
 
+
 def LDA_zpg2_x():
     pass
+# endregion LDA
 
-#endregion LDA
-#region LDX
+
+# region LDX
 def LDX_imm():
     pass
+
 
 def LDX_abs():
     pass
 
+
 def LDX_zpg():
     pass
+
+
 def LDX_abs_y():
     pass
 
+
 def LDX_zpg_y():
     pass
-#endregion LDX
-#region LDY
+# endregion LDX
+
+
+# region LDY
 def LDY_imm():
     pass
+
 
 def LDY_abs():
     pass
 
+
 def LDY_zpg():
+    pass
+
 
 def LDY_abs_y():
     pass
 
+
 def LDY_zpg_y():
     pass
-#endregion LDY
+# endregion LDY
+
+
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej X
 def LDX(pc=pc, x=None, y=None):
     global X
@@ -377,4 +402,4 @@ def EOR():
         flagi.update(N=1)
 
 
-#endregion
+# endregion
