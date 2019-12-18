@@ -25,12 +25,12 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc_low = 1536
 pc_high = pc_low + 1
 pc = [pc_high, pc_low]
-
+pc = {'left':1536,'right':1537}
 
 def NOP():
     return None
 
-  
+#region Metody Load
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
 def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
     global akumulator
@@ -96,7 +96,7 @@ def LDY_abs():
     pass
 
 def LDY_zpg():
-
+    pass
 def LDY_abs_y():
     pass
 
@@ -129,8 +129,8 @@ def LDY(pc=pc, x=None, y=None):
     else:
         Y = pamiec[pc_high][pc_low]
     print('Y: ', Y)
-
-
+#endregion
+#region Metody Store
 # Zapisz z Akumaltora do danego miejsca w pamięci
 def STA(x=None, y=None):
     global akumulator
@@ -174,7 +174,7 @@ def STY(x=None, y=None):
     Y = 0
     print('pamięć', pamiec[pc_high][pc_low], 'Wartość X', Y)
 
-
+#endregion
 def CLC():  # zerowanie C
     global flagi
     flagi.update(C=0)
