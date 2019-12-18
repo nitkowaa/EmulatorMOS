@@ -1,7 +1,8 @@
+# coding=utf-8
 import numpy as np
 
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
-pamiec = [0 for x in range(256*256)]
+pamiec = [0 for bit in range(256 * 256)]
 
 # https://skilldrick.github.io/easy6502/#first-program
 program = ['0xa9', '0x01', '0x8d', '0x00', '0x02', '0xa9', '0x05', '0x8d',
@@ -25,14 +26,16 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc_low = 1536
 pc_high = pc_low + 1
 pc = [pc_high, pc_low]
-pc = {'left':1536,'right':1537}
+pc = {'left': 1536, 'right': 1537}
 
-def NOP():
-    return None
 
-#region Metody Load
+# region Metody Load
+
+
+# region LDA
+
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
-def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
+def LDA(x=None, y=None):
     global akumulator
     global X
     global Y  # nieużywane
@@ -45,66 +48,91 @@ def LDA(pc=pc, x=None, y=None):  # dlaczego tu jest pc=pc, co to w ogóle znaczy
     else:
         akumulator = pamiec[pc_high][pc_low]
     print('akumulator: ', akumulator)
-#region LDA
-def LDA_imm(value):
+
+
+def LDA_imm():
     pass
     global akumulator
-    global  pc_high
+    global pc_high
     akumulator = pc_high
+
+
 def LDA_abs():
     pass
+
 
 def LDA_zpg():
     pass
 
+
 def LDA_abs_x():
     pass
+
 
 def LDA_abs_y():
     pass
 
+
 def LDA_zpg_x():
     pass
 
+
+# Metody oznaczone nawiasami na wiekszej liczbie cykli
 def LDA_zpg2_y():
     pass
+
 
 def LDA_zpg2_x():
     pass
 
-#endregion LDA
-#region LDX
+
+# endregion LDA
+# region LDX
 def LDX_imm():
     pass
+
 
 def LDX_abs():
     pass
 
+
 def LDX_zpg():
     pass
+
+
 def LDX_abs_y():
     pass
 
+
 def LDX_zpg_y():
     pass
-#endregion LDX
-#region LDY
+
+
+# endregion LDX
+# region LDY
 def LDY_imm():
     pass
+
 
 def LDY_abs():
     pass
 
+
 def LDY_zpg():
     pass
+
+
 def LDY_abs_y():
     pass
 
+
 def LDY_zpg_y():
     pass
-#endregion LDY
+
+
+# endregion LDY
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej X
-def LDX(pc=pc, x=None, y=None):
+def LDX(x=None, y=None):
     global X
     if x and y is not None:
         X = pamiec[x][y]
@@ -118,7 +146,7 @@ def LDX(pc=pc, x=None, y=None):
 
 
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Y
-def LDY(pc=pc, x=None, y=None):
+def LDY(x=None, y=None):
     global Y
     if x and y is not None:
         Y = pamiec[x][y]
@@ -129,42 +157,90 @@ def LDY(pc=pc, x=None, y=None):
     else:
         Y = pamiec[pc_high][pc_low]
     print('Y: ', Y)
-#endregion
-#region Metody Store
+
+
+# endregion
+# region Metody Store
+# region STA
+def STA_abs():
+    pass
+
+
+def STA_zpg():
+    pass
+
+
+def STA_abs_x():
+    pass
+
+
+def STA_abs_y():
+    pass
+
+
+def STA_zpg_x():
+    pass
+
+
+# Metody oznaczone nawiasami na wiekszej liczbie cykli
+def STA_zpg2_y():
+    pass
+
+
+def STA_zpg2_x():
+    pass
+
+
 # Zapisz z Akumaltora do danego miejsca w pamięci
 def STA(x=None, y=None):
     global akumulator
     if x and y is not None:
-        X = pamiec[x][y]
+        akumulator = pamiec[x][y]
     elif x is not None:
-        Y = pamiec[x][pc_low]
+        akumulator = pamiec[x][pc_low]
     elif y is not None:
-        Y = pamiec[pc_high][y]
+        akumulator = pamiec[pc_high][y]
     else:
         pamiec[pc_high][pc_low] = akumulator
     akumulator = 0
 
 
+# endregion
+# region STX
 # Zapisz z X do danego miejsca w pamięci do zmiennej
 def STX(x=None, y=None):
     global X
     if x and y is not None:
         X = pamiec[x][y]
     elif x is not None:
-        Y = pamiec[x][pc_low]
+        X = pamiec[x][pc_low]
     elif y is not None:
-        Y = pamiec[pc_high][y]
+        X = pamiec[pc_high][y]
     else:
         pamiec[pc_high][pc_low] = X
     X = 0
     print('pamięć', pamiec[pc_high][pc_low], 'Wartość Y', X)
 
 
+def STX_abs():
+    pass
+
+
+def STX_zpg():
+    pass
+
+
+def STX_zpg_y():
+    pass
+
+
+# endregion STX
+# region STY
 # Zapisz z Y do danego miejsca w pamięci do zmiennej
 def STY(x=None, y=None):
     global Y
     if x and y is not None:
-        X = pamiec[x][y]
+        Y = pamiec[x][y]
     elif x is not None:
         Y = pamiec[x][pc_low]
     elif y is not None:
@@ -174,7 +250,22 @@ def STY(x=None, y=None):
     Y = 0
     print('pamięć', pamiec[pc_high][pc_low], 'Wartość X', Y)
 
-#endregion
+
+def STY_abs():
+    pass
+
+
+def STY_zpg():
+    pass
+
+
+def STY_zpg_x():
+    pass
+
+
+# endregion
+# endregion
+# region Metody Flag
 def CLC():  # zerowanie C
     global flagi
     flagi.update(C=0)
@@ -229,8 +320,9 @@ def SEI():  # jedynkowanie I
     print()
     print('SEI ustawia flagi', flagi)
 
-    
-def ADC(pc=pc, x=None, y=None):
+
+# endregion
+def ADC(x=None, y=None):
     global akumulator
     global flagi
     global CarryValue
@@ -272,7 +364,7 @@ def ADC(pc=pc, x=None, y=None):
         flagi.update(V=0)
 
 
-def SBC(pc=pc, x=None, y=None):
+def SBC(x=None, y=None):
     SEC()
     global akumulator
     if x and y is not None:
@@ -283,6 +375,10 @@ def SBC(pc=pc, x=None, y=None):
         akumulator = akumulator - pamiec[pc_high][y] - (255 - CarryValue)
     else:
         akumulator = akumulator - pamiec[pc_high][pc_low] - (255 - CarryValue)
+
+
+def NOP():
+    return None
 
 
 # region Do sprawdzenia PROSZE niech ktoś mądry to sprawdzi
@@ -330,7 +426,7 @@ def INC():  # Inkrementacja  pamięci
     else:
         pamiec[pc_high][pc_low] = pamiec[pc_high][pc_low]
 
-        
+
 def DEC():  # Dekrementacja pamięci
     global pamiec
     global flagi
@@ -378,5 +474,4 @@ def EOR():
         flagi.update(Z=0)
         flagi.update(N=1)
 
-
-#endregion
+# endregion
