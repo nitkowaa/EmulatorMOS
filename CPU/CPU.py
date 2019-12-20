@@ -6,8 +6,8 @@ import numpy as np
 pamiec = [0 for bit in range(256 * 256)]
 
 # https://skilldrick.github.io/easy6502/#first-program
-program = ['0xa9', '0x01', '0x8d', '0x00', '0x02', '0xa9', '0x05', '0x8d',
-           '0x01', '0x02', '0xa9', '0x08', '0x8d', '0x02', '0x02']
+program = [0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
+           0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
@@ -23,11 +23,17 @@ X = 0
 Y = 0
 CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 
-# program counter: przechowuje dwa indeksy - aktualnie czytane komórki pamięci, np. 1536 i 1537
-pc_low = 1536
-pc_high = pc_low + 1
-pc = [pc_high, pc_low]
-pc = {'left': 1536, 'right': 1537}
+# program counter: przechowuje indeks czytanej komórki pamięci
+pc = 1536
+
+
+def get_index():
+    return pamiec[pc+2]*0x100 + pamiec[pc+1]
+
+
+def load_program():
+    for i in range(len(program)):
+        pamiec[1536+i] = program[i]
 
 
 # region Metody Load
@@ -36,19 +42,11 @@ pc = {'left': 1536, 'right': 1537}
 # region LDA
 
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
-def LDA(x=None, y=None):
+def LDA():
     global akumulator
-    global X
-    global Y  # nieużywane
-    if x and y is not None:
-        X = pamiec[x][y]
-    elif x is not None:
-        akumulator = pamiec[x][pc_low]
-    elif y is not None:
-        akumulator = pamiec[pc_high][y]
-    else:
-        akumulator = pamiec[pc_high][pc_low]
-    print('akumulator: ', akumulator)
+    global pc
+    akumulator = pamiec[pc+1]
+    pc = pc + 2
 
 
 def LDA_imm():
@@ -133,31 +131,31 @@ def LDY_zpg_y():
 
 # endregion LDY
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej X
-def LDX(x=None, y=None):
-    global X
-    if x and y is not None:
-        X = pamiec[x][y]
-    elif x is not None:
-        X = pamiec[x][pc_low]
-    elif y is not None:
-        X = pamiec[pc_high][y]
-    else:
-        X = pamiec[pc_high][pc_low]
-    print('X: ', X)
-
-
-# Wczytaj miejsce z danego miejsca w pamięci do zmiennej Y
-def LDY(x=None, y=None):
-    global Y
-    if x and y is not None:
-        Y = pamiec[x][y]
-    elif x is not None:
-        Y = pamiec[x][pc_low]
-    elif y is not None:
-        Y = pamiec[pc_high][y]
-    else:
-        Y = pamiec[pc_high][pc_low]
-    print('Y: ', Y)
+# def LDX(x=None, y=None):
+#     global X
+#     if x and y is not None:
+#         X = pamiec[x][y]
+#     elif x is not None:
+#         X = pamiec[x][pc_low]
+#     elif y is not None:
+#         X = pamiec[pc_high][y]
+#     else:
+#         X = pamiec[pc_high][pc_low]
+#     print('X: ', X)
+#
+#
+# # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Y
+# def LDY(x=None, y=None):
+#     global Y
+#     if x and y is not None:
+#         Y = pamiec[x][y]
+#     elif x is not None:
+#         Y = pamiec[x][pc_low]
+#     elif y is not None:
+#         Y = pamiec[pc_high][y]
+#     else:
+#         Y = pamiec[pc_high][pc_low]
+#     print('Y: ', Y)
 
 
 # endregion
@@ -193,34 +191,29 @@ def STA_zpg2_x():
 
 
 # Zapisz z Akumaltora do danego miejsca w pamięci
-def STA(x=None, y=None):
+def STA():
     global akumulator
-    if x and y is not None:
-        akumulator = pamiec[x][y]
-    elif x is not None:
-        akumulator = pamiec[x][pc_low]
-    elif y is not None:
-        akumulator = pamiec[pc_high][y]
-    else:
-        pamiec[pc_high][pc_low] = akumulator
-    akumulator = 0
+    global pc
+    pamiec[get_index()] = akumulator
+    print('STA: ', hex(get_index()), '\n')
+    pc = pc + 3
 
 
 # endregion
 # region STX
 # Zapisz z X do danego miejsca w pamięci do zmiennej
-def STX(x=None, y=None):
-    global X
-    if x and y is not None:
-        X = pamiec[x][y]
-    elif x is not None:
-        X = pamiec[x][pc_low]
-    elif y is not None:
-        X = pamiec[pc_high][y]
-    else:
-        pamiec[pc_high][pc_low] = X
-    X = 0
-    print('pamięć', pamiec[pc_high][pc_low], 'Wartość Y', X)
+# def STX(x=None, y=None):
+#     global X
+#     if x and y is not None:
+#         X = pamiec[x][y]
+#     elif x is not None:
+#         X = pamiec[x][pc_low]
+#     elif y is not None:
+#         X = pamiec[pc_high][y]
+#     else:
+#         pamiec[pc_high][pc_low] = X
+#     X = 0
+#     print('pamięć', pamiec[pc_high][pc_low], 'Wartość Y', X)
 
 
 def STX_abs():
@@ -238,18 +231,18 @@ def STX_zpg_y():
 # endregion STX
 # region STY
 # Zapisz z Y do danego miejsca w pamięci do zmiennej
-def STY(x=None, y=None):
-    global Y
-    if x and y is not None:
-        Y = pamiec[x][y]
-    elif x is not None:
-        Y = pamiec[x][pc_low]
-    elif y is not None:
-        Y = pamiec[pc_high][y]
-    else:
-        pamiec[pc_high][pc_low] = Y
-    Y = 0
-    print('pamięć', pamiec[pc_high][pc_low], 'Wartość X', Y)
+# def STY(x=None, y=None):
+#     global Y
+#     if x and y is not None:
+#         Y = pamiec[x][y]
+#     elif x is not None:
+#         Y = pamiec[x][pc_low]
+#     elif y is not None:
+#         Y = pamiec[pc_high][y]
+#     else:
+#         pamiec[pc_high][pc_low] = Y
+#     Y = 0
+#     print('pamięć', pamiec[pc_high][pc_low], 'Wartość X', Y)
 
 
 def STY_abs():
@@ -323,59 +316,59 @@ def SEI():  # jedynkowanie I
 
 
 # endregion
-def ADC(x=None, y=None):
-    global akumulator
-    global flagi
-    global CarryValue
-    if x and y is not None:
-        akumulator = akumulator + pamiec[x][y] + flagi.get('C')
-    elif x is not None:
-        akumulator = akumulator + pamiec[x][pc_low] + flagi.get('C')
-    elif y is not None:
-        akumulator = akumulator + pamiec[pc_high][y] + flagi.get('C')
-    else:
-        akumulator = akumulator + pamiec[pc_high][pc_low] + flagi.get('C')
-
-    # Negative
-    if akumulator < 0:
-        flagi.update(N=1)
-    else:
-        flagi.update(N=0)
-
-    # Carry
-    if akumulator >= 255 and flagi.get('N') == 0:
-        flagi.update(C=1)
-        CarryValue = akumulator % 255
-        akumulator = 255
-
-    # Zero
-    if akumulator != 0:
-        flagi.update(Z=0)
-    else:
-        flagi.update(Z=1)
-
-    # Overflow
-    if akumulator > 127 and flagi.get('N') == 1:
-        akumulator = 127
-        flagi.update(V=1)
-    elif akumulator < -128 and flagi.get('N') == 1:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
-
-
-def SBC(x=None, y=None):
-    SEC()
-    global akumulator
-    if x and y is not None:
-        akumulator = akumulator - pamiec[x][y] - (255 - CarryValue)
-    elif x is not None:
-        akumulator = akumulator - pamiec[x][pc_low] - (255 - CarryValue)
-    elif y is not None:
-        akumulator = akumulator - pamiec[pc_high][y] - (255 - CarryValue)
-    else:
-        akumulator = akumulator - pamiec[pc_high][pc_low] - (255 - CarryValue)
+# def ADC(x=None, y=None):
+#     global akumulator
+#     global flagi
+#     global CarryValue
+#     if x and y is not None:
+#         akumulator = akumulator + pamiec[x][y] + flagi.get('C')
+#     elif x is not None:
+#         akumulator = akumulator + pamiec[x][pc_low] + flagi.get('C')
+#     elif y is not None:
+#         akumulator = akumulator + pamiec[pc_high][y] + flagi.get('C')
+#     else:
+#         akumulator = akumulator + pamiec[pc_high][pc_low] + flagi.get('C')
+#
+#     # Negative
+#     if akumulator < 0:
+#         flagi.update(N=1)
+#     else:
+#         flagi.update(N=0)
+#
+#     # Carry
+#     if akumulator >= 255 and flagi.get('N') == 0:
+#         flagi.update(C=1)
+#         CarryValue = akumulator % 255
+#         akumulator = 255
+#
+#     # Zero
+#     if akumulator != 0:
+#         flagi.update(Z=0)
+#     else:
+#         flagi.update(Z=1)
+#
+#     # Overflow
+#     if akumulator > 127 and flagi.get('N') == 1:
+#         akumulator = 127
+#         flagi.update(V=1)
+#     elif akumulator < -128 and flagi.get('N') == 1:
+#         akumulator = -128
+#         flagi.update(V=1)
+#     else:
+#         flagi.update(V=0)
+#
+#
+# def SBC(x=None, y=None):
+#     SEC()
+#     global akumulator
+#     if x and y is not None:
+#         akumulator = akumulator - pamiec[x][y] - (255 - CarryValue)
+#     elif x is not None:
+#         akumulator = akumulator - pamiec[x][pc_low] - (255 - CarryValue)
+#     elif y is not None:
+#         akumulator = akumulator - pamiec[pc_high][y] - (255 - CarryValue)
+#     else:
+#         akumulator = akumulator - pamiec[pc_high][pc_low] - (255 - CarryValue)
 
 
 def NOP():
@@ -419,60 +412,77 @@ def INY():  # Inkrementacja Y
         flagi.update(Z=1)
 
 
-def INC():  # Inkrementacja  pamięci
-    global pamiec
-    global flagi
-    if flagi.get("Z") == 1:
-        pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) + 1
-    else:
-        pamiec[pc_high][pc_low] = pamiec[pc_high][pc_low]
-
-
-def DEC():  # Dekrementacja pamięci
-    global pamiec
-    global flagi
-    if flagi.get("N") == 1:
-        pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) - 1
-    else:
-        pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low])
-
-
-def AND():  # do sprawdzenia jeszcze; logic 1 = 1
-    global akumulator
-    global pamiec
-    if pamiec[pc_high][pc_low] == 1 and akumulator >= 0:
-        akumulator = 1
-        flagi.update(Z=0)
-        flagi.update(N=1)
-    else:
-        akumulator = 0
-        flagi.update(Z=1)
-        flagi.update(N=0)
-
-
-def ORA():
-    global akumulator
-    global pamiec
-    if pamiec[pc_high][pc_low] == 0 and akumulator <= 0:
-        akumulator = 0
-        flagi.update(Z=1)
-        flagi.update(N=0)
-    else:
-        akumulator = 1
-        flagi.update(Z=0)
-        flagi.update(N=1)
-
-
-def EOR():
-    global akumulator
-    global pamiec
-    if (pamiec[pc_high][pc_low] == 0 and akumulator) <= 0 or (pamiec[pc_high][pc_low] == 1 and akumulator >= 0):
-        akumulator = 0
-        flagi.update(Z=1)
-        flagi.update(N=0)
-    else:
-        akumulator = 1
-        flagi.update(Z=0)
-        flagi.update(N=1)
+# def INC():  # Inkrementacja  pamięci
+#     global pamiec
+#     global flagi
+#     if flagi.get("Z") == 1:
+#         pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) + 1
+#     else:
+#         pamiec[pc_high][pc_low] = pamiec[pc_high][pc_low]
+#
+#
+# def DEC():  # Dekrementacja pamięci
+#     global pamiec
+#     global flagi
+#     if flagi.get("N") == 1:
+#         pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) - 1
+#     else:
+#         pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low])
+#
+#
+# def AND():  # do sprawdzenia jeszcze; logic 1 = 1
+#     global akumulator
+#     global pamiec
+#     if pamiec[pc_high][pc_low] == 1 and akumulator >= 0:
+#         akumulator = 1
+#         flagi.update(Z=0)
+#         flagi.update(N=1)
+#     else:
+#         akumulator = 0
+#         flagi.update(Z=1)
+#         flagi.update(N=0)
+#
+#
+# def ORA():
+#     global akumulator
+#     global pamiec
+#     if pamiec[pc_high][pc_low] == 0 and akumulator <= 0:
+#         akumulator = 0
+#         flagi.update(Z=1)
+#         flagi.update(N=0)
+#     else:
+#         akumulator = 1
+#         flagi.update(Z=0)
+#         flagi.update(N=1)
+#
+#
+# def EOR():
+#     global akumulator
+#     global pamiec
+#     if (pamiec[pc_high][pc_low] == 0 and akumulator) <= 0 or (pamiec[pc_high][pc_low] == 1 and akumulator >= 0):
+#         akumulator = 0
+#         flagi.update(Z=1)
+#         flagi.update(N=0)
+#     else:
+#         akumulator = 1
+#         flagi.update(Z=0)
+#         flagi.update(N=1)
 
 # endregion
+
+# słownik rozkazów
+rozkazy = {0xa9: LDA, 0x8d: STA}
+
+
+def main():
+    global pamiec
+    global pc
+
+    load_program()
+    while pamiec[pc] != 0:
+        print('pc: ', pc, hex(pamiec[pc]), 'akumulator: ', akumulator, '\n')
+        rozkazy[pamiec[pc]]()
+
+
+if __name__ == '__main__':
+    main()
