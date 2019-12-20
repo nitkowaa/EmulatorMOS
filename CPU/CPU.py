@@ -474,7 +474,7 @@ def INY():  # Inkrementacja Y
 # region branch
 
 # metody branchowe wczytują etykiety
-def BCS(label):  # skok jeśli C=1
+def BCS_rel(label):  # skok jeśli C=1
     global pc
     global flagi
     if flagi.get('C') == 1:
@@ -483,7 +483,7 @@ def BCS(label):  # skok jeśli C=1
         pass
 
 
-def BCC(label):  # skok jeśli C=0
+def BCC_rel(label):  # skok jeśli C=0
     global pc
     global flagi
     if flagi.get('C') == 0:
@@ -492,7 +492,7 @@ def BCC(label):  # skok jeśli C=0
         pass
 
 
-def BEQ(label):  # skok jeśli Z=1
+def BEQ_rel(label):  # skok jeśli Z=1
     global pc
     global flagi
     if flagi.get('Z') == 1:
@@ -501,7 +501,7 @@ def BEQ(label):  # skok jeśli Z=1
         pass
 
 
-def BNE(label):  # skok jeśli Z=0
+def BNE_rel(label):  # skok jeśli Z=0
     global pc
     global flagi
     if flagi.get('Z') == 0:
@@ -510,7 +510,7 @@ def BNE(label):  # skok jeśli Z=0
         pass
 
 
-def BMI(label):  # skok jeśli N=1
+def BMI_rel(label):  # skok jeśli N=1
     global pc
     global flagi
     if flagi.get('N') == 1:
@@ -519,7 +519,7 @@ def BMI(label):  # skok jeśli N=1
         pass
 
 
-def BPL(label):  # skok jeśli N=0
+def BPL_rel(label):  # skok jeśli N=0
     global pc
     global flagi
     if flagi.get('N') == 0:
@@ -528,7 +528,7 @@ def BPL(label):  # skok jeśli N=0
         pass
 
 
-def BVS(label):  # skok jeśli V=1
+def BVS_rel(label):  # skok jeśli V=1
     global pc
     global flagi
     if flagi.get('V') == 1:
@@ -537,7 +537,7 @@ def BVS(label):  # skok jeśli V=1
         pass
 
 
-def BVC(label):  # skok jeśli V=0
+def BVC_rel(label):  # skok jeśli V=0
     global pc
     global flagi
     if flagi.get('V') == 0:
