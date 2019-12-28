@@ -10,19 +10,6 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc = 1536
 
 
-#def get_index(): nie wiem po co
-    #return pamiec[pc+2]*0x100 + pamiec[pc+1]
-
-
-#def load_program():
- #for i in range(len(program)):
-  #      pamiec[1536+i] = program[i]
-
-
-# region Metody Load
-
-# region LDA
-
 # Wczytaj podaną wartość do Akumulatora
 def LDA_imm(value):
     global akumulator
@@ -50,100 +37,100 @@ def LDY_imm(value):
 # region Metody Flag
 def CLC():  # zerowanie C
     global flagi
+    global pc
     flagi.update(C=0)
-    print()
-    print('CLC zeruje flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def CLD():  # zerowanie D
     global flagi
+    global pc
     flagi.update(D=0)
-    print()
-    print('CLD zeruje flagi', flagi)
-    print()
-
+    pc = pc + 1
 
 def CLI():  # zerowanie I
     global flagi
+    global pc
     flagi.update(I=0)
-    print()
-    print('CLI zeruje flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def CLV():  # zerowanie V
     global flagi
+    global pc
     flagi.update(V=0)
-    print()
-    print('CLV zeruje flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def SED():  # jedynkowanie D
     global flagi
+    global pc
     flagi.update(D=1)
-    print()
-    print('SED ustawia flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def SEC():  # jedynkowanie C
     global flagi
+    global pc
     flagi.update(C=1)
-    print()
-    print('SEC ustawia flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def SEI():  # jedynkowanie I
     global flagi
+    global pc
     flagi.update(I=1)
-    print()
-    print('SEI ustawia flagi', flagi)
+    pc = pc + 1
 
 
 # endregion
 
 def NOP():
-    return None
+    global pc
+    pc = pc + 1
 
 
-# region Do sprawdzenia PROSZE niech ktoś mądry to sprawdzi
+# region Inkremenetacja / Dekrementacja
 def DEX():  # Dekrementacja X
     global X
+    global pc
     X = X - 1
     if X < 0:
         flagi.update(N=1)
     elif X == 0:
         flagi.update(Z=1)
+    pc = pc + 1
 
 
 def DEY():  # Dekrementacja Y
     global Y
+    global pc
     Y = Y - 1
     if Y < 0:
         flagi.update(N=1)
     elif Y == 0:
         flagi.update(Z=1)
-
+    pc = pc + 1
 
 def INX():  # Inkrementacja X
     global X
+    global pc
     X = X + 1
     if X < 0:
         flagi.update(N=1)
     elif X == 0:
         flagi.update(Z=1)
-
+    pc = pc + 1
 
 def INY():  # Inkrementacja Y
     global Y
+    global pc
     Y = Y + 1
     if Y < 0:
         flagi.update(N=1)
     elif Y == 0:
         flagi.update(Z=1)
+    pc = pc + 1
 
 
 
@@ -222,9 +209,7 @@ def BVC_rel(label):  # skok jeśli V=0
 
 
 # słownik rozkazów
-rozkazy = {0xa9: LDA_imm(89)
-#,0xa2: LDX_imm(82),0xa0: LDY_imm(17)
-}
+rozkazy = {0xa9: LDA_imm}
 
 
 def main():
