@@ -55,8 +55,13 @@ def LDA_imm():
     akumulator = pc_high
 
 
+# 3 bity, 1 bit to polecenie, drugi bit to numer strony, trzeci bit to numer indeksu, ich przemnozenie daje indeks
 def LDA_abs():
-    pass
+    global akumulator
+    global pc
+    akumulator = pamiec[pc + 1]
+    akumulator = akumulator * pamiec[pc + 2]
+    pc = pc + 3
 
 
 def LDA_zpg():
@@ -94,7 +99,11 @@ def LDX_imm():
 
 
 def LDX_abs():
-    pass
+    global X
+    global pc
+    X = pamiec[pc + 1]
+    X = X * pamiec[pc + 2]
+    pc = pc + 3
 
 
 def LDX_zpg():
@@ -119,7 +128,11 @@ def LDY_imm():
 
 
 def LDY_abs():
-    pass
+    global Y
+    global pc
+    Y = pamiec[pc + 1]
+    Y = akumulator * pamiec[pc + 2]
+    pc = pc + 3
 
 
 def LDY_zpg():
