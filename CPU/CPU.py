@@ -478,9 +478,11 @@ def BCS_rel(label):  # skok jeśli C=1
     global pc
     global flagi
     if flagi.get('C') == 1:
-        pc=label
+        pc = label
     else:
-        pass
+        pc = pc+2
+
+
 
 
 def BCC_rel(label):  # skok jeśli C=0
@@ -489,7 +491,7 @@ def BCC_rel(label):  # skok jeśli C=0
     if flagi.get('C') == 0:
         pc = label
     else:
-        pass
+        pc = pc + 2
 
 
 def BEQ_rel(label):  # skok jeśli Z=1
@@ -498,7 +500,7 @@ def BEQ_rel(label):  # skok jeśli Z=1
     if flagi.get('Z') == 1:
         pc = label
     else:
-        pass
+        pc = pc + 2
 
 
 def BNE_rel(label):  # skok jeśli Z=0
@@ -507,7 +509,7 @@ def BNE_rel(label):  # skok jeśli Z=0
     if flagi.get('Z') == 0:
         pc = label
     else:
-        pass
+        pc = pc + 2
 
 
 def BMI_rel(label):  # skok jeśli N=1
@@ -516,7 +518,7 @@ def BMI_rel(label):  # skok jeśli N=1
     if flagi.get('N') == 1:
         pc = label
     else:
-        pass
+        pc = pc + 2
 
 
 def BPL_rel(label):  # skok jeśli N=0
@@ -525,7 +527,7 @@ def BPL_rel(label):  # skok jeśli N=0
     if flagi.get('N') == 0:
         pc = label
     else:
-        pass
+        pc = pc + 2
 
 
 def BVS_rel(label):  # skok jeśli V=1
@@ -534,7 +536,7 @@ def BVS_rel(label):  # skok jeśli V=1
     if flagi.get('V') == 1:
         pc = label
     else:
-        pass
+        pc = pc + 2
 
 
 def BVC_rel(label):  # skok jeśli V=0
@@ -543,7 +545,7 @@ def BVC_rel(label):  # skok jeśli V=0
     if flagi.get('V') == 0:
         pc = label
     else:
-        pass
+        pc = pc + 2
 # endregion branch
 
 
