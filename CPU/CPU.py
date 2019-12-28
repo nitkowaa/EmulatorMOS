@@ -282,63 +282,56 @@ def STY_zpg_x():
 
 # endregion
 # endregion
-# region Metody Flag
+
+# region Flagi
 def CLC():  # zerowanie C
     global flagi
+    global pc
     flagi.update(C=0)
-    print()
-    print('CLC zeruje flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def CLD():  # zerowanie D
     global flagi
+    global pc
     flagi.update(D=0)
-    print()
-    print('CLD zeruje flagi', flagi)
-    print()
-
+    pc = pc + 1
 
 def CLI():  # zerowanie I
     global flagi
+    global pc
     flagi.update(I=0)
-    print()
-    print('CLI zeruje flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def CLV():  # zerowanie V
     global flagi
+    global pc
     flagi.update(V=0)
-    print()
-    print('CLV zeruje flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def SED():  # jedynkowanie D
     global flagi
+    global pc
     flagi.update(D=1)
-    print()
-    print('SED ustawia flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def SEC():  # jedynkowanie C
     global flagi
+    global pc
     flagi.update(C=1)
-    print()
-    print('SEC ustawia flagi', flagi)
-    print()
+    pc = pc + 1
 
 
 def SEI():  # jedynkowanie I
     global flagi
+    global pc
     flagi.update(I=1)
-    print()
-    print('SEI ustawia flagi', flagi)
+    pc = pc + 1
+# endregion Flagi
 
-
-# endregion
 # def ADC(x=None, y=None):
 #     global akumulator
 #     global flagi
