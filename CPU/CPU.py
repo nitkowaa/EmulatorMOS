@@ -11,12 +11,7 @@ program = [0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
 
-# Paweł = Przerobienie pamięci na listę (przepisanie),
-# zmienić nazwe indeksów pamięci z małego x,y na jakieś czytelne i lub j
-# Hubert = Przerobienie poleceń na ich różne warianty  (Rozkminienie jak działaja warianty)
-# Kamil = słownik z Tabelki poleceń (przepisanie)
-# Anita = Nowe polecenia w podstawowym wariancie (Rozkminienie)
-
+#ZROBIC FLAGI N i Z !!!
 akumulator = 0
 X = 0
 Y = 0
@@ -413,45 +408,53 @@ def SEI():  # jedynkowanie I
 
 
 def NOP():
-    return None
+    global pc
+    pc = pc +1
 
 
-# region Do sprawdzenia PROSZE niech ktoś mądry to sprawdzi
+# region Inkremenetacja / Dekrementacja
 def DEX():  # Dekrementacja X
     global X
+    global pc
     X = X - 1
     if X < 0:
         flagi.update(N=1)
     elif X == 0:
         flagi.update(Z=1)
+    pc = pc + 1
 
 
 def DEY():  # Dekrementacja Y
     global Y
+    global pc
     Y = Y - 1
     if Y < 0:
         flagi.update(N=1)
     elif Y == 0:
         flagi.update(Z=1)
+    pc = pc + 1
 
 
 def INX():  # Inkrementacja X
     global X
+    global pc
     X = X + 1
     if X < 0:
         flagi.update(N=1)
     elif X == 0:
         flagi.update(Z=1)
+    pc = pc + 1
 
 
 def INY():  # Inkrementacja Y
     global Y
+    global pc
     Y = Y + 1
     if Y < 0:
         flagi.update(N=1)
     elif Y == 0:
         flagi.update(Z=1)
-
+    pc = pc + 1
 
 # def INC():  # Inkrementacja  pamięci
 #     global pamiec
@@ -512,7 +515,12 @@ def INY():  # Inkrementacja Y
 # endregion
 
 # słownik rozkazów
-rozkazy = {0xa9: LDA, 0x8d: STA}
+
+
+rozkazy = {0xa9: LDA, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
+           0xd8: CLD, 0xf8: SED}
+
+
 
 
 def main():
