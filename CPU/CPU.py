@@ -65,7 +65,11 @@ def LDA_abs():
 
 
 def LDA_zpg():
-    pass
+    global akumulator
+    global pc
+    akumulator = pamiec[pc + 1] # adres do pobrania
+    akumulator = pamiec[akumulator]
+    pc = pc + 2
 
 
 def LDA_abs_x():
@@ -107,7 +111,11 @@ def LDX_abs():
 
 
 def LDX_zpg():
-    pass
+    global X
+    global pc
+    X = pamiec[pc + 1]  # adres do pobrania
+    X = pamiec[akumulator]
+    pc = pc + 2
 
 
 def LDX_abs_y():
@@ -136,7 +144,11 @@ def LDY_abs():
 
 
 def LDY_zpg():
-    pass
+    global Y
+    global pc
+    Y = pamiec[pc + 1]  # adres do pobrania
+    Y = pamiec[akumulator]
+    pc = pc + 2
 
 
 def LDY_abs_y():
