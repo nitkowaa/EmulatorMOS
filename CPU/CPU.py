@@ -4,14 +4,16 @@ import numpy as np
 
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
-# https://skilldrick.github.io/easy6502/#first-program
-program = [0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
+# https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
+program = [0x78,0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
            0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
 
-#ZROBIC FLAGI N i Z !!!
+
+# ZROBIC FLAGI N i Z !!!
+
 akumulator = 0
 X = 0
 Y = 0
@@ -36,21 +38,14 @@ def load_program():
 # region LDA
 
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
-def LDA():
+def LDA_imm():
     global akumulator
     global pc
     akumulator = pamiec[pc+1]
     pc = pc + 2
 
 
-def LDA_imm():
-    pass
-    global akumulator
-    global pc_high
-    akumulator = pc_high
-
-
-# 3 bity, 1 bit to polecenie, drugi bit to numer strony, trzeci bit to numer indeksu, ich przemnozenie daje indeks tablicy pamieci
+# 3 bity, 1 to polecenie, drugi to numer strony, trzeci to numer indeksu, ich przemnozenie daje indeks tablicy pamieci
 def LDA_abs():
     global akumulator
     global pc
@@ -140,38 +135,8 @@ def LDY_abs_y():
 
 def LDY_zpg_y():
     pass
-
-
 # endregion LDY
-# Wczytaj miejsce z danego miejsca w pamięci do zmiennej X
-# def LDX(x=None, y=None):
-#     global X
-#     if x and y is not None:
-#         X = pamiec[x][y]
-#     elif x is not None:
-#         X = pamiec[x][pc_low]
-#     elif y is not None:
-#         X = pamiec[pc_high][y]
-#     else:
-#         X = pamiec[pc_high][pc_low]
-#     print('X: ', X)
-#
-#
-# # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Y
-# def LDY(x=None, y=None):
-#     global Y
-#     if x and y is not None:
-#         Y = pamiec[x][y]
-#     elif x is not None:
-#         Y = pamiec[x][pc_low]
-#     elif y is not None:
-#         Y = pamiec[pc_high][y]
-#     else:
-#         Y = pamiec[pc_high][pc_low]
-#     print('Y: ', Y)
 
-
-# endregion
 # region Metody Store
 # region STA
 
@@ -214,6 +179,7 @@ def STA():
     pc = pc + 3
 
 
+# Zapisz z Y do danego miejsca w pamięci
 def STY():
     global Y
     global pc
@@ -222,6 +188,7 @@ def STY():
     pc = pc + 3
 
 
+# Zapisz z X do danego miejsca w pamięci
 def STX():
     global X
     global pc
@@ -304,6 +271,7 @@ def CLD():  # zerowanie D
     global pc
     flagi.update(D=0)
     pc = pc + 1
+
 
 def CLI():  # zerowanie I
     global flagi
@@ -505,10 +473,8 @@ def INY():  # Inkrementacja Y
 # słownik rozkazów
 
 
-rozkazy = {0xa9: LDA, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
+rozkazy = {0xa9: LDA_imm, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
            0xd8: CLD, 0xf8: SED}
-
-
 
 
 def main():
@@ -517,7 +483,8 @@ def main():
 
     load_program()
     while pamiec[pc] != 0:
-        print('pc: ', pc, hex(pamiec[pc]), 'akumulator: ', akumulator, '\n')
+        print('pc=', pc, hex(pamiec[pc]), 'akumulator=', akumulator, '\n'
+              'X=', X,'Y=', Y, flagi,'\n')
         rozkazy[pamiec[pc]]()
 
 
