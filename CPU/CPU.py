@@ -55,7 +55,7 @@ def LDA_imm():
     akumulator = pc_high
 
 
-# 3 bity, 1 bit to polecenie, drugi bit to numer strony, trzeci bit to numer indeksu, ich przemnozenie daje indeks
+# 3 bity, 1 bit to polecenie, drugi bit to numer strony, trzeci bit to numer indeksu, ich przemnozenie daje indeks tablicy pamieci
 def LDA_abs():
     global akumulator
     global pc
