@@ -4,7 +4,6 @@ import numpy as np
 
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
-
 # https://skilldrick.github.io/easy6502/#first-program
 program = [0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
            0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
@@ -88,7 +87,10 @@ def LDA_zpg2_x():
 # endregion LDA
 # region LDX
 def LDX_imm():
-    pass
+    global X
+    global pc
+    X = pamiec[pc + 1]
+    pc = pc + 2
 
 
 def LDX_abs():
@@ -110,7 +112,10 @@ def LDX_zpg_y():
 # endregion LDX
 # region LDY
 def LDY_imm():
-    pass
+    global Y
+    global pc
+    Y = pamiec[pc + 1]
+    pc = pc + 2
 
 
 def LDY_abs():
