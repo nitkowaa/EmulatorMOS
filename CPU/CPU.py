@@ -166,6 +166,8 @@ def LDY_zpg_y():
 # endregion
 # region Metody Store
 # region STA
+
+
 def STA_abs():
     pass
 
@@ -201,6 +203,22 @@ def STA():
     global pc
     pamiec[get_index()] = akumulator
     print('STA: ', hex(get_index()), '\n')
+    pc = pc + 3
+
+
+def STY():
+    global Y
+    global pc
+    pamiec[get_index()] = Y
+    print('STY: ', hex(get_index()), '\n')
+    pc = pc + 3
+
+
+def STX():
+    global X
+    global pc
+    pamiec[get_index()] = X
+    print('STX: ', hex(get_index()), '\n')
     pc = pc + 3
 
 
