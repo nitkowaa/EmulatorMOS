@@ -5,7 +5,7 @@ import numpy as np
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
-program = [0x78,0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
+program = [0x78,0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
            0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
@@ -52,6 +52,16 @@ def LDA_abs():
     akumulator = pamiec[pc + 1]
     akumulator = akumulator * pamiec[pc + 2]
     pc = pc + 3
+
+
+def BCS_rel(label):  # skok jeśli C=1
+    global pc
+    global flagi
+    if flagi.get('C') == 1:
+        pc = pamiec[pc+1]
+    else:
+        pc = pc+2
+
 
 
 def LDA_zpg():
@@ -209,23 +219,6 @@ def STX():
     pc = pc + 3
 
 
-# endregion
-# region STX
-# Zapisz z X do danego miejsca w pamięci do zmiennej
-# def STX(x=None, y=None):
-#     global X
-#     if x and y is not None:
-#         X = pamiec[x][y]
-#     elif x is not None:
-#         X = pamiec[x][pc_low]
-#     elif y is not None:
-#         X = pamiec[pc_high][y]
-#     else:
-#         pamiec[pc_high][pc_low] = X
-#     X = 0
-#     print('pamięć', pamiec[pc_high][pc_low], 'Wartość Y', X)
-
-
 def STX_abs():
     pass
 
@@ -236,23 +229,6 @@ def STX_zpg():
 
 def STX_zpg_y():
     pass
-
-
-# endregion STX
-# region STY
-# Zapisz z Y do danego miejsca w pamięci do zmiennej
-# def STY(x=None, y=None):
-#     global Y
-#     if x and y is not None:
-#         Y = pamiec[x][y]
-#     elif x is not None:
-#         Y = pamiec[x][pc_low]
-#     elif y is not None:
-#         Y = pamiec[pc_high][y]
-#     else:
-#         pamiec[pc_high][pc_low] = Y
-#     Y = 0
-#     print('pamięć', pamiec[pc_high][pc_low], 'Wartość X', Y)
 
 
 def STY_abs():
@@ -318,62 +294,6 @@ def SEI():  # jedynkowanie I
     global pc
     flagi.update(I=1)
     pc = pc + 1
-# endregion Flagi
-
-# def ADC(x=None, y=None):
-#     global akumulator
-#     global flagi
-#     global CarryValue
-#     if x and y is not None:
-#         akumulator = akumulator + pamiec[x][y] + flagi.get('C')
-#     elif x is not None:
-#         akumulator = akumulator + pamiec[x][pc_low] + flagi.get('C')
-#     elif y is not None:
-#         akumulator = akumulator + pamiec[pc_high][y] + flagi.get('C')
-#     else:
-#         akumulator = akumulator + pamiec[pc_high][pc_low] + flagi.get('C')
-#
-#     # Negative
-#     if akumulator < 0:
-#         flagi.update(N=1)
-#     else:
-#         flagi.update(N=0)
-#
-#     # Carry
-#     if akumulator >= 255 and flagi.get('N') == 0:
-#         flagi.update(C=1)
-#         CarryValue = akumulator % 255
-#         akumulator = 255
-#
-#     # Zero
-#     if akumulator != 0:
-#         flagi.update(Z=0)
-#     else:
-#         flagi.update(Z=1)
-#
-#     # Overflow
-#     if akumulator > 127 and flagi.get('N') == 1:
-#         akumulator = 127
-#         flagi.update(V=1)
-#     elif akumulator < -128 and flagi.get('N') == 1:
-#         akumulator = -128
-#         flagi.update(V=1)
-#     else:
-#         flagi.update(V=0)
-#
-#
-# def SBC(x=None, y=None):
-#     SEC()
-#     global akumulator
-#     if x and y is not None:
-#         akumulator = akumulator - pamiec[x][y] - (255 - CarryValue)
-#     elif x is not None:
-#         akumulator = akumulator - pamiec[x][pc_low] - (255 - CarryValue)
-#     elif y is not None:
-#         akumulator = akumulator - pamiec[pc_high][y] - (255 - CarryValue)
-#     else:
-#         akumulator = akumulator - pamiec[pc_high][pc_low] - (255 - CarryValue)
-
 
 def NOP():
     global pc
@@ -424,69 +344,85 @@ def INY():  # Inkrementacja Y
         flagi.update(Z=1)
     pc = pc + 1
 
-# def INC():  # Inkrementacja  pamięci
-#     global pamiec
-#     global flagi
-#     if flagi.get("Z") == 1:
-#         pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) + 1
-#     else:
-#         pamiec[pc_high][pc_low] = pamiec[pc_high][pc_low]
-#
-#
-# def DEC():  # Dekrementacja pamięci
-#     global pamiec
-#     global flagi
-#     if flagi.get("N") == 1:
-#         pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low]) - 1
-#     else:
-#         pamiec[pc_high][pc_low] = (pamiec[pc_high][pc_low])
-#
-#
-# def AND():  # do sprawdzenia jeszcze; logic 1 = 1
-#     global akumulator
-#     global pamiec
-#     if pamiec[pc_high][pc_low] == 1 and akumulator >= 0:
-#         akumulator = 1
-#         flagi.update(Z=0)
-#         flagi.update(N=1)
-#     else:
-#         akumulator = 0
-#         flagi.update(Z=1)
-#         flagi.update(N=0)
-#
-#
-# def ORA():
-#     global akumulator
-#     global pamiec
-#     if pamiec[pc_high][pc_low] == 0 and akumulator <= 0:
-#         akumulator = 0
-#         flagi.update(Z=1)
-#         flagi.update(N=0)
-#     else:
-#         akumulator = 1
-#         flagi.update(Z=0)
-#         flagi.update(N=1)
-#
-#
-# def EOR():
-#     global akumulator
-#     global pamiec
-#     if (pamiec[pc_high][pc_low] == 0 and akumulator) <= 0 or (pamiec[pc_high][pc_low] == 1 and akumulator >= 0):
-#         akumulator = 0
-#         flagi.update(Z=1)
-#         flagi.update(N=0)
-#     else:
-#         akumulator = 1
-#         flagi.update(Z=0)
-#         flagi.update(N=1)
 
-# endregion
+# metody branchowe wczytują etykiety
+def BCS_rel():  # skok jeśli C=1
+    global pc
+    global flagi
+    if flagi.get('C') == 1:
+        pc = pamiec[pc + 1] # to trzeba sprawdzić we wszystkich branchach
+    else:
+        pc = pc+2
+
+
+def BCC_rel():  # skok jeśli C=0
+    global pc
+    global flagi
+    if flagi.get('C') == 0:
+        pc = pamiec[pc + 1]
+    else:
+        pc = pc + 2
+
+
+def BEQ_rel():  # skok jeśli Z=1
+    global pc
+    global flagi
+    if flagi.get('Z') == 1:
+        pc = pamiec[pc + 1]
+    else:
+        pc = pc + 2
+
+
+def BNE_rel():  # skok jeśli Z=0
+    global pc
+    global flagi
+    if flagi.get('Z') == 0:
+        pc = pamiec[pc + 1]
+    else:
+        pc = pc + 2
+
+
+def BMI_rel():  # skok jeśli N=1
+    global pc
+    global flagi
+    if flagi.get('N') == 1:
+        pc = pamiec[pc + 1]
+    else:
+        pc = pc + 2
+
+
+def BPL_rel():  # skok jeśli N=0
+    global pc
+    global flagi
+    if flagi.get('N') == 0:
+        pc = pamiec[pc + 1]
+    else:
+        pc = pc + 2
+
+
+def BVS_rel():  # skok jeśli V=1
+    global pc
+    global flagi
+    if flagi.get('V') == 1:
+        pc = pamiec[pc + 1]
+    else:
+        pc = pc + 2
+
+
+def BVC_rel():  # skok jeśli V=0
+    global pc
+    global flagi
+    if flagi.get('V') == 0:
+        pc = pamiec[pc + 1]
+    else:
+        pc = pc + 2
+# endregion branch
 
 # słownik rozkazów
 
 
 rozkazy = {0xa9: LDA_imm, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
-           0xd8: CLD, 0xf8: SED}
+           0xd8: CLD, 0xf8: SED,}
 
 
 def main():
