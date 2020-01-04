@@ -346,7 +346,7 @@ def INY():  # Inkrementacja Y
 
 
 # metody branchowe wczytują etykiety
-def BCS_rel():  # skok jeśli C=1
+def BCS():  # skok jeśli C=1
     global pc
     global flagi
     if flagi.get('C') == 1:
@@ -355,7 +355,7 @@ def BCS_rel():  # skok jeśli C=1
         pc = pc+2
 
 
-def BCC_rel():  # skok jeśli C=0
+def BCC():  # skok jeśli C=0
     global pc
     global flagi
     if flagi.get('C') == 0:
@@ -364,7 +364,7 @@ def BCC_rel():  # skok jeśli C=0
         pc = pc + 2
 
 
-def BEQ_rel():  # skok jeśli Z=1
+def BEQ():  # skok jeśli Z=1
     global pc
     global flagi
     if flagi.get('Z') == 1:
@@ -373,7 +373,7 @@ def BEQ_rel():  # skok jeśli Z=1
         pc = pc + 2
 
 
-def BNE_rel():  # skok jeśli Z=0
+def BNE():  # skok jeśli Z=0
     global pc
     global flagi
     if flagi.get('Z') == 0:
@@ -382,7 +382,7 @@ def BNE_rel():  # skok jeśli Z=0
         pc = pc + 2
 
 
-def BMI_rel():  # skok jeśli N=1
+def BMI():  # skok jeśli N=1
     global pc
     global flagi
     if flagi.get('N') == 1:
@@ -391,7 +391,7 @@ def BMI_rel():  # skok jeśli N=1
         pc = pc + 2
 
 
-def BPL_rel():  # skok jeśli N=0
+def BPL():  # skok jeśli N=0
     global pc
     global flagi
     if flagi.get('N') == 0:
@@ -400,7 +400,7 @@ def BPL_rel():  # skok jeśli N=0
         pc = pc + 2
 
 
-def BVS_rel():  # skok jeśli V=1
+def BVS():  # skok jeśli V=1
     global pc
     global flagi
     if flagi.get('V') == 1:
@@ -409,7 +409,7 @@ def BVS_rel():  # skok jeśli V=1
         pc = pc + 2
 
 
-def BVC_rel():  # skok jeśli V=0
+def BVC():  # skok jeśli V=0
     global pc
     global flagi
     if flagi.get('V') == 0:
@@ -422,7 +422,7 @@ def BVC_rel():  # skok jeśli V=0
 
 
 rozkazy = {0xa9: LDA_imm, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
-           0xd8: CLD, 0xf8: SED,}
+           0xd8: CLD, 0xf8: SED, BPL: 0x10,BMI: 0x30, BVC: 0x50, BVS: 0x70, BCC: 0x90, BCS: 0xb0, BNE: 0xd0, BEQ: 0xf0}
 
 
 def main():
