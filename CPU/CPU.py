@@ -295,6 +295,7 @@ def SEI():  # jedynkowanie I
     flagi.update(I=1)
     pc = pc + 1
 
+
 def NOP():
     global pc
     pc = pc +1
@@ -418,11 +419,19 @@ def BVC():  # skok jeśli V=0
         pc = pc + 2
 # endregion branch
 
+
+def JMP_abs():  # skok jeśli V=0
+    global pc
+    global flagi
+    pc = pamiec[pc + 1]
+
+
 # słownik rozkazów
 
 
 rozkazy = {0xa9: LDA_imm, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
-           0xd8: CLD, 0xf8: SED, BPL: 0x10,BMI: 0x30, BVC: 0x50, BVS: 0x70, BCC: 0x90, BCS: 0xb0, BNE: 0xd0, BEQ: 0xf0}
+           0xd8: CLD, 0xf8: SED, BPL: 0x10,BMI: 0x30, BVC: 0x50, BVS: 0x70, BCC: 0x90, BCS: 0xb0, BNE: 0xd0, BEQ: 0xf0,
+           JMP_abs: 0x4c}
 
 
 def main():
