@@ -31,11 +31,9 @@ def load_program():
     for i in range(len(program)):
         pamiec[1536+i] = program[i]
 
-
-# region Metody Load
-
-
+# region LDA,LDX, LDY
 # region LDA
+
 
 # Wczytaj miejsce z danego miejsca w pamięci do zmiennej Akumaltora
 def LDA_imm():
@@ -61,7 +59,6 @@ def BCS_rel(label):  # skok jeśli C=1
         pc = pamiec[pc+1]
     else:
         pc = pc+2
-
 
 
 def LDA_zpg():
@@ -158,9 +155,9 @@ def LDY_abs_y():
 def LDY_zpg_y():
     pass
 # endregion LDY
+#endregion
 
-# region Metody Store
-# region STA
+# region STA, STX, STY
 
 
 def STA_abs():
@@ -244,9 +241,15 @@ def STY_zpg_x():
 
 
 # endregion
-# endregion
 
-# region Flagi
+# region metody Flag & NOP
+
+
+def NOP():
+    global pc
+    pc = pc +1
+
+
 def CLC():  # zerowanie C
     global flagi
     global pc
@@ -295,11 +298,7 @@ def SEI():  # jedynkowanie I
     flagi.update(I=1)
     pc = pc + 1
 
-
-def NOP():
-    global pc
-    pc = pc +1
-
+# endregion
 
 # region Inkremenetacja / Dekrementacja
 def DEX():  # Dekrementacja X
@@ -344,9 +343,69 @@ def INY():  # Inkrementacja Y
     elif Y == 0:
         flagi.update(Z=1)
     pc = pc + 1
+# endregion
+
+# region TAX, TXA, TAY, TYA
 
 
-# metody branchowe wczytują etykiety
+def TAX():  # Transfer z A do X
+    global X
+    global akumulator
+    global pc
+    X = akumulator
+    if X < 0:
+        flagi.update(N=1)
+    elif X == 0:
+        flagi.update(Z=1)
+    pc = pc + 1
+
+
+def TXA():  # Transfer z X do A
+    global X
+    global akumulator
+    global pc
+    akumulator = X
+    if X < 0:
+        flagi.update(N=1)
+    elif X == 0:
+        flagi.update(Z=1)
+    pc = pc + 1
+
+
+def TYA():  # Transfer z Y do A
+    global Y
+    global akumulator
+    global pc
+    akumulator = Y
+    if Y < 0:
+        flagi.update(N=1)
+    elif Y == 0:
+        flagi.update(Z=1)
+    pc = pc + 1
+
+
+def TAY():  # Transfer z A do Y
+    global Y
+    global akumulator
+    global pc
+    Y = akumulator
+    if Y < 0:
+        flagi.update(N=1)
+    elif Y == 0:
+        flagi.update(Z=1)
+    pc = pc + 1
+
+# endregion
+
+# region Branche & JUMP
+
+
+def JMP_abs():  # skok jeśli V=0
+    global pc
+    global flagi
+    pc = pamiec[pc + 1]
+
+
 def BCS():  # skok jeśli C=1
     global pc
     global flagi
@@ -417,13 +476,7 @@ def BVC():  # skok jeśli V=0
         pc = pamiec[pc + 1]
     else:
         pc = pc + 2
-# endregion branch
-
-
-def JMP_abs():  # skok jeśli V=0
-    global pc
-    global flagi
-    pc = pamiec[pc + 1]
+# endregion
 
 
 # słownik rozkazów
@@ -431,7 +484,7 @@ def JMP_abs():  # skok jeśli V=0
 
 rozkazy = {0xa9: LDA_imm, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
            0xd8: CLD, 0xf8: SED, BPL: 0x10,BMI: 0x30, BVC: 0x50, BVS: 0x70, BCC: 0x90, BCS: 0xb0, BNE: 0xd0, BEQ: 0xf0,
-           JMP_abs: 0x4c}
+           JMP_abs: 0x4c,}
 
 
 def main():
