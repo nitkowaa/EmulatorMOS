@@ -174,6 +174,7 @@ def LDY_zpg_y():
 # region STA, STX, STY
 # region STA
 
+
 def STA_abs():
     global akumulator
     global pc
@@ -575,6 +576,23 @@ def BVC():  # skok jeśli V=0
         pc = pamiec[pc + 1]
     else:
         pc = pc + 2
+# endregion
+
+# region Porównania
+
+
+def CMP_imm(): # porównuje miejsce w pamieci do akumulatora
+    global pc
+    global akumulator
+    global pamiec
+    global a
+    a = pamiec[pc + 1]
+    if akumulator >= a:
+        flagi.update("C",1)
+    elif akumulator == a:
+        flagi.update("Z",1)
+    pc = pc + 2
+
 # endregion
 
 
