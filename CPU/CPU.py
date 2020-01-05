@@ -26,8 +26,8 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc = 1536
 
 
-def get_index():
-    return pamiec[pc+2]*0x100 + pamiec[pc+1]
+def get_index(): # zczytuje 2 liczby jako index listy pamiec.
+    return pamiec[pc+2]*256 + pamiec[pc+1]
 
 
 def load_program():
@@ -174,22 +174,36 @@ def LDY_zpg_y():
 # endregion
 
 # region STA, STX, STY
-
+# region STA
 
 def STA_abs():
-    pass
+    global akumulator
+    global pc
+    pamiec[get_index()] = akumulator
+    pc = pc + 3
 
 
 def STA_zpg():
-    pass
+    global akumulator
+    global pc
+    pamiec[pc + 1] = akumulator
+    pc = pc + 2
 
 
 def STA_abs_x():
-    pass
+    global akumulator
+    global X
+    global pc
+    pamiec[get_index()] = akumulator + X
+    pc = pc + 3
 
 
 def STA_abs_y():
-    pass
+    global akumulator
+    global X
+    global pc
+    pamiec[get_index()] = akumulator + X
+    pc = pc + 3
 
 
 def STA_zpg_x():
@@ -204,58 +218,45 @@ def STA_zpg2_y():
 def STA_zpg2_x():
     pass
 
-
-# Zapisz z Akumaltora do danego miejsca w pamięci
-def STA():
-    global akumulator
-    global pc
-    pamiec[get_index()] = akumulator
-    print('STA: ', hex(get_index()), '\n')
-    pc = pc + 3
-
-
-# Zapisz z Y do danego miejsca w pamięci
-def STY():
-    global Y
-    global pc
-    pamiec[get_index()] = Y
-    print('STY: ', hex(get_index()), '\n')
-    pc = pc + 3
-
-
-# Zapisz z X do danego miejsca w pamięci
-def STX():
+# endregion
+# region STX
+def STX_abs():
     global X
     global pc
     pamiec[get_index()] = X
-    print('STX: ', hex(get_index()), '\n')
     pc = pc + 3
 
 
-def STX_abs():
-    pass
-
-
 def STX_zpg():
-    pass
+    global X
+    global pc
+    pamiec[pc + 1] = X
+    pc = pc + 2
 
 
 def STX_zpg_y():
     pass
 
-
+# endregion
+# region STY
 def STY_abs():
-    pass
+    global Y
+    global pc
+    pamiec[get_index()] = Y
+    pc = pc + 3
 
 
 def STY_zpg():
-    pass
+    global Y
+    global pc
+    pamiec[pc + 1] = Y
+    pc = pc + 2
 
 
 def STY_zpg_x():
     pass
 
-
+# endregion
 # endregion
 
 # region metody Flag & NOP
