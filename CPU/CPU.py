@@ -5,8 +5,11 @@ import numpy as np
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
-program = [0x78,0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
-           0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
+#program = [0x78,0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
+ #          0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
+
+program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
+#1536=0x600 tu jest test branchy
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
@@ -52,13 +55,6 @@ def LDA_abs():
     pc = pc + 3
 
 
-def BCS_rel(label):  # skok jeśli C=1
-    global pc
-    global flagi
-    if flagi.get('C') == 1:
-        pc = pamiec[pc+1]
-    else:
-        pc = pc+2
 
 
 def LDA_zpg():
@@ -155,7 +151,7 @@ def LDY_abs_y():
 def LDY_zpg_y():
     pass
 # endregion LDY
-#endregion
+# endregion
 
 # region STA, STX, STY
 
@@ -301,6 +297,8 @@ def SEI():  # jedynkowanie I
 # endregion
 
 # region Inkremenetacja / Dekrementacja
+
+
 def DEX():  # Dekrementacja X
     global X
     global pc
@@ -410,7 +408,7 @@ def BCS():  # skok jeśli C=1
     global pc
     global flagi
     if flagi.get('C') == 1:
-        pc = pamiec[pc + 1] # to trzeba sprawdzić we wszystkich branchach
+        pc = pamiec[pc + 1] 
     else:
         pc = pc+2
 
@@ -481,10 +479,10 @@ def BVC():  # skok jeśli V=0
 
 # słownik rozkazów
 
-
+# tutaj trzeba posprawdzac z plikiem Kamila i dodac (None)
 rozkazy = {0xa9: LDA_imm, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
-           0xd8: CLD, 0xf8: SED, BPL: 0x10,BMI: 0x30, BVC: 0x50, BVS: 0x70, BCC: 0x90, BCS: 0xb0, BNE: 0xd0, BEQ: 0xf0,
-           JMP_abs: 0x4c,TAX: 0xaa,TXA: 0x8a, DEX: 0xca, INX:0xe8, TAY: 0xa8,TYA: 0x98, DEY: 0x88, INY: 0xc8}
+           0xd8: CLD, 0xf8: SED,0x10: BPL,0x30: BMI,0x50: BVC,0x70: BVS,0x90: BCC,0xb0: BCS,0xd0: BNE,0xf0: BEQ,
+           0x4c: JMP_abs,0xaa: TAX, 0x8a: TXA,0xca: DEX,0xe8: INX,0xa8: TAY, 0x98:TYA,0x88: DEY,0xc8: INY }
 
 
 def main():
