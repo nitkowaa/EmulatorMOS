@@ -372,6 +372,34 @@ def DEC_abs(): # Dekrementacja pamięci
         flagi.update(Z=1)
 
 
+def INC_abs_x(): # Inkrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    indeks = pamiec[pc + 2]
+    indeks = indeks * 256 + pamiec[pc + 1] + X
+    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
+    pc = pc + 3
+    if pamiec[indeks] < 0: # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+
+
+def DEC_abs_x(): # Dekrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    indeks = pamiec[pc + 2]
+    indeks = indeks * 256 + pamiec[pc + 1] + X
+    pamiec[indeks]=pamiec[indeks] - 1   # lub coś innego zamiast jedynki
+    pc = pc + 3
+    if pamiec[indeks] < 0: # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+
+
 def DEX():  # Dekrementacja X
     global X
     global pc
@@ -555,16 +583,15 @@ def BRK():
     pc = pc+1
 
 
-
-
 # słownik rozkazów
 
 # tutaj trzeba posprawdzac z plikiem Kamila i dodac (None)
-rozkazy = {0xa9: LDA_imm, 0x8d: STA, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
+
+
+rozkazy = {0xa9: LDA_imm, 0x8d: STA_abs, 0xea: NOP, 0x18: CLC, 0x38:SEC, 0x58: CLI, 0x78: SEI, 0xb8: CLV,
            0xd8: CLD, 0xf8: SED,0x10: BPL,0x30: BMI,0x50: BVC,0x70: BVS,0x90: BCC,0xb0: BCS,0xd0: BNE,0xf0: BEQ,
            0x4c: JMP_abs,0xaa: TAX, 0x8a: TXA,0xca: DEX,0xe8: INX,0xa8: TAY, 0x98:TYA,0x88: DEY,0xc8: INY,0x00: BRK,
-           0xe6: INC_zpg, 0xee: INC_abs, 0xc6: DEC_zpg, 0xce: DEC_abs}
-           
+           0xe6: INC_zpg, 0xee: INC_abs, 0xc6: DEC_zpg, 0xce: DEC_abs, 0xfe: INC_abs_x, 0xde: DEC_abs_x}
 
 
 def main():
