@@ -50,8 +50,8 @@ def LDA_imm():
 def LDA_abs():
     global akumulator
     global pc
-    akumulator = pamiec[pc + 1] # pierwsza liczba (Strona) do pomnozenia przez 256 (wielkosc strony)
-    akumulator = akumulator * 256 + pamiec[pc + 2] # liczba stron + druga liczba (miejsce na stronie)
+    akumulator = pamiec[pc + 2] # druga liczba (Strona) do pomnozenia przez 256 (wielkosc strony)
+    akumulator = akumulator * 256 + pamiec[pc + 1] # liczba stron + pierwsza liczba (miejsce na stronie)
     pc = pc + 3
 
 
@@ -69,8 +69,8 @@ def LDA_abs_x():
     global akumulator
     global X
     global pc
-    akumulator = pamiec[pc + 1]
-    akumulator = akumulator * 256 + pamiec[pc + 2] + X
+    akumulator = pamiec[pc + 2]
+    akumulator = akumulator * 256 + pamiec[pc + 1] + X
     pc = pc + 3
 
 
@@ -78,8 +78,8 @@ def LDA_abs_y():
     global akumulator
     global Y
     global pc
-    akumulator = pamiec[pc + 1]
-    akumulator = akumulator * 256 + pamiec[pc + 2] + Y
+    akumulator = pamiec[pc + 2]
+    akumulator = akumulator * 256 + pamiec[pc + 1] + Y
     pc = pc + 3
 
 
@@ -108,8 +108,8 @@ def LDX_imm():
 def LDX_abs():
     global X
     global pc
-    X = pamiec[pc + 1]
-    X = X * 256 + pamiec[pc + 2]
+    X = pamiec[pc + 2]
+    X = X * 256 + pamiec[pc + 1]
     pc = pc + 3
 
 
@@ -125,8 +125,8 @@ def LDX_abs_y():
     global X
     global pc
     global Y
-    X = pamiec[pc + 1]
-    X = X * 256 + pamiec[pc + 2] + Y
+    X = pamiec[pc + 2]
+    X = X * 256 + pamiec[pc + 1] + Y
     pc = pc + 3
 
 
@@ -146,8 +146,8 @@ def LDY_imm():
 def LDY_abs():
     global Y
     global pc
-    Y = pamiec[pc + 1]
-    Y = Y * 256 + pamiec[pc + 2]
+    Y = pamiec[pc + 2]
+    Y = Y * 256 + pamiec[pc + 1]
     pc = pc + 3
 
 
@@ -163,8 +163,8 @@ def LDY_abs_x():
     global Y
     global pc
     global X
-    Y = pamiec[pc + 1]
-    Y = Y * 256 + pamiec[pc + 2] + X
+    Y = pamiec[pc + 2]
+    Y = Y * 256 + pamiec[pc + 1] + X
     pc = pc + 3
 
 
@@ -178,6 +178,7 @@ def LDY_zpg_y():
 
 def STA_abs():
     pass
+
 
 def STA_zpg():
     pass
