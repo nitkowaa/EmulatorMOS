@@ -627,6 +627,28 @@ def CMP_zpg(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 2
 
 
+def CMP_abs(): # porównuje wartosc w pamieci do akumulatora
+    global pc
+    global akumulator
+    global pamiec
+    global a
+    a = pamiec[pc + 2]
+    a = a * 256 + pamiec[pc + 1]
+    if akumulator > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif akumulator == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif akumulator < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 3
+
+
 def CPX_imm(): # porównuje wartosc do X
     global pc
     global X
@@ -670,6 +692,28 @@ def CPX_zpg(): # porównuje wartosc do X
     pc = pc + 2
 
 
+def CPX_abs(): # porównuje wartosc do X
+    global pc
+    global X
+    global pamiec
+    global a
+    a = pamiec[pc + 2]
+    a = a * 256 + pamiec[pc + 1]
+    if X > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif X == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif X < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 3
+
+
 def CPY_imm(): # porównuje wartosc do Y
     global pc
     global Y
@@ -711,6 +755,28 @@ def CPY_zpg(): # porównuje wartosc do Y
         flagi.update("Z", 0)
         flagi.update("N", 1)
     pc = pc + 2
+
+    
+def CPY_abs(): # porównuje wartosc do Y
+    global pc
+    global Y
+    global pamiec
+    global a
+    a = pamiec[pc + 2]
+    a = a * 256 + pamiec[pc + 1]
+    if Y > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif Y == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif Y < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 3
 
 
 
