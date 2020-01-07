@@ -325,11 +325,12 @@ def INC_zpg(): # Inkrementacja pamięci
     global indeks
     indeks = pamiec[pc+1]
     pamiec[indeks]=pamiec[indeks]+1   # lub coś innego zamiast jedynki
-    pc = pc + 2
     if pamiec[indeks] < 0: # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
+    pc = pc + 2
+
 
 
 def DEC_zpg(): # Dekrementacja pamięci
@@ -338,11 +339,12 @@ def DEC_zpg(): # Dekrementacja pamięci
     global indeks
     indeks = pamiec[pc+1]
     pamiec[indeks]=pamiec[indeks]-1  # lub coś innego zamiast jedynki
-    pc = pc + 2
     if pamiec[indeks] < 0: # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
+    pc = pc + 2
+
 
 
 def INC_abs(): # Inkrementacja pamięci
@@ -357,6 +359,7 @@ def INC_abs(): # Inkrementacja pamięci
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
+
 
 
 def DEC_abs(): # Dekrementacja pamięci
@@ -581,21 +584,140 @@ def BVC():  # skok jeśli V=0
 # region Porównania
 
 
-def CMP_imm(): # porównuje miejsce w pamieci do akumulatora
+def CMP_imm(): # porównuje wartosc do akumulatora
     global pc
     global akumulator
     global pamiec
     global a
     a = pamiec[pc + 1]
-    if akumulator >= a:
+    if akumulator > a:
         flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
     elif akumulator == a:
-        flagi.update("Z",1)
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif akumulator < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
     pc = pc + 2
+
+
+def CMP_zpg(): # porównuje wartosc w pamieci do akumulatora
+    global pc
+    global akumulator
+    global pamiec
+    global a
+    a = pamiec[pc + 1]  # adres do pobrania
+    a = pamiec[a]
+    if akumulator > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif akumulator == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif akumulator < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
+def CPX_imm(): # porównuje wartosc do X
+    global pc
+    global X
+    global pamiec
+    global a
+    a = pamiec[pc + 1]
+    if X > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif X == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif X < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
+def CPX_zpg(): # porównuje wartosc do X
+    global pc
+    global X
+    global pamiec
+    global a
+    a = pamiec[pc + 1]  # adres do pobrania
+    a = pamiec[a]
+    if X > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif X == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif X < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
+def CPY_imm(): # porównuje wartosc do Y
+    global pc
+    global Y
+    global pamiec
+    global a
+    a = pamiec[pc + 1]
+    if Y > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif Y == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif Y < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
+def CPY_zpg(): # porównuje wartosc do Y
+    global pc
+    global Y
+    global pamiec
+    global a
+    a = pamiec[pc + 1]
+    a = pamiec[a]
+    if Y > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif Y == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif Y < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
+
 
 # endregion
 
-#region STOS
+# region STOS
 
 
 def TXS():
@@ -649,7 +771,7 @@ def PLP():
     - flagi.get("C")
 
 
-#endregion
+# endregion
 
 
 def BRK():
