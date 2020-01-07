@@ -656,10 +656,6 @@ def PLP(): #tez chyba cacy ALE BRAKUJE DLA FLAGI D,I,C nie mam pomyslu jak mozna
     global flagi
     global sp
     global processor_status
-    valueDec = "1"
-    for value in flagi:
-        valueDec = valueDec + flagi[value]
-    processor_status = int(valueDec)
     sp = sp - processor_status
     sp = sp + 1
     flagi.update(B=1)
