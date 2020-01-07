@@ -31,11 +31,11 @@ def get_index_abs(): # zczytuje 2 liczby jako index listy pamiec.
 
 
 def get_index_abs_x(): # zczytuje 2 liczby jako index listy pamiec + x.
-    return pamiec[pc+2]*256 + pamiec[pc+1] + x
+    return pamiec[pc+2]*256 + pamiec[pc+1] + X
 
 
 def get_index_abs_y(): # zczytuje 2 liczby jako index listy pamiec + x.
-    return pamiec[pc+2]*256 + pamiec[pc+1] + y
+    return pamiec[pc+2]*256 + pamiec[pc+1] + Y
 
 
 def load_program():
@@ -670,7 +670,7 @@ def ADC_zpg_x():
     global flagi
     global pc
 
-    akumulator = akumulator + pamiec[pamiec[pc + 1] + x] + flagi.get('C')
+    akumulator = akumulator + pamiec[pamiec[pc + 1] + X] + flagi.get('C')
     pc = pc + 2
 
     # Negative
