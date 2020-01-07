@@ -13,7 +13,7 @@ program = [0x78,0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
-
+sp=0
 
 # ZROBIC FLAGI N i Z !!!
 
