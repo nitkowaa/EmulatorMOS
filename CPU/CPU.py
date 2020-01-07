@@ -13,7 +13,7 @@ program = [0x78,0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
-
+sp=0
 
 # ZROBIC FLAGI N i Z !!!
 
@@ -594,6 +594,62 @@ def CMP_imm():  # porównuje miejsce w pamieci do akumulatora
     pc = pc + 2
 
 # endregion
+
+#region STOS
+
+
+def TXS():
+    global X
+    global sp
+    if X == 0:
+        sp = sp
+    else:
+        sp = sp + X
+
+
+def TSX():
+    global X
+    global sp
+    if sp == 0:
+        X = X
+    else:
+        X = X + sp
+        sp = sp - 1
+
+
+def PHA():
+    global akumulator
+    global sp
+    if akumulator == 0:
+        sp = sp
+    else:
+        sp = sp + akumulator
+        sp = sp - 1
+
+
+def PHP():
+    global flagi
+    global sp
+    sp = sp + flagi.get("N") + flagi.get("Z")
+
+
+def PLA():
+    global akumulator
+    global sp
+    if akumulator == 0:
+        sp = sp
+    else:
+        sp = sp - akumulator
+
+
+def PLP():
+    global flagi
+    global sp
+    sp = sp - flagi.get("N") - flagi.get("V") - flagi.get("B") - flagi.get("D") - flagi.get("I") - flagi.get("Z")
+    - flagi.get("C")
+
+
+#endregion
 
 
 def BRK():
