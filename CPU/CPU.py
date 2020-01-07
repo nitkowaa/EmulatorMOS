@@ -26,8 +26,16 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc = 1536
 
 
-def get_index(): # zczytuje 2 liczby jako index listy pamiec.
+def get_index_abs(): # zczytuje 2 liczby jako index listy pamiec.
     return pamiec[pc+2]*256 + pamiec[pc+1]
+
+
+def get_index_abs_x(): # zczytuje 2 liczby jako index listy pamiec + x.
+    return pamiec[pc+2]*256 + pamiec[pc+1] + x
+
+
+def get_index_abs_y(): # zczytuje 2 liczby jako index listy pamiec + x.
+    return pamiec[pc+2]*256 + pamiec[pc+1] + y
 
 
 def load_program():
@@ -416,6 +424,268 @@ def INY():  # Inkrementacja Y
     pc = pc + 1
 # endregion
 
+# region Dodawanie z przenoszeniem
+
+
+def ADC_imm():
+    global akumulator
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[pc + 1] + flagi.get('C')
+    pc = pc + 2
+
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255 and flagi.get('C') == 0:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+def ADC_abs():
+    global akumulator
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[get_index_abs()] + flagi.get('C')
+    pc = pc + 3
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255 and flagi.get('C') == 0:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+def ADC_zpg():
+    global akumulator
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[pamiec[pc+1]] + flagi.get('C')
+    pc = pc + 2
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255 and flagi.get('C') == 0:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+def ADC_abs_x():
+    global akumulator
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[get_index_abs_x()] + flagi.get('C')
+    pc = pc + 3
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255 and flagi.get('C') == 0:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+def ADC_abs_y():
+    global akumulator
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[get_index_abs_y()] + flagi.get('C')
+    pc = pc + 3
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255 and flagi.get('C') == 0:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+def ADC_zpg_x():
+    global akumulator
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[pamiec[pc + 1] + x] + flagi.get('C')
+    pc = pc + 2
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+
+# Metody oznaczone nawiasami na wiekszej liczbie cykli
+
+
+def ADC_zpg2_x():
+    pass
+
+
+def ADC_zpg2_y():
+    pass
+
+# endregion
+
 # region TAX, TXA, TAY, TYA
 
 
@@ -468,7 +738,7 @@ def TAY():  # Transfer z A do Y
 
 # endregion
 
-# region Branche & JUMP
+                                                                                                                                                                                                                                                           # region Branche & JUMP
 
 
 def JMP_abs():  # skok jeśli V=0
