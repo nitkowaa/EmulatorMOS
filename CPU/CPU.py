@@ -11,10 +11,10 @@ program = [0x78,0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
 #program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
 #1536=0x600 tu jest test branchy
 
-# NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
-flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
-sp=0
-processor_status = 0
+# NEGATIVE, OVERFLOW, LICZBA KONTROLNA, BREAK, DECIMAL, IRQ DISABLE, ZERO, CARRY
+flagi = {'N': 0, 'V': 0,'K': 1,'B': 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
+sp = 0 #stack pointer
+ps = 0 # processor status
 # ZROBIC FLAGI N i Z !!!
 
 akumulator = 0
@@ -643,20 +643,20 @@ def PLA(): #chyba cacy
 def PHP(): # chyba cacy
     global flagi
     global sp
-    global processor_status
-    valueDec = "1"
+    global ps
+    valueDec = ""
     for value in flagi:
-        valueDec = valueDec + flagi[value]
-    processor_status = int(valueDec)
-    sp = sp + processor_status
+        valueDec = valueDec + str(flagi[value])
+    ps = int(valueDec, 2)
+    sp = sp + ps
     sp = sp - 1
 
 def PLP(): #tez chyba cacy ALE BRAKUJE DLA FLAGI D,I,C nie mam pomyslu jak mozna zrobic Carry, Decimala i IRQ
 
     global flagi
     global sp
-    global processor_status
-    sp = sp - processor_status
+    global ps
+    sp = sp - ps
     sp = sp + 1
     flagi.update(B=1)
     if sp < 0:
