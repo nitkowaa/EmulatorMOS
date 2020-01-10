@@ -186,7 +186,7 @@ def LDY_zpg_y():
 def STA_abs():
     global akumulator
     global pc
-    pamiec[get_index()] = akumulator
+    pamiec[get_index_abs()] = akumulator
     pc = pc + 3
 
 
@@ -456,8 +456,8 @@ def INY():  # Inkrementacja Y
     pc = pc + 1
 # endregion
 
-# region Dodawanie z przenoszeniem
-
+# region ADC,SBC
+# region ADC
 
 def ADC_imm():
     global akumulator
@@ -717,7 +717,42 @@ def ADC_zpg2_y():
     pass
 
 # endregion
+# region SBC
 
+
+def SBC_imm():
+    pass
+
+
+def SBC_abs():
+    pass
+
+
+def SBC_zpg():
+    pass
+
+
+def SBC_abs_x():
+    pass
+
+
+def SBC_abs_y():
+    pass
+
+
+def SBC_zpg_x():
+    pass
+
+# ponizej te same metody z nawiasem i na wiekszej ilosci cykli
+
+def SBC_zpg2_y():
+    pass
+
+
+
+
+# endregion
+# endregion
 # region TAX, TXA, TAY, TYA
 
 
