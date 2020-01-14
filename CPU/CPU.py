@@ -1187,8 +1187,7 @@ def BRK():
 
 # słownik rozkazów
 
-# tutaj trzeba posprawdzac z plikiem Kamila i dodac (None)
-
+# TODO: AND, ASL, BIT, EOR, JSR, LSR, ORA, ROL, ROR, RTI, RTS
 
 rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,      0x08: PHP,
            0x09: ORA_imm,       0x0a: ASL_acc,      0x0d: ORA_abs,      0x0e: ASL_abs,      0x10: BPL,
