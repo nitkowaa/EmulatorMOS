@@ -31,10 +31,12 @@ def get_index_abs():  # zczytuje 2 liczby jako index listy pamiec.
 
 
 def get_index_abs_x(): # zczytuje 2 liczby jako index listy pamiec + x.
+    global X
     return pamiec[pc+2]*256 + pamiec[pc+1] + X
 
 
 def get_index_abs_y(): # zczytuje 2 liczby jako index listy pamiec + x.
+    global Y
     return pamiec[pc+2]*256 + pamiec[pc+1] + Y
 
 
@@ -321,7 +323,7 @@ def SEI():  # jedynkowanie I
     flagi.update(I=1)
     pc = pc + 1
 
-# endregion
+# endregion   An
 
 # region Inkremenetacja / Dekrementacja             DO SPRAWDZENIA - Anita
 
@@ -331,7 +333,7 @@ def INC_zpg():  # Inkrementacja pamięci
     global pamiec
     global indeks
     indeks = pamiec[pc+1]
-    pamiec[indeks] = pamiec[indeks]+1   # lub coś innego zamiast jedynki
+    pamiec[indeks] = pamiec[indeks] + 1   # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
@@ -339,12 +341,13 @@ def INC_zpg():  # Inkrementacja pamięci
     pc = pc + 2
 
 
-def DEC_zpg():  # Dekrementacja pamięci
+def INC_zpg_x():  # Inkrementacja pamięci
     global pc
     global pamiec
     global indeks
-    indeks = pamiec[pc+1]
-    pamiec[indeks]=pamiec[indeks]-1  # lub coś innego zamiast jedynki
+    global X
+    indeks = pamiec[pc+1] + X
+    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
@@ -356,56 +359,79 @@ def INC_abs():  # Inkrementacja pamięci
     global pc
     global pamiec
     global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1]
-    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
-    pc = pc + 3
+    indeks = pamiec[get_index_abs()]
+    pamiec[indeks] = pamiec[indeks] + 1
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
-
-
-def DEC_abs():  # Dekrementacja pamięci
-    global pc
-    global pamiec
-    global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1]
-    pamiec[indeks]=pamiec[indeks] - 1  # lub coś innego zamiast jedynki
     pc = pc + 3
-    if pamiec[indeks] < 0:  # chyba tak
-        flagi.update(N=1)
-    elif pamiec[indeks] == 0:
-        flagi.update(Z=1)
 
 
 def INC_abs_x():  # Inkrementacja pamięci
     global pc
     global pamiec
     global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1] + X
+    indeks = pamiec[get_index_abs_x()]
     pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
-    pc = pc + 3
     if pamiec[indeks] < 0: # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
+    pc = pc + 3
+
+
+def DEC_zpg():  # Dekrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    indeks = pamiec[pc+1]
+    pamiec[indeks]=pamiec[indeks] - 1  # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0:  # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+    pc = pc + 2
+
+
+def DEC_zpg_x():  # Dekrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    global X
+    indeks = pamiec[pc+1] + X
+    pamiec[indeks]=pamiec[indeks]-1  # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0:  # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+    pc = pc + 2
+
+
+def DEC_abs():  # Dekrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    indeks = pamiec[get_index_abs()]
+    pamiec[indeks] = pamiec[indeks] - 1  # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0:  # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+    pc = pc + 3
 
 
 def DEC_abs_x():  # Dekrementacja pamięci
     global pc
     global pamiec
     global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1] + X
-    pamiec[indeks]=pamiec[indeks] - 1   # lub coś innego zamiast jedynki
-    pc = pc + 3
+    indeks = pamiec[get_index_abs_x()]
+    pamiec[indeks] = pamiec[indeks] - 1   # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0: # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
+    pc = pc + 3
 
 
 def DEX():  # Dekrementacja X
