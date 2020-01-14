@@ -1179,7 +1179,7 @@ def PLP():
 
 # endregion
 
-# DO SPRAWDZENIA - Anita
+# DO SPRAWDZENIA - Paweł
 def BRK():
     global pc
     pc = pc+1
