@@ -325,7 +325,7 @@ def SEI():  # jedynkowanie I
 
 # endregion   An
 
-# region Inkremenetacja / Dekrementacja             DO SPRAWDZENIA - Anita
+# region Inkremenetacja / Dekrementacja             SPRAWDZONE
 
 
 def INC_zpg():  # Inkrementacja pamięci
@@ -773,7 +773,7 @@ def SBC_zpg2_y():
 # endregion
 # endregion
 
-# region TAX, TXA, TAY, TYA             DO SPRAWDZENIA - Anita
+# region TAX, TXA, TAY, TYA             SPRAWDZONE
 
 def TAX():  # Transfer z A do X
     global X
@@ -824,10 +824,10 @@ def TAY():  # Transfer z A do Y
 
 # endregion
 
-# region BCS & JMP          DO SPRAWDZENIA - Anita
+# region BCS & JMP          SPRAWDZONE
 
 
-def JMP_abs():  # skok jeśli V=0
+def JMP_abs():
     global pc
     global flagi
     pc = pamiec[pc + 1]
@@ -907,7 +907,6 @@ def BVC():  # skok jeśli V=0
 
 # region CMP         DO SPRAWDZENIA - Anita
 
-
 def CMP_imm():  # porównuje miejsce w pamieci do akumulatora
     global pc
     global akumulator
@@ -951,13 +950,35 @@ def CMP_zpg(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 2
 
 
+def CMP_zpg_x(): # porównuje wartosc w pamieci do akumulatora
+    global pc
+    global akumulator
+    global pamiec
+    global a
+    global X
+    a = pamiec[pc + 1] + X  # adres do pobrania
+    a = pamiec[a]
+    if akumulator > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif akumulator == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif akumulator < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
 def CMP_abs(): # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1]
+    a = pamiec[get_index_abs()]
     if akumulator > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -978,8 +999,7 @@ def CMP_abs_x(): # porównuje wartosc w pamieci do akumulatora
     global akumulator
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1] + X
+    a = pamiec[get_index_abs_x()]
     if akumulator > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1000,8 +1020,7 @@ def CMP_abs_y(): # porównuje wartosc w pamieci do akumulatora
     global akumulator
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1] + Y
+    a = pamiec[get_index_abs_y()]
     if akumulator > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1065,8 +1084,7 @@ def CPX_abs(): # porównuje wartosc do X
     global X
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1]
+    a = pamiec[get_index_abs()]
     if X > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1130,8 +1148,7 @@ def CPY_abs(): # porównuje wartosc do Y
     global Y
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1]
+    a = pamiec[get_index_abs()]
     if Y > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
