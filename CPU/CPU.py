@@ -26,17 +26,17 @@ CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 pc = 1536
 
 
-
-
 def get_index_abs():  # zczytuje 2 liczby jako index listy pamiec.
     return pamiec[pc+2]*256 + pamiec[pc+1]
 
 
 def get_index_abs_x(): # zczytuje 2 liczby jako index listy pamiec + x.
+    global X
     return pamiec[pc+2]*256 + pamiec[pc+1] + X
 
 
 def get_index_abs_y(): # zczytuje 2 liczby jako index listy pamiec + x.
+    global Y
     return pamiec[pc+2]*256 + pamiec[pc+1] + Y
 
 
@@ -44,15 +44,7 @@ def load_program():
     for i in range(len(program)):
         pamiec[1536+i] = program[i]
 
-
-def Complement(num):
-    if num == 1:
-        return 0
-    if num == 0:
-        return 1
-
-
-# region LDA,LDX, LDY
+# region LDA, LDX, LDY                                DO POPRAWY - Paweł
 # region LDA
 
 
@@ -98,16 +90,17 @@ def LDA_abs_y():
     pc = pc + 3
 
 
-def LDA_zpg_x():
-    pass
+# def LDA_zpg_x():
+#     pass
 
 
-def LDA_ind_y():
-    pass
+# Metody oznaczone nawiasami na wiekszej liczbie cykli
+# def LDA_zpg2_y():
+#     pass
 
 
-def LDA_ind_x():
-    pass
+# def LDA_zpg2_x():
+#     pass
 
 
 # endregion LDA
@@ -187,7 +180,7 @@ def LDY_zpg_y():
 # endregion LDY
 # endregion
 
-# region STA, STX, STY
+# region STA, STX,                                      DO POPRAWY - Paweł
 # region STA
 
 
@@ -225,12 +218,12 @@ def STA_zpg_x():
     pass
 
 
-
-def STA_ind_y():
+# Metody oznaczone nawiasami na wiekszej liczbie cykli
+def STA_zpg2_y():
     pass
 
 
-def STA_ind_x():
+def STA_zpg2_x():
     pass
 
 # endregion
@@ -279,7 +272,7 @@ def STY_zpg_x():
 
 def NOP():
     global pc
-    pc = pc +1
+    pc = pc + 1
 
 
 def CLC():  # zerowanie C
@@ -330,23 +323,62 @@ def SEI():  # jedynkowanie I
     flagi.update(I=1)
     pc = pc + 1
 
-# endregion
+# endregion   An
 
-# region Inkremenetacja / Dekrementacja
+# region Inkremenetacja / Dekrementacja             SPRAWDZONE
 
 
-def INC_zpg(): # Inkrementacja pamięci
+def INC_zpg():  # Inkrementacja pamięci
     global pc
     global pamiec
     global indeks
     indeks = pamiec[pc+1]
-    pamiec[indeks]=pamiec[indeks]+1   # lub coś innego zamiast jedynki
-    if pamiec[indeks] < 0: # chyba tak
+    pamiec[indeks] = pamiec[indeks] + 1   # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
     pc = pc + 2
 
+
+def INC_zpg_x():  # Inkrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    global X
+    indeks = pamiec[pc+1] + X
+    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0:  # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+    pc = pc + 2
+
+
+def INC_abs():  # Inkrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    indeks = pamiec[get_index_abs()]
+    pamiec[indeks] = pamiec[indeks] + 1
+    if pamiec[indeks] < 0:  # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+    pc = pc + 3
+
+
+def INC_abs_x():  # Inkrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    indeks = pamiec[get_index_abs_x()]
+    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0: # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+    pc = pc + 3
 
 
 def DEC_zpg():  # Dekrementacja pamięci
@@ -354,6 +386,20 @@ def DEC_zpg():  # Dekrementacja pamięci
     global pamiec
     global indeks
     indeks = pamiec[pc+1]
+    pamiec[indeks]=pamiec[indeks] - 1  # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0:  # chyba tak
+        flagi.update(N=1)
+    elif pamiec[indeks] == 0:
+        flagi.update(Z=1)
+    pc = pc + 2
+
+
+def DEC_zpg_x():  # Dekrementacja pamięci
+    global pc
+    global pamiec
+    global indeks
+    global X
+    indeks = pamiec[pc+1] + X
     pamiec[indeks]=pamiec[indeks]-1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
@@ -362,61 +408,30 @@ def DEC_zpg():  # Dekrementacja pamięci
     pc = pc + 2
 
 
-
-def INC_abs():  # Inkrementacja pamięci
-    global pc
-    global pamiec
-    global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1]
-    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
-    pc = pc + 3
-    if pamiec[indeks] < 0:  # chyba tak
-        flagi.update(N=1)
-    elif pamiec[indeks] == 0:
-        flagi.update(Z=1)
-
-
 def DEC_abs():  # Dekrementacja pamięci
     global pc
     global pamiec
     global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1]
-    pamiec[indeks]=pamiec[indeks] - 1  # lub coś innego zamiast jedynki
-    pc = pc + 3
+    indeks = pamiec[get_index_abs()]
+    pamiec[indeks] = pamiec[indeks] - 1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
-
-
-def INC_abs_x():  # Inkrementacja pamięci
-    global pc
-    global pamiec
-    global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1] + X
-    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
     pc = pc + 3
-    if pamiec[indeks] < 0: # chyba tak
-        flagi.update(N=1)
-    elif pamiec[indeks] == 0:
-        flagi.update(Z=1)
 
 
 def DEC_abs_x():  # Dekrementacja pamięci
     global pc
     global pamiec
     global indeks
-    indeks = pamiec[pc + 2]
-    indeks = indeks * 256 + pamiec[pc + 1] + X
-    pamiec[indeks]=pamiec[indeks] - 1   # lub coś innego zamiast jedynki
-    pc = pc + 3
+    indeks = pamiec[get_index_abs_x()]
+    pamiec[indeks] = pamiec[indeks] - 1   # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0: # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
+    pc = pc + 3
 
 
 def DEX():  # Dekrementacja X
@@ -463,8 +478,9 @@ def INY():  # Inkrementacja Y
     pc = pc + 1
 # endregion
 
-# region ADC,SBC
+# region ADC, SBC                           DO SPRAWDZENIA - Hubert
 # region ADC
+
 
 def ADC_imm():
     global akumulator
@@ -474,7 +490,6 @@ def ADC_imm():
     akumulator = akumulator + pamiec[pc + 1] + flagi.get('C')
     pc = pc + 2
 
-
     # Negative
     if akumulator < 0:
         flagi.update(N=1)
@@ -482,7 +497,6 @@ def ADC_imm():
         flagi.update(N=0)
 
     # Carry
-
     if akumulator >= 255 and flagi.get('C') == 0:
         flagi.update(C=1)
         akumulator = 255
@@ -490,7 +504,6 @@ def ADC_imm():
         flagi.update(C=0)
 
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
@@ -500,7 +513,6 @@ def ADC_imm():
     if akumulator >= 127:
         akumulator = 127
         flagi.update(V=1)
-
     elif akumulator < -128:
         akumulator = -128
         flagi.update(V=1)
@@ -713,11 +725,14 @@ def ADC_zpg_x():
         flagi.update(V=0)
 
 
-def ADC_ind_x():
+# Metody oznaczone nawiasami na wiekszej liczbie cykli
+
+
+def ADC_zpg2_x():
     pass
 
 
-def ADC_ind_y():
+def ADC_zpg2_y():
     pass
 
 # endregion
@@ -725,224 +740,28 @@ def ADC_ind_y():
 
 
 def SBC_imm():
-    global akumulator
-    global flagi
-    global pc
-
-    akumulator = akumulator - pamiec[pc + 1] - Complement(flagi.get('C'))
-    pc = pc + 2
-
-    # Negative
-    if akumulator < 0:
-        flagi.update(N=1)
-    else:
-        flagi.update(N=0)
-
-    # Carry
-
-    if akumulator >= 0:
-        flagi.update(C=1)
-    else:
-        flagi.update(C=0)
-    # Zero
-    if akumulator != 0:
-        flagi.update(Z=0)
-    else:
-        flagi.update(Z=1)
-
-    # Overflow
-    if akumulator >= 127:
-        akumulator = 127
-        flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
+    pass
 
 
 def SBC_abs():
-    global akumulator
-    global flagi
-    global pc
-
-    akumulator = akumulator - pamiec[get_index_abs()] - Complement(flagi.get('C'))
-    pc = pc + 3
-
-    # Negative
-    if akumulator < 0:
-        flagi.update(N=1)
-    else:
-        flagi.update(N=0)
-
-    # Carry
-
-    if akumulator >= 0:
-        flagi.update(C=1)
-    else:
-        flagi.update(C=0)
-    # Zero
-    if akumulator != 0:
-        flagi.update(Z=0)
-    else:
-        flagi.update(Z=1)
-
-    # Overflow
-    if akumulator >= 127:
-        akumulator = 127
-        flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
+    pass
 
 
 def SBC_zpg():
-    global akumulator
-    global flagi
-    global pc
-
-    akumulator = akumulator - pamiec[pamiec[pc + 1]] - Complement(flagi.get('C'))
-    pc = pc + 2
-
-    # Negative
-    if akumulator < 0:
-        flagi.update(N=1)
-    else:
-        flagi.update(N=0)
-
-    # Carry
-
-    if akumulator >= 0:
-        flagi.update(C=1)
-    else:
-        flagi.update(C=0)
-    # Zero
-    if akumulator != 0:
-        flagi.update(Z=0)
-    else:
-        flagi.update(Z=1)
-
-    # Overflow
-    if akumulator >= 127:
-        akumulator = 127
-        flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
+    pass
 
 
 def SBC_abs_x():
-    global akumulator
-    global flagi
-    global pc
-
-    akumulator = akumulator - pamiec[get_index_abs_x()] - flagi.get('C')
-    pc = pc + 3
-
-    # Negative
-    if akumulator < 0:
-        flagi.update(N=1)
-    else:
-        flagi.update(N=0)
-
-    # Carry
-
-    if akumulator >= 0:
-        flagi.update(C=1)
-    else:
-        flagi.update(C=0)
-    # Zero
-    if akumulator != 0:
-        flagi.update(Z=0)
-    else:
-        flagi.update(Z=1)
-
-    # Overflow
-    if akumulator >= 127:
-        akumulator = 127
-        flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
+    pass
 
 
 def SBC_abs_y():
-    global akumulator
-    global flagi
-    global pc
-
-    akumulator = akumulator - pamiec[get_index_abs_y()] - Complement(flagi.get('C'))
-    pc = pc + 3
-
-    # Negative
-    if akumulator < 0:
-        flagi.update(N=1)
-    else:
-        flagi.update(N=0)
-
-    # Carry
-
-    if akumulator >= 0:
-        flagi.update(C=1)
-    else:
-        flagi.update(C=0)
-    # Zero
-    if akumulator != 0:
-        flagi.update(Z=0)
-    else:
-        flagi.update(Z=1)
-
-    # Overflow
-    if akumulator >= 127:
-        akumulator = 127
-        flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
+    pass
 
 
 def SBC_zpg_x():
-    global akumulator
-    global flagi
-    global pc
+    pass
 
-    akumulator = akumulator - pamiec[pamiec[pc + 1] + X] - Complement(flagi.get('C'))
-    pc = pc + 2
-    # Negative
-    if akumulator < 0:
-        flagi.update(N=1)
-    else:
-        flagi.update(N=0)
-
-    # Carry
-
-    if akumulator >= 0:
-        flagi.update(C=1)
-    else:
-        flagi.update(C=0)
-    # Zero
-    if akumulator != 0:
-        flagi.update(Z=0)
-    else:
-        flagi.update(Z=1)
-
-    # Overflow
-    if akumulator >= 127:
-        akumulator = 127
-        flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 # ponizej te same metody z nawiasem i na wiekszej ilosci cykli
 
 def SBC_zpg2_y():
@@ -953,8 +772,8 @@ def SBC_zpg2_y():
 
 # endregion
 # endregion
-# region TAX, TXA, TAY, TYA
 
+# region TAX, TXA, TAY, TYA             SPRAWDZONE
 
 def TAX():  # Transfer z A do X
     global X
@@ -1005,10 +824,10 @@ def TAY():  # Transfer z A do Y
 
 # endregion
 
-# region Branche & JUMP
+# region BCS & JMP          SPRAWDZONE
 
 
-def JMP_abs():  # skok jeśli V=0
+def JMP_abs():
     global pc
     global flagi
     pc = pamiec[pc + 1]
@@ -1086,8 +905,7 @@ def BVC():  # skok jeśli V=0
         pc = pc + 2
 # endregion
 
-# region Porównania
-
+# region CMP         DO SPRAWDZENIA - Anita
 
 def CMP_imm():  # porównuje miejsce w pamieci do akumulatora
     global pc
@@ -1132,13 +950,35 @@ def CMP_zpg(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 2
 
 
+def CMP_zpg_x(): # porównuje wartosc w pamieci do akumulatora
+    global pc
+    global akumulator
+    global pamiec
+    global a
+    global X
+    a = pamiec[pc + 1] + X  # adres do pobrania
+    a = pamiec[a]
+    if akumulator > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif akumulator == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif akumulator < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
 def CMP_abs(): # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1]
+    a = pamiec[get_index_abs()]
     if akumulator > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1159,8 +999,7 @@ def CMP_abs_x(): # porównuje wartosc w pamieci do akumulatora
     global akumulator
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1] + X
+    a = pamiec[get_index_abs_x()]
     if akumulator > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1181,8 +1020,7 @@ def CMP_abs_y(): # porównuje wartosc w pamieci do akumulatora
     global akumulator
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1] + Y
+    a = pamiec[get_index_abs_y()]
     if akumulator > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1246,8 +1084,7 @@ def CPX_abs(): # porównuje wartosc do X
     global X
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1]
+    a = pamiec[get_index_abs()]
     if X > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1311,8 +1148,7 @@ def CPY_abs(): # porównuje wartosc do Y
     global Y
     global pamiec
     global a
-    a = pamiec[pc + 2]
-    a = a * 256 + pamiec[pc + 1]
+    a = pamiec[get_index_abs()]
     if Y > a:
         flagi.update("C",1)
         flagi.update("Z", 0)
@@ -1332,9 +1168,7 @@ def CPY_abs(): # porównuje wartosc do Y
 
 # endregion
 
-# region STOS
-
-
+# region STOS               DO POPRAWY - Kamil
 def TXS():
     global X
     global sp
@@ -1388,7 +1222,7 @@ def PLP():
 
 # endregion
 
-
+# DO SPRAWDZENIA - Paweł
 def BRK():
     global pc
     pc = pc+1
@@ -1396,8 +1230,7 @@ def BRK():
 
 # słownik rozkazów
 
-# tutaj trzeba posprawdzac z plikiem Kamila i dodac (None)
-
+# TODO: AND, ASL, BIT, EOR, JSR, LSR, ORA, ROL, ROR, RTI, RTS
 
 rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,      0x08: PHP,
            0x09: ORA_imm,       0x0a: ASL_acc,      0x0d: ORA_abs,      0x0e: ASL_abs,      0x10: BPL,
@@ -1431,17 +1264,14 @@ rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: AS
            0xf6: INC_zpg_x,     0xf8: SED,          0xf9: SBC_abs_y,    0xfd: SBC_abs_x,    0xfe: INC_abs_x}
 
 
-
-
-
-
 def main():
     global pamiec
     global pc
+
     load_program()
     while pamiec[pc] != 0:
         print('pc=', pc, hex(pamiec[pc]), 'akumulator=', akumulator, '\n'
-              'X=', X,'Y=', Y, flagi,'\n')
+              'X=', X, 'Y=', Y, flagi, '\n')
         rozkazy[pamiec[pc]]()
 
 
