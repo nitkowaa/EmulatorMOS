@@ -733,15 +733,89 @@ def ADC_zpg_x():
         flagi.update(V=0)
 
 
-# Metody oznaczone nawiasami na wiekszej liczbie cykli
-
 
 def ADC_ind_x():
-    pass
+    global akumulator
+    global X
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[pamiec[pamiec[pc + 1]] + X] + flagi.get('C')
+    pc = pc + 2
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
 
 
 def ADC_ind_y():
-    pass
+    global akumulator
+    global Y
+    global flagi
+    global pc
+
+    akumulator = akumulator + pamiec[pamiec[pamiec[pc + 1]] + Y] + flagi.get('C')
+    pc = pc + 2
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 255:
+        flagi.update(C=1)
+        akumulator = 255
+    else:
+        flagi.update(C=0)
+
+    # Zero
+
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
 
 # endregion
 # region SBC
@@ -966,12 +1040,83 @@ def SBC_zpg_x():
     else:
         flagi.update(V=0)
 
-# ponizej te same metody z nawiasem i na wiekszej ilosci cykli
-
-def SBC_zpg2_y():
-    pass
 
 
+def SBC_ind_y():
+    global akumulator
+    global flagi
+    global pc
+    global Y
+
+    akumulator = akumulator - pamiec[pamiec[pamiec[pc + 1]] + Y] - Complement(flagi.get('C'))
+    pc = pc + 2
+
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 0:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    # Zero
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
+
+def SBC_ind_x():
+    global akumulator
+    global flagi
+    global pc
+    global X
+
+    akumulator = akumulator - pamiec[pamiec[pamiec[pc + 1]] + X] - Complement(flagi.get('C'))
+    pc = pc + 2
+
+
+    # Negative
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+
+    # Carry
+
+    if akumulator >= 0:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    # Zero
+    if akumulator != 0:
+        flagi.update(Z=0)
+    else:
+        flagi.update(Z=1)
+
+    # Overflow
+    if akumulator >= 127:
+        akumulator = 127
+        flagi.update(V=1)
+    elif akumulator < -128:
+        akumulator = -128
+        flagi.update(V=1)
+    else:
+        flagi.update(V=0)
 
 
 # endregion
