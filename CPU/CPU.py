@@ -1182,6 +1182,13 @@ def JMP_abs():
     pc = pamiec[pc + 1]
 
 
+def JMP_ind():
+    global pc
+    global flagi
+    global pamiec
+    pc = pc + pamiec[pamiec[pamiec[pc + 1]]]
+
+
 def BCS():  # skok jeśli C=1
     global pc
     global flagi
@@ -1341,6 +1348,50 @@ def CMP_abs(): # porównuje wartosc w pamieci do akumulatora
         flagi.update("Z", 0)
         flagi.update("N", 1)
     pc = pc + 3
+
+
+def CMP_ind_x(): # porównuje wartosc w pamieci do akumulatora
+    global pc
+    global akumulator
+    global pamiec
+    global a
+    global X
+    a = a + pamiec[pamiec[pamiec[pc + 1]] + X]
+    if akumulator > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif akumulator == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif akumulator < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
+
+
+def CMP_ind_y(): # porównuje wartosc w pamieci do akumulatora
+    global pc
+    global akumulator
+    global pamiec
+    global a
+    global Y
+    a = a + pamiec[pamiec[pamiec[pc + 1]] + Y]
+    if akumulator > a:
+        flagi.update("C",1)
+        flagi.update("Z", 0)
+        flagi.update("N", 0)
+    elif akumulator == a:
+        flagi.update("C", 1)
+        flagi.update("Z", 1)
+        flagi.update("N", 0)
+    elif akumulator < a:
+        flagi.update("C", 0)
+        flagi.update("Z", 0)
+        flagi.update("N", 1)
+    pc = pc + 2
 
 
 def CMP_abs_x(): # porównuje wartosc w pamieci do akumulatora
