@@ -11,8 +11,8 @@ program = [0x78, 0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
 #program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
 #1536=0x600 tu jest test branchy
 
-# NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
-flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
+#NEGATIVE, OVERFLOW, KONTROLNA, BREAK, DECIMAL, IRQ DISABLE, ZERO, CARRY
+flagi = {'N': 0, 'V': 0, 'K' : 1, 'B' : 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
 sp = 0
 
 # ZROBIC FLAGI N i Z !!!
@@ -1270,17 +1270,17 @@ def CMP_imm():  # porównuje miejsce w pamieci do akumulatora
     global a
     a = pamiec[pc + 1]
     if akumulator > a:
-        flagi.update("C", 1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1292,17 +1292,17 @@ def CMP_zpg(): # porównuje wartosc w pamieci do akumulatora
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
     if akumulator > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1315,17 +1315,17 @@ def CMP_zpg_x(): # porównuje wartosc w pamieci do akumulatora
     a = pamiec[pc + 1] + X  # adres do pobrania
     a = pamiec[a]
     if akumulator > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1336,17 +1336,17 @@ def CMP_abs(): # porównuje wartosc w pamieci do akumulatora
     global a
     a = pamiec[get_index_abs()]
     if akumulator > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 3
 
 
@@ -1358,17 +1358,17 @@ def CMP_ind_x(): # porównuje wartosc w pamieci do akumulatora
     global X
     a = a + pamiec[pamiec[pamiec[pc + 1]] + X]
     if akumulator > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1380,17 +1380,17 @@ def CMP_ind_y(): # porównuje wartosc w pamieci do akumulatora
     global Y
     a = a + pamiec[pamiec[pamiec[pc + 1]] + Y]
     if akumulator > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1401,17 +1401,17 @@ def CMP_abs_x(): # porównuje wartosc w pamieci do akumulatora
     global a
     a = pamiec[get_index_abs_x()]
     if akumulator > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 3
 
 
@@ -1422,17 +1422,17 @@ def CMP_abs_y(): # porównuje wartosc w pamieci do akumulatora
     global a
     a = pamiec[get_index_abs_y()]
     if akumulator > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif akumulator == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif akumulator < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 3
 
 
@@ -1443,17 +1443,17 @@ def CPX_imm(): # porównuje wartosc do X
     global a
     a = pamiec[pc + 1]
     if X > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
-    elif X == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
+    elif Y == a:
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif X < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1465,17 +1465,17 @@ def CPX_zpg(): # porównuje wartosc do X
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
     if X > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
-    elif X == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
+    elif Y == a:
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif X < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1486,17 +1486,17 @@ def CPX_abs(): # porównuje wartosc do X
     global a
     a = pamiec[get_index_abs()]
     if X > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
-    elif X == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
+    elif Y == a:
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif X < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 3
 
 
@@ -1507,17 +1507,17 @@ def CPY_imm(): # porównuje wartosc do Y
     global a
     a = pamiec[pc + 1]
     if Y > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif Y == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif Y < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1529,17 +1529,17 @@ def CPY_zpg(): # porównuje wartosc do Y
     a = pamiec[pc + 1]
     a = pamiec[a]
     if Y > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif Y == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif Y < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 2
 
 
@@ -1550,22 +1550,23 @@ def CPY_abs(): # porównuje wartosc do Y
     global a
     a = pamiec[get_index_abs()]
     if Y > a:
-        flagi.update("C",1)
-        flagi.update("Z", 0)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
+        flagi.update(N=0)
     elif Y == a:
-        flagi.update("C", 1)
-        flagi.update("Z", 1)
-        flagi.update("N", 0)
+        flagi.update(C=1)
+        flagi.update(Z=1)
+        flagi.update(N=0)
     elif Y < a:
-        flagi.update("C", 0)
-        flagi.update("Z", 0)
-        flagi.update("N", 1)
+        flagi.update(C=0)
+        flagi.update(Z=0)
+        flagi.update(N=1)
     pc = pc + 3
 # endregion
 
-# region ADC, EOR, ORA
-# region ADC
+# region AND, EOR, ORA
+#akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+# region AND
 
 def AND_imm():
     global akumulator
@@ -1578,18 +1579,22 @@ def AND_imm():
     b = str(b)
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1605,19 +1610,22 @@ def AND_abs():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -1634,19 +1642,22 @@ def AND_zpg():
     b = pamiec[b]
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1662,19 +1673,23 @@ def AND_abs_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
 
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -1690,19 +1705,22 @@ def AND_abs_y():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -1720,19 +1738,22 @@ def AND_zpg_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1749,19 +1770,22 @@ def AND_ind_y():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1778,19 +1802,22 @@ def AND_ind_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1810,18 +1837,22 @@ def EOR_imm():
     b = str(b)
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1837,19 +1868,22 @@ def EOR_abs():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -1866,19 +1900,22 @@ def EOR_zpg():
     b = pamiec[b]
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1895,19 +1932,22 @@ def EOR_abs_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -1923,19 +1963,22 @@ def EOR_abs_y():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -1953,19 +1996,22 @@ def EOR_zpg_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -1982,19 +2028,22 @@ def EOR_ind_y():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -2011,19 +2060,22 @@ def EOR_ind_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -2043,18 +2095,22 @@ def ORA_imm():
     b = str(b)
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -2070,19 +2126,22 @@ def ORA_abs():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -2099,19 +2158,22 @@ def ORA_zpg():
     b = pamiec[b]
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -2127,19 +2189,22 @@ def ORA_abs_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -2155,19 +2220,22 @@ def ORA_abs_y():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 3
 
@@ -2185,19 +2253,22 @@ def ORA_zpg_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -2214,19 +2285,22 @@ def ORA_ind_y():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -2243,19 +2317,22 @@ def ORA_ind_x():
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
     for i in range(len(akumulator)):
         if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
-
-    if wynik.endswith('1'):
-        flagi.update("N", 1)
+    if wynik[7] == 1:
+        flagi.update(N=1)
     else:
-        flagi.update("N", 0)
+        flagi.update(N=0)
     if int(wynik) == 0:
-        flagi.update("Z", 1)
-    akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+        flagi.update(Z=1)
+    akumulator = bin(int(wynik, 2))[2:]
     akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
@@ -2263,6 +2340,68 @@ def ORA_ind_x():
 # endregion ORA
 
 # endregion
+
+# region BIT
+def BIT_abs():
+    global akumulator
+    global flagi
+    global pamiec
+    global pc
+    global b
+
+    b = pamiec[get_index_abs()]
+    b = str(bin(b)[2:])
+    akumulator = str(bin(akumulator)[2:])  # str
+    wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
+    for i in range(len(akumulator)):
+        if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
+            wynik = wynik + "1"
+        else:
+            wynik = wynik + "0"  # str
+    flagi.update(N=wynik[6])
+    flagi.update(V=wynik[5])
+    if int(wynik) == 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
+    pc = pc + 3
+
+def BIT_zpg():
+    global akumulator
+    global flagi
+    global pamiec
+    global pc
+    global b
+
+    b = bin(pamiec[pc + 1][2:])
+    b = str(b)  # str
+    b = pamiec[b]
+    akumulator = str(bin(akumulator)[2:])  # str
+    wynik = ""  # str
+    while len(b) <= 7:
+        b = "0" + b
+    while len(akumulator) <= 7:
+        akumulator = "0" + akumulator
+    for i in range(len(akumulator)):
+        if akumulator[i] == b[i] and (akumulator[i] == '1' and b[i] == "1"):
+            wynik = wynik + "1"
+        else:
+            wynik = wynik + "0"  # str
+    flagi.update(N=wynik[6])
+    flagi.update(V=wynik[5])
+    if int(wynik) == 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
+    pc = pc + 2
+
+
+# endregion
+
 # region STOS               DO POPRAWY - Kamil
 def TXS():
     global X
