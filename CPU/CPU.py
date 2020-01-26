@@ -1622,6 +1622,154 @@ def PLP():
 
 # endregion
 
+
+# region ROR,ROL,ASL,LSR
+# region ASL
+def ASL_acc():
+    global akumulator
+    global pc
+    akumulator = 2*akumulator
+    if akumulator >= 256:
+        akumulator=akumulator%256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 1
+
+
+def ASL_zpg():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[pc + 1]  # adres do pobrania
+    a = pamiec[a]
+    a=a*2
+    if a >= 256:
+        a=a%256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc +2
+
+
+def ASL_zpg_x():
+    global pc
+    global a
+    global pamiec
+    global X
+    a = pamiec[[pc + 1] + X]  # adres do pobrania
+    a = pamiec[a]
+    a=a*2
+    if a >= 256:
+        a=a%256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc +2
+
+
+def ASL_abs():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs()]
+    a=a*2
+    if a >= 256:
+        a = a % 256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+
+
+def ASL_abs_x():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs_x()]
+    a=a*2
+    if a >= 256:
+        a = a % 256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+# endregion
+
+# region LSR
+
+
+def LSR_acc():
+    global akumulator
+    global pc
+    akumulator = akumulator / 2
+    if akumulator%2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 1
+
+
+def LSR_zpg():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[pc + 1]  # adres do pobrania
+    a = pamiec[a]
+    a = a/2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 2
+
+
+def LSR_zpg_x():
+    global pc
+    global a
+    global pamiec
+    global X
+    a = pamiec[[pc + 1] + X]  # adres do pobrania
+    a = pamiec[a]
+    a = a / 2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 2
+
+
+def LSR_abs():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs()]
+    a = pamiec[a]
+    a = a / 2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+
+
+def LSR_abs_x():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs_x()]
+    a = a / 2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+
+
+# endregion
+
+#   endregion
+
 # DO SPRAWDZENIA - Paweł
 def BRK():
     global pc
