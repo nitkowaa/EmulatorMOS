@@ -1768,6 +1768,149 @@ def LSR_abs_x():
 
 # endregion
 
+# region ROL
+
+def ROL_acc():
+    global akumulator
+    global pc
+    akumulator = 2*akumulator
+    if akumulator >= 256:
+        akumulator=akumulator%256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 1
+
+
+def ROL_zpg():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[pc + 1]  # adres do pobrania
+    a = pamiec[a]
+    a=a*2
+    if a >= 256:
+        a=a%256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc +2
+
+
+def ROL_zpg_x():
+    global pc
+    global a
+    global pamiec
+    global X
+    a = pamiec[[pc + 1] + X]  # adres do pobrania
+    a = pamiec[a]
+    a=a*2
+    if a >= 256:
+        a=a%256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc +2
+
+
+def ROL_abs():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs()]
+    a=a*2
+    if a >= 256:
+        a = a % 256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+
+
+def ROL_abs_x():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs_x()]
+    a=a*2
+    if a >= 256:
+        a = a % 256
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+
+# endregion
+
+# region ROR
+def ROR_acc():
+    global akumulator
+    global pc
+    akumulator = akumulator / 2
+    if akumulator%2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 1
+
+
+def ROR_zpg():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[pc + 1]  # adres do pobrania
+    a = pamiec[a]
+    a = a/2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 2
+
+
+def ROR_zpg_x():
+    global pc
+    global a
+    global pamiec
+    global X
+    a = pamiec[[pc + 1] + X]  # adres do pobrania
+    a = pamiec[a]
+    a = a / 2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 2
+
+
+def ROR_abs():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs()]
+    a = pamiec[a]
+    a = a / 2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+
+
+def ROR_abs_x():
+    global pc
+    global a
+    global pamiec
+    a = pamiec[get_index_abs_x()]
+    a = a / 2
+    if a % 2 == 1:
+        flagi.update(C=1)
+    else:
+        flagi.update(C=0)
+    pc = pc + 3
+# endregion
+
+
 #   endregion
 
 # DO SPRAWDZENIA - Paweł
