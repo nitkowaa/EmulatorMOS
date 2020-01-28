@@ -16,6 +16,7 @@ flagi = {'N': 0, 'V': 0, 'K' : 1, 'B' : 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
 sp = 0
 
 # ZROBIC FLAGI N i Z !!!
+sp = 0 # stack pointer
 
 akumulator = 0
 X = 0
@@ -297,13 +298,6 @@ def CLD():  # zerowanie D
     pc = pc + 1
 
 
-def CLI():  # zerowanie I
-    global flagi
-    global pc
-    flagi.update(I=0)
-    pc = pc + 1
-
-
 def CLV():  # zerowanie V
     global flagi
     global pc
@@ -329,6 +323,13 @@ def SEI():  # jedynkowanie I
     global flagi
     global pc
     flagi.update(I=1)
+    pc = pc + 1
+
+
+def CLI():  # zerowanie I
+    global flagi
+    global pc
+    flagi.update(I=0)
     pc = pc + 1
 
 # endregion   An
@@ -731,7 +732,6 @@ def ADC_zpg_x():
         flagi.update(V=1)
     else:
         flagi.update(V=0)
-
 
 
 def ADC_ind_x():
@@ -2402,74 +2402,69 @@ def BIT_zpg():
 
 # endregion
 
-# region STOS               DO POPRAWY - Kamil
-def TXS():
-    global X
+# region STOS
+
+# endregion
+
+# region Potrzebne do całego stosu oraz JSR, RTS i RTI
+def Push_Word(n):# wpycha na stos
     global sp
-    if X == 0:
-        sp = sp
-    else:
-        sp = sp + X
+    pamiec[0x100 + sp] = n
+    sp = sp + 1
+    if sp >= 256:
+        sp = 0
 
 
-def TSX():
-    global X
+
+def Pull_Word():# wypycha ze stosu
     global sp
-    if sp == 0:
-        X = X
-    else:
-        X = X + sp
-        sp = sp - 1
+    global pc
+    pc = pamiec[(0x100+sp) - 1]
+    sp = sp - 1
+    if sp < 0:
+        sp = 0
+    return pc
 
+# endregion
 
-def PHA():
-    global akumulator
+# region JSR, RTS, RTI  # nw chyba takie cos moze? nie wiem nie wiem
+def JSR_abs():
+    global pc
     global sp
-    if akumulator == 0:
-        sp = sp
-    else:
-        sp = sp + akumulator
-        sp = sp - 1
+    Push_Word()
+    pc = pc + 3
 
+def RTS():
+    global pc
+    global sp
+    Pull_Word()
+    pc = pc + 1
 
-def PHP():
+def RTI():
     global flagi
+    global pc
     global sp
-    sp = sp + flagi.get("N") + flagi.get("Z")
 
-
-def PLA():
-    global akumulator
-    global sp
-    if akumulator == 0:
-        sp = sp
-    else:
-        sp = sp - akumulator
-
-
-def PLP():
-    global flagi
-    global sp
-    sp = sp - flagi.get("N") - flagi.get("V") - flagi.get("B") - flagi.get("D") - flagi.get("I") - flagi.get("Z")
-    - flagi.get("C")
-
-
+    pc = pc + 1
 # endregion
 
 # DO SPRAWDZENIA - Paweł
 def BRK():
     global pc
+    Pull_Word()
     pc = pc+1
+
+
 
 
 # słownik rozkazów
 
-# TODO: AND, ASL, BIT, EOR, JSR, LSR, ORA, ROL, ROR, RTI, RTS
+# TODO:, ASL, JSR, LSR, ROL, ROR, RTI, RTS
 
 rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,      0x08: PHP,
            0x09: ORA_imm,       0x0a: ASL_acc,      0x0d: ORA_abs,      0x0e: ASL_abs,      0x10: BPL,
            0x11: ORA_ind_y,     0x15: ORA_zpg_x,    0x16: ASL_zpg_x,    0x18: CLC,          0x19: ORA_abs_y,
-           0x1d: ORA_abs_x,     0x1e: ASL_abs_x,    0x20: JSR,          0x21: AND_ind_x,    0x24: BIT_zpg,
+           0x1d: ORA_abs_x,     0x1e: ASL_abs_x,    0x20: JSR_abs,          0x21: AND_ind_x,    0x24: BIT_zpg,
            0x25: AND_zpg,       0x26: ROL_zpg,      0x28: PLP,          0x29: AND_imm,      0x2a: ROL_acc,
            0x2c: BIT_abs,       0x2d: AND_abs,      0x2e: ROL_abs,      0x30: BMI,          0x31: AND,
            0x35: AND_zpg_x,     0x36: ROL_zpg_x,    0x38: SEC,          0x39: AND_abs_y,    0x3d: AND_abs_x,
