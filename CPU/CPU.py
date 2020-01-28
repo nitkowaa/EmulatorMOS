@@ -1,6 +1,4 @@
 # coding=utf-8
-import numpy as np
-
 
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
@@ -8,19 +6,18 @@ pamiec = [0 for bit in range(256 * 256)]
 program = [0x78, 0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
            0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
 
-#program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
-#1536=0x600 tu jest test branchy
+# program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
+# 1536=0x600 tu jest test branchy
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
 flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
-sp = 0
 
-# ZROBIC FLAGI N i Z !!!
+# Stack Pointer
+sp = 0
 
 akumulator = 0
 X = 0
 Y = 0
-CarryValue = 0  # Zmienna przechowująca nadmiar liczby dodatniej
 
 # program counter: przechowuje indeks czytanej komórki pamięci
 pc = 1536
@@ -44,6 +41,7 @@ def load_program():
     for i in range(len(program)):
         pamiec[1536+i] = program[i]
 
+
 def Complement(num):
     if num == 1:
         return 0
@@ -59,6 +57,14 @@ def LDA_imm():
     global akumulator
     global pc
     akumulator = pamiec[pc+1]
+    if akumulator > 127:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if akumulator is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 2
 
 
@@ -67,6 +73,14 @@ def LDA_abs():
     global akumulator
     global pc
     akumulator = pamiec[get_index_abs()]
+    if akumulator > 127:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if akumulator is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 3
 
 
@@ -75,6 +89,14 @@ def LDA_zpg():
     global pc
     akumulator = pamiec[pc + 1]  # adres do pobrania
     akumulator = pamiec[akumulator]
+    if akumulator > 127:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if akumulator is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 2
 
 
@@ -82,8 +104,15 @@ def LDA_abs_x():
     global akumulator
     global X
     global pc
-    akumulator = pamiec[pc + 2]
-    akumulator = akumulator * 256 + pamiec[pc + 1] + X
+    akumulator = pamiec[get_index_abs_x()]
+    if akumulator > 127:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if akumulator is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 3
 
 
