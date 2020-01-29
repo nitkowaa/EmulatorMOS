@@ -4,8 +4,8 @@
 pamiec = [0 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
 
-#program = [0x78, 0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
-#          0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
+# program = [0x78, 0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05,
+#            0x8d, 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
 
 # program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
 # 1536=0x600 tu jest test branchy
@@ -24,16 +24,16 @@ Y = 0
 pc = 1536
 
 
-def get_index_abs():  # zczytuje 2 liczby jako index listy pamiec.
+def get_index_abs():  # zczytuje 2 liczby jako indeks listy pamiec.
     return pamiec[pc+2]*256 + pamiec[pc+1]
 
 
-def get_index_abs_x(): # zczytuje 2 liczby jako index listy pamiec + x.
+def get_index_abs_x():  # zczytuje 2 liczby jako indeks listy pamiec + X.
     global X
     return pamiec[pc+2]*256 + pamiec[pc+1] + X
 
 
-def get_index_abs_y(): # zczytuje 2 liczby jako index listy pamiec + x.
+def get_index_abs_y():  # zczytuje 2 liczby jako indeks listy pamiec + Y.
     global Y
     return pamiec[pc+2]*256 + pamiec[pc+1] + Y
 
@@ -58,7 +58,7 @@ def LDA_imm():
     global akumulator
     global pc
     akumulator = pamiec[pc+1]
-    if akumulator > 127:
+    if akumulator < 0:
         flagi.update(N=1)
     else:
         flagi.update(N=0)
@@ -74,7 +74,7 @@ def LDA_abs():
     global akumulator
     global pc
     akumulator = pamiec[get_index_abs()]
-    if akumulator > 127:
+    if akumulator < 0:
         flagi.update(N=1)
     else:
         flagi.update(N=0)
@@ -90,7 +90,7 @@ def LDA_zpg():
     global pc
     akumulator = pamiec[pc + 1]  # adres do pobrania
     akumulator = pamiec[akumulator]
-    if akumulator > 127:
+    if akumulator < 0:
         flagi.update(N=1)
     else:
         flagi.update(N=0)
@@ -106,7 +106,7 @@ def LDA_abs_x():
     global X
     global pc
     akumulator = pamiec[get_index_abs_x()]
-    if akumulator > 127:
+    if akumulator < 0:
         flagi.update(N=1)
     else:
         flagi.update(N=0)
@@ -121,26 +121,40 @@ def LDA_abs_y():
     global akumulator
     global Y
     global pc
-    akumulator = pamiec[pc + 2]
-    akumulator = akumulator * 256 + pamiec[pc + 1] + Y
+    akumulator = pamiec[get_index_abs_y()]
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if akumulator is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 3
 
 
-def LDA_zpg_x(): #CHYBA COŚ TAKIEGO DO SPRAWDZENIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+def LDA_zpg_x():
     global akumulator
     global pc
-    akumulator = pamiec[pamiec[pc + 1]+X]
+    akumulator = (pamiec[pc + 1] + X) % 256
     akumulator = pamiec[akumulator]
+    if akumulator < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if akumulator is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 2
 
 
+def LDA_ind_y():
+    pass
 
-# def LDA_ind_y():
-#     pass
 
-
-# def LDA_ind_x():
-#     pass
+def LDA_ind_x():
+    pass
 
 
 # endregion LDA
@@ -149,14 +163,29 @@ def LDX_imm():
     global X
     global pc
     X = pamiec[pc + 1]
+    if X < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if X is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 2
 
 
 def LDX_abs():
     global X
     global pc
-    X = pamiec[pc + 2]
-    X = X * 256 + pamiec[pc + 1]
+    X = pamiec[get_index_abs()]
+    if X < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if X is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 3
 
 
@@ -165,6 +194,14 @@ def LDX_zpg():
     global pc
     X = pamiec[pc + 1]  # adres do pobrania
     X = pamiec[X]
+    if X < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if X is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 2
 
 
@@ -172,13 +209,33 @@ def LDX_abs_y():
     global X
     global pc
     global Y
-    X = pamiec[pc + 2]
-    X = X * 256 + pamiec[pc + 1] + Y
+    X = pamiec[get_index_abs_y()]
+    if X < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if X is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 3
 
 
 def LDX_zpg_y():
-    pass
+    global X
+    global pc
+    global Y
+    X = (pamiec[pc + 1] + Y) % 256
+    X = pamiec[X]
+    if X < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if X is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
+    pc = pc + 2
 
 
 # endregion LDX
@@ -187,14 +244,29 @@ def LDY_imm():
     global Y
     global pc
     Y = pamiec[pc + 1]
+    if Y < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if Y is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 2
 
 
 def LDY_abs():
     global Y
     global pc
-    Y = pamiec[pc + 2]
-    Y = Y * 256 + pamiec[pc + 1]
+    Y = pamiec[get_index_abs()]
+    if Y < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if Y is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 3
 
 
@@ -203,6 +275,14 @@ def LDY_zpg():
     global pc
     Y = pamiec[pc + 1]  # adres do pobrania
     Y = pamiec[Y]
+    if Y < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if Y is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 2
 
 
@@ -210,13 +290,33 @@ def LDY_abs_x():
     global Y
     global pc
     global X
-    Y = pamiec[pc + 2]
-    Y = Y * 256 + pamiec[pc + 1] + X
+    Y = pamiec[get_index_abs_x()]
+    if Y < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if Y is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
     pc = pc + 3
 
 
-def LDY_zpg_y():
-    pass
+def LDY_zpg_x():
+    global X
+    global pc
+    global Y
+    Y = (pamiec[pc + 1] + X) % 256
+    Y = pamiec[Y]
+    if Y < 0:
+        flagi.update(N=1)
+    else:
+        flagi.update(N=0)
+    if Y is 0:
+        flagi.update(Z=1)
+    else:
+        flagi.update(Z=0)
+    pc = pc + 2
 # endregion LDY
 # endregion
 
@@ -1806,7 +1906,7 @@ def ROL_acc():
     global pc
     akumulator = 2*akumulator
     if akumulator >= 256:
-        akumulator=akumulator%256
+        akumulator = akumulator % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
@@ -1819,13 +1919,13 @@ def ROL_zpg():
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a=a*2
+    a = a*2
     if a >= 256:
-        a=a%256
+        a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
-    pc = pc +2
+    pc = pc + 2
 
 
 def ROL_zpg_x():
@@ -2908,10 +3008,9 @@ rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: AS
         # 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
 #sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
-program=[0xa9, 0xc0, 0xaa, 0xe8, 0x69, 0xc4,0xea] # drugi test z Easy6502 PC=0607 A=84 X=c1,
+program = [0xa9, 0xc0, 0xaa, 0xe8, 0x69, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
 
 # ADC działa zle ! Program zaczyna od złego indeksu
-
 
 
 def main():
