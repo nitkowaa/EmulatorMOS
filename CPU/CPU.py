@@ -68,7 +68,7 @@ def Complement(num):
         return 1
 
 
-# region LDA, LDX, LDY                                DO POPRAWY - Paweł
+# region LDA, LDX, LDY
 # region LDA
 # Wczytaj podaną wartość do zmiennej Akumaltora
 def LDA_imm():
@@ -1701,7 +1701,7 @@ def CPY_abs():  # porównuje wartosc do Y
     a = pamiec[get_index_abs()]
     if Y > a:
         flagi.update(C=1)
-        flagi.update(Z =0)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif Y == a:
         flagi.update(C=1)
@@ -2098,7 +2098,7 @@ def BRK():
 
 
 # region AND, EOR, ORA
-#akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+# akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
 # region AND
 
 def AND_imm():
