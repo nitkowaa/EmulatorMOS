@@ -913,7 +913,7 @@ def SBC_abs():
     global flagi
     global pc
 
-    akumulator = akumulator - pamiec[get_index_abs()] - Complement(flagi.get('C'))
+    akumulator = akumulator + (255 - pamiec[get_index_abs()] + flagi.get('C'))
     pc = pc + 3
 
     # Negative
@@ -940,7 +940,7 @@ def SBC_zpg():
     global flagi
     global pc
 
-    akumulator = akumulator - pamiec[pamiec[pc + 1]] - Complement(flagi.get('C'))
+    akumulator = akumulator +(255- pamiec[pamiec[pc + 1]]) + flagi.get('C')
     pc = pc + 2
 
     # Negative
@@ -967,7 +967,7 @@ def SBC_abs_x():
     global flagi
     global pc
 
-    akumulator = akumulator - pamiec[get_index_abs_x()] - flagi.get('C')
+    akumulator = akumulator + (255 - pamiec[get_index_abs_x()]) + flagi.get('C')
     pc = pc + 3
 
     # Negative
@@ -994,7 +994,7 @@ def SBC_abs_y():
     global flagi
     global pc
 
-    akumulator = akumulator - pamiec[get_index_abs_y()] - Complement(flagi.get('C'))
+    akumulator = akumulator + (255- pamiec[get_index_abs_y()]) + flagi.get('C')
     pc = pc + 3
 
     # Negative
@@ -1021,7 +1021,7 @@ def SBC_zpg_x():
     global flagi
     global pc
 
-    akumulator = akumulator - pamiec[pamiec[pc + 1] + X] - Complement(flagi.get('C'))
+    akumulator = akumulator + (255 - pamiec[pamiec[pc + 1] + X]) + flagi.get('C')
     pc = pc + 2
 
     # Negative
@@ -1049,7 +1049,7 @@ def SBC_ind_y():
     global pc
     global Y
 
-    akumulator = akumulator - pamiec[pamiec[pamiec[pc + 1]] + Y] - Complement(flagi.get('C'))
+    akumulator = akumulator + (255 - pamiec[pamiec[pamiec[pc + 1]] + Y]) + flagi.get('C')
     pc = pc + 2
 
     # Negative
@@ -1077,7 +1077,7 @@ def SBC_ind_x():
     global pc
     global X
 
-    akumulator = akumulator - pamiec[pamiec[pamiec[pc + 1]] + X] - Complement(flagi.get('C'))
+    akumulator = akumulator + (255 - pamiec[pamiec[pamiec[pc + 1]] + X] ) + flagi.get('C')
     pc = pc + 2
 
     # Negative
@@ -2884,7 +2884,7 @@ rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
 # 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
 # sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
-program = [0xa9, 0xc4, 0xaa, 0xe8, 0xe9, 0xc0, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
+program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
 
 
 def main():
