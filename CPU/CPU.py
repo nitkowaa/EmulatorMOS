@@ -25,36 +25,36 @@ pc = 1536
 
 
 def get_index_abs():  # zczytuje 2 liczby jako indeks listy pamiec.
-    return pamiec[pc+2]*256 + pamiec[pc+1]
+    return pamiec[pc + 2] * 256 + pamiec[pc + 1]
 
 
 def get_index_abs_x():  # zczytuje 2 liczby jako indeks listy pamiec + X.
     global X
-    return pamiec[pc+2]*256 + pamiec[pc+1] + X
+    return pamiec[pc + 2] * 256 + pamiec[pc + 1] + X
 
 
 def get_index_abs_y():  # zczytuje 2 liczby jako indeks listy pamiec + Y.
     global Y
-    return pamiec[pc+2]*256 + pamiec[pc+1] + Y
+    return pamiec[pc + 2] * 256 + pamiec[pc + 1] + Y
 
 
 def get_index_ind_x():  # zczytuje 2 liczby jako indeks listy pamiec + X.
     global X
-    low = (pamiec[pc+1] + X) % 256
+    low = (pamiec[pc + 1] + X) % 256
     high = (low + 1) % 256
-    return high*256 + low
+    return high * 256 + low
 
 
 def get_index_ind_y():  # zczytuje 2 liczby jako indeks listy pamiec + Y.
     global Y
-    low = (pamiec[pamiec[pc+1]]) % 256
-    high = (pamiec[low+1]) % 256
-    return high*256 + low + Y
+    low = (pamiec[pamiec[pc + 1]]) % 256
+    high = (pamiec[low + 1]) % 256
+    return high * 256 + low + Y
 
 
 def load_program():
     for i in range(len(program)):
-        pamiec[1536+i] = program[i]
+        pamiec[1536 + i] = program[i]
 
 
 def Complement(num):
@@ -63,15 +63,14 @@ def Complement(num):
     if num == 0:
         return 1
 
+
 # region LDA, LDX, LDY                                DO POPRAWY - Paweł
 # region LDA
-
-
 # Wczytaj podaną wartość do zmiennej Akumaltora
 def LDA_imm():
     global akumulator
     global pc
-    akumulator = pamiec[pc+1]
+    akumulator = pamiec[pc + 1]
     if akumulator > 127:
         flagi.update(N=1)
     else:
@@ -97,7 +96,6 @@ def LDA_abs():
     else:
         flagi.update(Z=0)
     pc = pc + 3
-
 
 
 def LDA_zpg():
@@ -196,7 +194,10 @@ def LDA_ind_x():
         flagi.update(Z=0)
     pc = pc + 2
 
+
 # endregion LDA
+
+
 # region LDX
 def LDX_imm():
     global X
@@ -211,6 +212,8 @@ def LDX_imm():
     else:
         flagi.update(Z=0)
     pc = pc + 2
+
+
 def LDX_abs():
     global X
     global pc
@@ -240,6 +243,8 @@ def LDX_zpg():
     else:
         flagi.update(Z=0)
     pc = pc + 2
+
+
 def LDX_abs_y():
     global X
     global pc
@@ -271,7 +276,10 @@ def LDX_zpg_y():
     else:
         flagi.update(Z=0)
     pc = pc + 2
+
+
 # endregion LDX
+
 
 # region LDY
 def LDY_imm():
@@ -351,13 +359,14 @@ def LDY_zpg_x():
     else:
         flagi.update(Z=0)
     pc = pc + 2
-# endregion LDY
+
+
+# endregion
 # endregion
 
-# region STA, STX,                                      DO POPRAWY - Paweł
+
+# region STA, STX, STY                                      DO POPRAWY - Paweł
 # region STA
-
-
 def STA_abs():
     global akumulator
     global pc
@@ -391,6 +400,7 @@ def STA_abs_y():
 def STA_zpg_x():
     pass
 
+
 def STA_ind_y():
     pass
 
@@ -398,7 +408,10 @@ def STA_ind_y():
 def STA_ind_x():
     pass
 
+
 # endregion
+
+
 # region STX
 def STX_abs():
     global X
@@ -417,7 +430,10 @@ def STX_zpg():
 def STX_zpg_y():
     pass
 
+
 # endregion
+
+
 # region STY
 def STY_abs():
     global Y
@@ -436,12 +452,12 @@ def STY_zpg():
 def STY_zpg_x():
     pass
 
+
 # endregion
 # endregion
+
 
 # region metody Flag & NOP
-
-
 def NOP():
     global pc
     pc = pc + 1
@@ -495,17 +511,17 @@ def SEI():  # jedynkowanie I
     flagi.update(I=1)
     pc = pc + 1
 
-# endregion   An
+
+# endregion
+
 
 # region Inkremenetacja / Dekrementacja             SPRAWDZONE
-
-
 def INC_zpg():  # Inkrementacja pamięci
     global pc
     global pamiec
-    global indeks
-    indeks = pamiec[pc+1]
-    pamiec[indeks] = pamiec[indeks] + 1   # lub coś innego zamiast jedynki
+    #  global indeks
+    indeks = pamiec[pc + 1]
+    pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
@@ -516,9 +532,9 @@ def INC_zpg():  # Inkrementacja pamięci
 def INC_zpg_x():  # Inkrementacja pamięci
     global pc
     global pamiec
-    global indeks
+    #  global indeks
     global X
-    indeks = pamiec[pc+1] + X
+    indeks = pamiec[pc + 1] + X
     pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
@@ -530,7 +546,7 @@ def INC_zpg_x():  # Inkrementacja pamięci
 def INC_abs():  # Inkrementacja pamięci
     global pc
     global pamiec
-    global indeks
+    #  global indeks
     indeks = pamiec[get_index_abs()]
     pamiec[indeks] = pamiec[indeks] + 1
     if pamiec[indeks] < 0:  # chyba tak
@@ -543,10 +559,10 @@ def INC_abs():  # Inkrementacja pamięci
 def INC_abs_x():  # Inkrementacja pamięci
     global pc
     global pamiec
-    global indeks
+    #  global indeks
     indeks = pamiec[get_index_abs_x()]
     pamiec[indeks] = pamiec[indeks] + 1  # lub coś innego zamiast jedynki
-    if pamiec[indeks] < 0: # chyba tak
+    if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
@@ -556,9 +572,9 @@ def INC_abs_x():  # Inkrementacja pamięci
 def DEC_zpg():  # Dekrementacja pamięci
     global pc
     global pamiec
-    global indeks
-    indeks = pamiec[pc+1]
-    pamiec[indeks]=pamiec[indeks] - 1  # lub coś innego zamiast jedynki
+    #  global indeks
+    indeks = pamiec[pc + 1]
+    pamiec[indeks] = pamiec[indeks] - 1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
@@ -569,10 +585,10 @@ def DEC_zpg():  # Dekrementacja pamięci
 def DEC_zpg_x():  # Dekrementacja pamięci
     global pc
     global pamiec
-    global indeks
+    #  global indeks
     global X
-    indeks = pamiec[pc+1] + X
-    pamiec[indeks]=pamiec[indeks]-1  # lub coś innego zamiast jedynki
+    indeks = pamiec[pc + 1] + X
+    pamiec[indeks] = pamiec[indeks] - 1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
@@ -583,7 +599,7 @@ def DEC_zpg_x():  # Dekrementacja pamięci
 def DEC_abs():  # Dekrementacja pamięci
     global pc
     global pamiec
-    global indeks
+    #  global indeks
     indeks = pamiec[get_index_abs()]
     pamiec[indeks] = pamiec[indeks] - 1  # lub coś innego zamiast jedynki
     if pamiec[indeks] < 0:  # chyba tak
@@ -596,10 +612,10 @@ def DEC_abs():  # Dekrementacja pamięci
 def DEC_abs_x():  # Dekrementacja pamięci
     global pc
     global pamiec
-    global indeks
+    #  global indeks
     indeks = pamiec[get_index_abs_x()]
-    pamiec[indeks] = pamiec[indeks] - 1   # lub coś innego zamiast jedynki
-    if pamiec[indeks] < 0: # chyba tak
+    pamiec[indeks] = pamiec[indeks] - 1  # lub coś innego zamiast jedynki
+    if pamiec[indeks] < 0:  # chyba tak
         flagi.update(N=1)
     elif pamiec[indeks] == 0:
         flagi.update(Z=1)
@@ -648,16 +664,18 @@ def INY():  # Inkrementacja Y
     elif Y == 0:
         flagi.update(Z=1)
     pc = pc + 1
+
+
 # endregion
+
 
 # region ADC, SBC                           DO SPRAWDZENIA - Hubert
 # region ADC
-
-
 def ADC_imm():
     global akumulator
     global flagi
     global pc
+
     akumulator = akumulator + pamiec[pc + 1] + flagi.get('C')
     pc = pc + 2
 
@@ -667,22 +685,18 @@ def ADC_imm():
     # 129-255 to odpowiednik liczb dodatnik od 0 do 127
     if akumulator > 128:
         flagi.update(N=1)
-
-
     # Carry
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
-
     # Zero
     if akumulator != 0:
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     # Przekroczenie wartości 255 (w systemie dwójkowym, 1111 1111 -> 1 0000 0000)
-    if akumulator >255:
+    if akumulator > 255:
         flagi.update(V=1)
 
 
@@ -697,20 +711,15 @@ def ADC_abs():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
-
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -721,25 +730,21 @@ def ADC_zpg():
     global flagi
     global pc
 
-    akumulator = akumulator + pamiec[pamiec[pc+1]] + flagi.get('C')
+    akumulator = akumulator + pamiec[pamiec[pc + 1]] + flagi.get('C')
     pc = pc + 2
 
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -756,21 +761,15 @@ def ADC_abs_x():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
-
-
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -787,20 +786,15 @@ def ADC_abs_y():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
-
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -817,24 +811,18 @@ def ADC_zpg_x():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
-
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
-
 
 
 def ADC_ind_x():
@@ -849,14 +837,11 @@ def ADC_ind_x():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
@@ -878,48 +863,41 @@ def ADC_ind_y():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 255:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
-
     # Zero
-
     if akumulator != 0:
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     #  Overflow
-
     if akumulator > 255:
         flagi.update(V=1)
 
+
 # endregion
+
+
 # region SBC
 def SBC_imm():
     global akumulator
     global flagi
     global pc
+
     akumulator = akumulator + (255 - pamiec[pc + 1]) + (flagi.get('C'))
     pc = pc + 2
 
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
     if akumulator >= 0:
         flagi.update(C=1)
         akumulator = (akumulator % 256)
-
-    if akumulator >= 0:
-        flagi.update(C=1)
     else:
         flagi.update(C=0)
-
     # Zero
     if akumulator != 0:
         flagi.update(Z=0)
@@ -941,11 +919,10 @@ def SBC_abs():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 0:
         flagi.update(C=1)
+        akumulator = (akumulator % 256)
     else:
         flagi.update(C=0)
     # Zero
@@ -953,14 +930,12 @@ def SBC_abs():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
 
 
 def SBC_zpg():
-
     global akumulator
     global flagi
     global pc
@@ -971,11 +946,10 @@ def SBC_zpg():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 0:
         flagi.update(C=1)
+        akumulator = (akumulator % 256)
     else:
         flagi.update(C=0)
     # Zero
@@ -983,7 +957,6 @@ def SBC_zpg():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -1000,11 +973,10 @@ def SBC_abs_x():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 0:
         flagi.update(C=1)
+        akumulator = (akumulator % 256)
     else:
         flagi.update(C=0)
     # Zero
@@ -1012,7 +984,6 @@ def SBC_abs_x():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -1029,11 +1000,10 @@ def SBC_abs_y():
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 0:
         flagi.update(C=1)
+        akumulator = (akumulator % 256)
     else:
         flagi.update(C=0)
     # Zero
@@ -1041,7 +1011,6 @@ def SBC_abs_y():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -1054,14 +1023,14 @@ def SBC_zpg_x():
 
     akumulator = akumulator - pamiec[pamiec[pc + 1] + X] - Complement(flagi.get('C'))
     pc = pc + 2
+
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 0:
         flagi.update(C=1)
+        akumulator = (akumulator % 256)
     else:
         flagi.update(C=0)
     # Zero
@@ -1069,11 +1038,9 @@ def SBC_zpg_x():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
-
 
 
 def SBC_ind_y():
@@ -1085,15 +1052,13 @@ def SBC_ind_y():
     akumulator = akumulator - pamiec[pamiec[pamiec[pc + 1]] + Y] - Complement(flagi.get('C'))
     pc = pc + 2
 
-
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 0:
         flagi.update(C=1)
+        akumulator = (akumulator % 256)
     else:
         flagi.update(C=0)
     # Zero
@@ -1101,10 +1066,10 @@ def SBC_ind_y():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
+
 
 def SBC_ind_x():
     global akumulator
@@ -1115,15 +1080,13 @@ def SBC_ind_x():
     akumulator = akumulator - pamiec[pamiec[pamiec[pc + 1]] + X] - Complement(flagi.get('C'))
     pc = pc + 2
 
-
     # Negative
     if akumulator > 128:
         flagi.update(N=1)
-
     # Carry
-
     if akumulator >= 0:
         flagi.update(C=1)
+        akumulator = (akumulator % 256)
     else:
         flagi.update(C=0)
     # Zero
@@ -1131,7 +1094,6 @@ def SBC_ind_x():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
     if akumulator > 255:
         flagi.update(V=1)
@@ -1140,8 +1102,8 @@ def SBC_ind_x():
 # endregion
 # endregion
 
-# region TAX, TXA, TAY, TYA             SPRAWDZONE
 
+# region TAX, TXA, TAY, TYA
 def TAX():  # Transfer z A do X
     global X
     global akumulator
@@ -1189,11 +1151,11 @@ def TAY():  # Transfer z A do Y
         flagi.update(Z=1)
     pc = pc + 1
 
+
 # endregion
 
-# region BCS & JMP          SPRAWDZONE
 
-
+# region BCS & JMP
 def JMP_abs():
     global pc
     global flagi
@@ -1213,7 +1175,7 @@ def BCS():  # skok jeśli C=1
     if flagi.get('C') == 1:
         pc = pamiec[pc + 1]
     else:
-        pc = pc+2
+        pc = pc + 2
 
 
 def BCC():  # skok jeśli C=0
@@ -1277,19 +1239,21 @@ def BVC():  # skok jeśli V=0
         pc = pamiec[pc + 1]
     else:
         pc = pc + 2
+
+
 # endregion
 
-# region CMP         DO SPRAWDZENIA - Anita
 
+# region CMP         DO SPRAWDZENIA - Anita
 def CMP_imm():  # porównuje miejsce w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     a = pamiec[pc + 1]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1302,16 +1266,16 @@ def CMP_imm():  # porównuje miejsce w pamieci do akumulatora
     pc = pc + 2
 
 
-def CMP_zpg(): # porównuje wartosc w pamieci do akumulatora
+def CMP_zpg():  # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1324,17 +1288,17 @@ def CMP_zpg(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 2
 
 
-def CMP_zpg_x(): # porównuje wartosc w pamieci do akumulatora
+def CMP_zpg_x():  # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     global X
     a = pamiec[pc + 1] + X  # adres do pobrania
     a = pamiec[a]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1347,15 +1311,15 @@ def CMP_zpg_x(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 2
 
 
-def CMP_abs(): # porównuje wartosc w pamieci do akumulatora
+def CMP_abs():  # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     a = pamiec[get_index_abs()]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1368,16 +1332,16 @@ def CMP_abs(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 3
 
 
-def CMP_ind_x(): # porównuje wartosc w pamieci do akumulatora
+def CMP_ind_x():  # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     global X
-    a = a + pamiec[pamiec[pamiec[pc + 1]] + X]
+    a = pamiec[get_index_ind_x()]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1390,16 +1354,16 @@ def CMP_ind_x(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 2
 
 
-def CMP_ind_y(): # porównuje wartosc w pamieci do akumulatora
+def CMP_ind_y():  # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     global Y
-    a = a + pamiec[pamiec[pamiec[pc + 1]] + Y]
+    a = pamiec[get_index_ind_y()]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1412,15 +1376,15 @@ def CMP_ind_y(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 2
 
 
-def CMP_abs_x(): # porównuje wartosc w pamieci do akumulatora
+def CMP_abs_x():  # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     a = pamiec[get_index_abs_x()]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1433,15 +1397,15 @@ def CMP_abs_x(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 3
 
 
-def CMP_abs_y(): # porównuje wartosc w pamieci do akumulatora
+def CMP_abs_y():  # porównuje wartosc w pamieci do akumulatora
     global pc
     global akumulator
     global pamiec
-    global a
+    #  global a
     a = pamiec[get_index_abs_y()]
     if akumulator > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif akumulator == a:
         flagi.update(C=1)
@@ -1454,15 +1418,15 @@ def CMP_abs_y(): # porównuje wartosc w pamieci do akumulatora
     pc = pc + 3
 
 
-def CPX_imm(): # porównuje wartosc do X
+def CPX_imm():  # porównuje wartosc do X
     global pc
     global X
     global pamiec
-    global a
+    #  global a
     a = pamiec[pc + 1]
     if X > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif X == a:
         flagi.update(C=1)
@@ -1475,16 +1439,16 @@ def CPX_imm(): # porównuje wartosc do X
     pc = pc + 2
 
 
-def CPX_zpg(): # porównuje wartosc do X
+def CPX_zpg():  # porównuje wartosc do X
     global pc
     global X
     global pamiec
-    global a
+    #  global a
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
     if X > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif X == a:
         flagi.update(C=1)
@@ -1497,15 +1461,15 @@ def CPX_zpg(): # porównuje wartosc do X
     pc = pc + 2
 
 
-def CPX_abs(): # porównuje wartosc do X
+def CPX_abs():  # porównuje wartosc do X
     global pc
     global X
     global pamiec
-    global a
+    #  global a
     a = pamiec[get_index_abs()]
     if X > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif X == a:
         flagi.update(C=1)
@@ -1518,15 +1482,15 @@ def CPX_abs(): # porównuje wartosc do X
     pc = pc + 3
 
 
-def CPY_imm(): # porównuje wartosc do Y
+def CPY_imm():  # porównuje wartosc do Y
     global pc
     global Y
     global pamiec
-    global a
+    #  global a
     a = pamiec[pc + 1]
     if Y > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif Y == a:
         flagi.update(C=1)
@@ -1539,16 +1503,16 @@ def CPY_imm(): # porównuje wartosc do Y
     pc = pc + 2
 
 
-def CPY_zpg(): # porównuje wartosc do Y
+def CPY_zpg():  # porównuje wartosc do Y
     global pc
     global Y
     global pamiec
-    global a
+    #  global a
     a = pamiec[pc + 1]
     a = pamiec[a]
     if Y > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif Y == a:
         flagi.update(C=1)
@@ -1561,15 +1525,15 @@ def CPY_zpg(): # porównuje wartosc do Y
     pc = pc + 2
 
 
-def CPY_abs(): # porównuje wartosc do Y
+def CPY_abs():  # porównuje wartosc do Y
     global pc
     global Y
     global pamiec
-    global a
+    #  global a
     a = pamiec[get_index_abs()]
     if Y > a:
-        flagi.update(C =1)
-        flagi.update(Z =0)
+        flagi.update(C=1)
+        flagi.update(Z=0)
         flagi.update(N=0)
     elif Y == a:
         flagi.update(C=1)
@@ -1583,9 +1547,8 @@ def CPY_abs(): # porównuje wartosc do Y
     pc = pc + 3
 
 
-
-
 # endregion
+
 
 # region STOS               DO POPRAWY - Kamil
 def TXS():
@@ -1647,9 +1610,9 @@ def PLP():
 def ASL_acc():
     global akumulator
     global pc
-    akumulator = 2*akumulator
+    akumulator = 2 * akumulator
     if akumulator >= 256:
-        akumulator=akumulator%256
+        akumulator = akumulator % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
@@ -1658,41 +1621,41 @@ def ASL_acc():
 
 def ASL_zpg():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a=a*2
+    a = a * 2
     if a >= 256:
-        a=a%256
+        a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
-    pc = pc +2
+    pc = pc + 2
 
 
 def ASL_zpg_x():
     global pc
-    global a
+    #  global a
     global pamiec
     global X
     a = pamiec[[pc + 1] + X]  # adres do pobrania
     a = pamiec[a]
-    a=a*2
+    a = a * 2
     if a >= 256:
-        a=a%256
+        a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
-    pc = pc +2
+    pc = pc + 2
 
 
 def ASL_abs():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs()]
-    a=a*2
+    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
@@ -1703,26 +1666,27 @@ def ASL_abs():
 
 def ASL_abs_x():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs_x()]
-    a=a*2
+    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
     pc = pc + 3
+
+
 # endregion
 
+
 # region LSR
-
-
 def LSR_acc():
     global akumulator
     global pc
     akumulator = akumulator / 2
-    if akumulator%2 == 1:
+    if akumulator % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
@@ -1731,11 +1695,11 @@ def LSR_acc():
 
 def LSR_zpg():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a = a/2
+    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
@@ -1745,7 +1709,7 @@ def LSR_zpg():
 
 def LSR_zpg_x():
     global pc
-    global a
+    #  global a
     global pamiec
     global X
     a = pamiec[[pc + 1] + X]  # adres do pobrania
@@ -1760,7 +1724,7 @@ def LSR_zpg_x():
 
 def LSR_abs():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs()]
     a = pamiec[a]
@@ -1774,7 +1738,7 @@ def LSR_abs():
 
 def LSR_abs_x():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs_x()]
     a = a / 2
@@ -1787,12 +1751,12 @@ def LSR_abs_x():
 
 # endregion
 
-# region ROL
 
+# region ROL
 def ROL_acc():
     global akumulator
     global pc
-    akumulator = 2*akumulator
+    akumulator = 2 * akumulator
     if akumulator >= 256:
         akumulator = akumulator % 256
         flagi.update(C=1)
@@ -1803,11 +1767,11 @@ def ROL_acc():
 
 def ROL_zpg():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a = a*2
+    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
@@ -1818,26 +1782,26 @@ def ROL_zpg():
 
 def ROL_zpg_x():
     global pc
-    global a
+    #  global a
     global pamiec
     global X
     a = pamiec[[pc + 1] + X]  # adres do pobrania
     a = pamiec[a]
-    a=a*2
+    a = a * 2
     if a >= 256:
-        a=a%256
+        a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
-    pc = pc +2
+    pc = pc + 2
 
 
 def ROL_abs():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs()]
-    a=a*2
+    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
@@ -1848,10 +1812,10 @@ def ROL_abs():
 
 def ROL_abs_x():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs_x()]
-    a=a*2
+    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
@@ -1859,14 +1823,16 @@ def ROL_abs_x():
         flagi.update(C=0)
     pc = pc + 3
 
+
 # endregion
+
 
 # region ROR
 def ROR_acc():
     global akumulator
     global pc
     akumulator = akumulator / 2
-    if akumulator%2 == 1:
+    if akumulator % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
@@ -1875,11 +1841,11 @@ def ROR_acc():
 
 def ROR_zpg():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a = a/2
+    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
@@ -1889,7 +1855,7 @@ def ROR_zpg():
 
 def ROR_zpg_x():
     global pc
-    global a
+    #  global a
     global pamiec
     global X
     a = pamiec[[pc + 1] + X]  # adres do pobrania
@@ -1904,7 +1870,7 @@ def ROR_zpg_x():
 
 def ROR_abs():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs()]
     a = pamiec[a]
@@ -1918,7 +1884,7 @@ def ROR_abs():
 
 def ROR_abs_x():
     global pc
-    global a
+    #  global a
     global pamiec
     a = pamiec[get_index_abs_x()]
     a = a / 2
@@ -1927,15 +1893,16 @@ def ROR_abs_x():
     else:
         flagi.update(C=0)
     pc = pc + 3
+
+
 # endregion
-
-
 #   endregion
+
 
 # DO SPRAWDZENIA - Paweł
 def BRK():
     global pc
-    pc = pc+1
+    pc = pc + 1
 
 
 # słownik rozkazów
@@ -1974,18 +1941,18 @@ def BRK():
            0xf6: INC_zpg_x,     0xf8: SED,          0xf9: SBC_abs_y,    0xfd: SBC_abs_x,    0xfe: INC_abs_x}
 '''
 
-# region AND, EOR, ORA
-#akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
-# region AND
 
+# region AND, EOR, ORA
+# akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
+# region AND
 def AND_imm():
     global akumulator
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
-    b = bin(pamiec[pc+1][2:])  # str
+    b = bin(pamiec[pc + 1][2:])  # str
     b = str(b)
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2014,7 +1981,7 @@ def AND_abs():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs()]
     b = str(bin(b)[2:])
@@ -2045,10 +2012,10 @@ def AND_zpg():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = bin(pamiec[pc + 1][2:])
-    b = str(b) #str
+    b = str(b)  # str
     b = pamiec[b]
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2077,7 +2044,7 @@ def AND_abs_x():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs_x()]
     b = str(bin(b)[2:])
@@ -2109,7 +2076,7 @@ def AND_abs_y():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs_y()]
     b = str(bin(b)[2:])
@@ -2141,7 +2108,7 @@ def AND_zpg_x():
     global pamiec
     global pc
     global X
-    global b
+    #  global b
 
     b = pamiec[pc + 1] + X  # adres do pobrania
     b = pamiec[b]
@@ -2174,9 +2141,9 @@ def AND_ind_y():
     global pamiec
     global pc
     global Y
-    global b
+    #  global b
 
-    b = b + pamiec[pamiec[pamiec[pc + 1]] + Y]
+    b = pamiec[get_index_ind_y()]
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2206,9 +2173,9 @@ def AND_ind_x():
     global pamiec
     global pc
     global X
-    global b
+    #  global b
 
-    b = b + pamiec[pamiec[pamiec[pc + 1]] + X]
+    b = pamiec[get_index_ind_x()]
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2234,14 +2201,14 @@ def AND_ind_x():
 
 # endregion
 
-# region EOR
 
+# region EOR
 def EOR_imm():
     global akumulator
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = bin(pamiec[pc + 1][2:])  # str
     b = str(b)
@@ -2272,7 +2239,7 @@ def EOR_abs():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs()]
     b = str(bin(b)[2:])
@@ -2303,10 +2270,10 @@ def EOR_zpg():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = bin(pamiec[pc + 1][2:])
-    b = str(b) #str
+    b = str(b)  # str
     b = pamiec[b]
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2330,13 +2297,12 @@ def EOR_zpg():
     pc = pc + 2
 
 
-
 def EOR_abs_x():
     global akumulator
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs_x()]
     b = str(bin(b)[2:])
@@ -2367,7 +2333,7 @@ def EOR_abs_y():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs_y()]
     b = str(bin(b)[2:])
@@ -2399,7 +2365,7 @@ def EOR_zpg_x():
     global pamiec
     global pc
     global X
-    global b
+    #  global b
 
     b = pamiec[pc + 1] + X  # adres do pobrania
     b = pamiec[b]
@@ -2432,9 +2398,9 @@ def EOR_ind_y():
     global pamiec
     global pc
     global Y
-    global b
+    #  global b
 
-    b = b + pamiec[pamiec[pamiec[pc + 1]] + Y]
+    b = pamiec[get_index_ind_y()]
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2464,9 +2430,9 @@ def EOR_ind_x():
     global pamiec
     global pc
     global X
-    global b
+    #  global b
 
-    b = b + pamiec[pamiec[pamiec[pc + 1]] + X]
+    b = pamiec[get_index_ind_x()]
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2492,14 +2458,14 @@ def EOR_ind_x():
 
 # endregion
 
-# region ORA
 
+# region ORA
 def ORA_imm():
     global akumulator
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = bin(pamiec[pc + 1][2:])  # str
     b = str(b)
@@ -2510,7 +2476,9 @@ def ORA_imm():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2530,7 +2498,7 @@ def ORA_abs():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs()]
     b = str(bin(b)[2:])
@@ -2541,7 +2509,9 @@ def ORA_abs():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2561,7 +2531,7 @@ def ORA_zpg():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = bin(pamiec[pc + 1][2:])
     b = str(b)  # str
@@ -2573,7 +2543,9 @@ def ORA_zpg():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2593,7 +2565,7 @@ def ORA_abs_x():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs_x()]
     b = str(bin(b)[2:])
@@ -2604,7 +2576,9 @@ def ORA_abs_x():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2624,7 +2598,7 @@ def ORA_abs_y():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs_y()]
     b = str(bin(b)[2:])
@@ -2635,7 +2609,9 @@ def ORA_abs_y():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2656,7 +2632,7 @@ def ORA_zpg_x():
     global pamiec
     global pc
     global X
-    global b
+    #  global b
 
     b = pamiec[pc + 1] + X  # adres do pobrania
     b = pamiec[b]
@@ -2668,7 +2644,9 @@ def ORA_zpg_x():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2689,9 +2667,9 @@ def ORA_ind_y():
     global pamiec
     global pc
     global Y
-    global b
+    #  global b
 
-    b = b + pamiec[pamiec[pamiec[pc + 1]] + Y]
+    b = pamiec[get_index_ind_y()]
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2700,7 +2678,9 @@ def ORA_ind_y():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2721,9 +2701,9 @@ def ORA_ind_x():
     global pamiec
     global pc
     global X
-    global b
+    #  global b
 
-    b = b + pamiec[pamiec[pamiec[pc + 1]] + X]
+    b = pamiec[get_index_ind_x()]
     b = str(bin(b)[2:])
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
@@ -2732,7 +2712,9 @@ def ORA_ind_x():
     while len(akumulator) <= 7:
         akumulator = "0" + akumulator
     for i in range(len(akumulator)):
-        if akumulator[i] == b[i] and ((akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (akumulator[i] == '1' and b[i] == "1")):
+        if akumulator[i] == b[i] and (
+                (akumulator[i] == '0' and b[i] == "1") or (akumulator[i] == '1' and b[i] == "0") or (
+                akumulator[i] == '1' and b[i] == "1")):
             wynik = wynik + "1"
         else:
             wynik = wynik + "0"  # str
@@ -2748,8 +2730,8 @@ def ORA_ind_x():
 
 
 # endregion ORA
-
 # endregion
+
 
 # region BIT
 def BIT_abs():
@@ -2757,7 +2739,7 @@ def BIT_abs():
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = pamiec[get_index_abs()]
     b = str(bin(b)[2:])
@@ -2780,12 +2762,13 @@ def BIT_abs():
         flagi.update(Z=0)
     pc = pc + 3
 
+
 def BIT_zpg():
     global akumulator
     global flagi
     global pamiec
     global pc
-    global b
+    #  global b
 
     b = bin(pamiec[pc + 1][2:])
     b = str(b)  # str
@@ -2812,12 +2795,14 @@ def BIT_zpg():
 
 # endregion
 
+
 # region STOS
 
 # endregion
 
+
 # region Potrzebne do całego stosu oraz JSR, RTS i RTI
-def Push_Word(n):# wpycha na stos
+def Push_Word(n):  # wpycha na stos
     global sp
     pamiec[0x100 + sp] = n
     sp = sp + 1
@@ -2825,17 +2810,18 @@ def Push_Word(n):# wpycha na stos
         sp = 0
 
 
-
-def Pull_Word():# wypycha ze stosu
+def Pull_Word():  # wypycha ze stosu
     global sp
     global pc
-    pc = pamiec[(0x100+sp) - 1]
+    pc = pamiec[(0x100 + sp) - 1]
     sp = sp - 1
     if sp < 0:
         sp = 0
     return pc
 
+
 # endregion
+
 
 # region JSR, RTS, RTI  # nw chyba takie cos moze? nie wiem nie wiem
 def JSR_abs():
@@ -2844,11 +2830,13 @@ def JSR_abs():
     Push_Word()
     pc = pc + 3
 
+
 def RTS():
     global pc
     global sp
     Pull_Word()
     pc = pc + 1
+
 
 def RTI():
     global flagi
@@ -2856,49 +2844,47 @@ def RTI():
     global sp
 
     pc = pc + 1
+
+
 # endregion
 
 
-rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,
-           0x09: ORA_imm,       0x0a: ASL_acc,      0x0d: ORA_abs,      0x0e: ASL_abs,      0x10: BPL,
-           0x11: ORA_ind_y,     0x15: ORA_zpg_x,    0x16: ASL_zpg_x,    0x18: CLC,          0x19: ORA_abs_y,
-           0x1d: ORA_abs_x,     0x1e: ASL_abs_x,    0x20: JSR_abs,      0x21: AND_ind_x,    0x24: BIT_zpg,
-           0x25: AND_zpg,       0x26: ROL_zpg,      0x29: AND_imm,      0x2a: ROL_acc,
-           0x2c: BIT_abs,       0x2d: AND_abs,      0x2e: ROL_abs,      0x30: BMI,          0x31: AND_ind_y,
-           0x35: AND_zpg_x,     0x36: ROL_zpg_x,    0x38: SEC,          0x39: AND_abs_y,    0x3d: AND_abs_x,
-           0x3e: ROL_abs_x,     0x40: RTI,          0x41: EOR_ind_x,    0x45: EOR_zpg,
-           0x49: EOR_imm,       0x4a: LSR_acc,      0x4c: JMP_abs,      0x4d: EOR_abs,      0x4e: LSR_abs,
-           0x50: BVC,           0x51: EOR_ind_y,    0x55: EOR_zpg_x,    0x56: LSR_zpg_x,    0x58: CLI,
-           0x59: EOR_abs_y,     0x5d: EOR_abs_x,    0x5e: LSR_abs_x,    0x60: RTS,          0x61: ADC_ind_x,
-           0x65: ADC_zpg,       0x66: ROR_zpg,      0x69: ADC_imm,      0x6a: ROR_acc,
-           0x6c: JMP_ind,       0x6d: ADC_abs,      0x6e: ROR_abs,      0x70: BVS,          0x71: ADC_ind_y,
-           0x75: ADC_zpg_x,     0x76: ROR_zpg_x,    0x78: SEI,          0x79: ADC_abs_y,
-           0x7e: ROR_abs_x,     0x84: STY_zpg,      0x85: STA_zpg,      0x86: STX_zpg,
-           0x88: DEY,           0x8a: TXA,          0x8c: STY_abs,      0x8d: STA_abs,      0x8e: STX_abs,
+rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
+           0x09: ORA_imm, 0x0a: ASL_acc, 0x0d: ORA_abs, 0x0e: ASL_abs, 0x10: BPL,
+           0x11: ORA_ind_y, 0x15: ORA_zpg_x, 0x16: ASL_zpg_x, 0x18: CLC, 0x19: ORA_abs_y,
+           0x1d: ORA_abs_x, 0x1e: ASL_abs_x, 0x20: JSR_abs, 0x21: AND_ind_x, 0x24: BIT_zpg,
+           0x25: AND_zpg, 0x26: ROL_zpg, 0x29: AND_imm, 0x2a: ROL_acc,
+           0x2c: BIT_abs, 0x2d: AND_abs, 0x2e: ROL_abs, 0x30: BMI, 0x31: AND_ind_y,
+           0x35: AND_zpg_x, 0x36: ROL_zpg_x, 0x38: SEC, 0x39: AND_abs_y, 0x3d: AND_abs_x,
+           0x3e: ROL_abs_x, 0x40: RTI, 0x41: EOR_ind_x, 0x45: EOR_zpg,
+           0x49: EOR_imm, 0x4a: LSR_acc, 0x4c: JMP_abs, 0x4d: EOR_abs, 0x4e: LSR_abs,
+           0x50: BVC, 0x51: EOR_ind_y, 0x55: EOR_zpg_x, 0x56: LSR_zpg_x, 0x58: CLI,
+           0x59: EOR_abs_y, 0x5d: EOR_abs_x, 0x5e: LSR_abs_x, 0x60: RTS, 0x61: ADC_ind_x,
+           0x65: ADC_zpg, 0x66: ROR_zpg, 0x69: ADC_imm, 0x6a: ROR_acc,
+           0x6c: JMP_ind, 0x6d: ADC_abs, 0x6e: ROR_abs, 0x70: BVS, 0x71: ADC_ind_y,
+           0x75: ADC_zpg_x, 0x76: ROR_zpg_x, 0x78: SEI, 0x79: ADC_abs_y,
+           0x7e: ROR_abs_x, 0x84: STY_zpg, 0x85: STA_zpg, 0x86: STX_zpg,
+           0x88: DEY, 0x8a: TXA, 0x8c: STY_abs, 0x8d: STA_abs, 0x8e: STX_abs,
            0x90: BCC,
-           0x98: TYA,           0x99: STA_abs_y,    0x9d: STA_abs_x,    0xa0: LDY_imm,
-           0xa2: LDX_imm,       0xa4: LDY_zpg,      0xa5: LDA_zpg,      0xa6: LDX_zpg,
-           0xa8: TAY,           0xa9: LDA_imm,      0xaa: TAX,          0xac: LDY_abs,      0xad: LDA_abs,
-           0xae: LDX_abs,       0xb0: BCS,          0xb5: LDA_zpg_x,
-           0xb8: CLV,           0xb9: LDA_abs_y,    0xbc: LDY_abs_x,
-           0xbd: LDA_abs_x,     0xbe: LDX_abs_y,    0xc0: CPY_imm,      0xc1: CMP_ind_x,    0xc4: CPY_zpg,
-           0xc5: CMP_zpg,       0xc8: INY,          0xc9: CMP_imm,      0xca: DEX,
-           0xcc: CPY_abs,       0xcd: CMP_abs,      0xce: DEC_abs,      0xd0: BNE,          0xd1: CMP_ind_y,
-           0xd5: CMP_zpg_x,     0xd6: DEC_zpg_x,    0xd8: CLD,          0xd9: CMP_abs_y,    0xdd: CMP_abs_x,
-           0xde: DEC_abs_x,     0xe0: CPX_imm,      0xe1: SBC_ind_x,    0xe4: CPX_zpg,      0xe5: SBC_zpg,
-           0xe6: INC_zpg,       0xe8: INX,          0xe9: SBC_imm,      0xea: NOP,          0xec: CPX_abs,
-           0xed: SBC_abs,       0xee: INC_abs,      0xf0: BEQ,          0xf1: SBC_ind_y,    0xf5: SBC_zpg_x,
-           0xf6: INC_zpg_x,     0xf8: SED,          0xf9: SBC_abs_y,    0xfd: SBC_abs_x,    0xfe: INC_abs_x}
+           0x98: TYA, 0x99: STA_abs_y, 0x9d: STA_abs_x, 0xa0: LDY_imm,
+           0xa2: LDX_imm, 0xa4: LDY_zpg, 0xa5: LDA_zpg, 0xa6: LDX_zpg,
+           0xa8: TAY, 0xa9: LDA_imm, 0xaa: TAX, 0xac: LDY_abs, 0xad: LDA_abs,
+           0xae: LDX_abs, 0xb0: BCS, 0xb5: LDA_zpg_x,
+           0xb8: CLV, 0xb9: LDA_abs_y, 0xbc: LDY_abs_x,
+           0xbd: LDA_abs_x, 0xbe: LDX_abs_y, 0xc0: CPY_imm, 0xc1: CMP_ind_x, 0xc4: CPY_zpg,
+           0xc5: CMP_zpg, 0xc8: INY, 0xc9: CMP_imm, 0xca: DEX,
+           0xcc: CPY_abs, 0xcd: CMP_abs, 0xce: DEC_abs, 0xd0: BNE, 0xd1: CMP_ind_y,
+           0xd5: CMP_zpg_x, 0xd6: DEC_zpg_x, 0xd8: CLD, 0xd9: CMP_abs_y, 0xdd: CMP_abs_x,
+           0xde: DEC_abs_x, 0xe0: CPX_imm, 0xe1: SBC_ind_x, 0xe4: CPX_zpg, 0xe5: SBC_zpg,
+           0xe6: INC_zpg, 0xe8: INX, 0xe9: SBC_imm, 0xea: NOP, 0xec: CPX_abs,
+           0xed: SBC_abs, 0xee: INC_abs, 0xf0: BEQ, 0xf1: SBC_ind_y, 0xf5: SBC_zpg_x,
+           0xf6: INC_zpg_x, 0xf8: SED, 0xf9: SBC_abs_y, 0xfd: SBC_abs_x, 0xfe: INC_abs_x}
 
-
-
-#program=[0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
-        # 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
-#sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
+# program=[0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
+# 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
+# sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
 program = [0xa9, 0xc4, 0xaa, 0xe8, 0xe9, 0xc0, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
-
-# ADC działa zle ! Program zaczyna od złego indeksu
 
 
 def main():
@@ -2908,7 +2894,7 @@ def main():
     load_program()
     while pamiec[pc] != 0:
         print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n'
-              'X=', hex(X), 'Y=', hex(Y), flagi, '\n')
+                                                                               'X=', hex(X), 'Y=', hex(Y), flagi, '\n')
         rozkazy[pamiec[pc]]()
 
 
