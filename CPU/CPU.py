@@ -903,8 +903,7 @@ def SBC_imm():
     global akumulator
     global flagi
     global pc
-
-    akumulator = akumulator - pamiec[pc + 1] - Complement(flagi.get('C'))
+    akumulator = akumulator + (255 - pamiec[pc + 1]) + (flagi.get('C'))
     pc = pc + 2
 
     # Negative
@@ -912,11 +911,15 @@ def SBC_imm():
         flagi.update(N=1)
 
     # Carry
+    if akumulator >= 0:
+        flagi.update(C=1)
+        akumulator = (akumulator % 256)
 
     if akumulator >= 0:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+
     # Zero
     if akumulator != 0:
         flagi.update(Z=0)
@@ -2893,7 +2896,7 @@ rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: AS
         # 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
 #sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
-program = [0xa9, 0xc0, 0xaa, 0xe8, 0x69, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
+program = [0xa9, 0xc4, 0xaa, 0xe8, 0xe9, 0xc0, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
 
 # ADC działa zle ! Program zaczyna od złego indeksu
 
