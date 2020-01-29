@@ -637,9 +637,7 @@ def ADC_imm():
     # Carry
     if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
     if akumulator != 0:
@@ -832,9 +830,7 @@ def ADC_zpg_x():
 
     if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
 
@@ -875,10 +871,7 @@ def ADC_ind_x():
 
     if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
-
+        akumulator = (akumulator % 256)
     # Zero
 
     if akumulator != 0:
@@ -917,9 +910,7 @@ def ADC_ind_y():
 
     if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
 
