@@ -674,11 +674,9 @@ def ADC_imm():
         flagi.update(N=0)
 
     # Carry
-    if akumulator >= 255 and flagi.get('C') == 0:
+    if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
     if akumulator != 0:
@@ -713,11 +711,9 @@ def ADC_abs():
 
     # Carry
 
-    if akumulator >= 255 and flagi.get('C') == 0:
+    if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
 
@@ -754,12 +750,9 @@ def ADC_zpg():
 
     # Carry
 
-    if akumulator >= 255 and flagi.get('C') == 0:
+    if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
-
+        akumulator = (akumulator % 256)
     # Zero
 
     if akumulator != 0:
@@ -795,11 +788,10 @@ def ADC_abs_x():
 
     # Carry
 
-    if akumulator >= 255 and flagi.get('C') == 0:
+    if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
+
 
     # Zero
 
@@ -836,11 +828,9 @@ def ADC_abs_y():
 
     # Carry
 
-    if akumulator >= 255 and flagi.get('C') == 0:
+    if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
 
@@ -879,9 +869,7 @@ def ADC_zpg_x():
 
     if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
 
@@ -921,10 +909,7 @@ def ADC_ind_x():
 
     if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
-
+        akumulator = (akumulator % 256)
     # Zero
 
     if akumulator != 0:
@@ -963,9 +948,7 @@ def ADC_ind_y():
 
     if akumulator >= 255:
         flagi.update(C=1)
-        akumulator = 255
-    else:
-        flagi.update(C=0)
+        akumulator = (akumulator % 256)
 
     # Zero
 
