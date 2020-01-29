@@ -624,7 +624,6 @@ def ADC_imm():
     global akumulator
     global flagi
     global pc
-
     akumulator = akumulator + pamiec[pc + 1] + flagi.get('C')
     pc = pc + 2
 
@@ -646,14 +645,9 @@ def ADC_imm():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    # Przekroczenie wartości 255 (w systemie dwójkowym, 1111 1111 -> 1 0000 0000)
+    if akumulator >255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def ADC_abs():
@@ -3002,8 +2996,8 @@ def main():
 
     load_program()
     while pamiec[pc] != 0:
-        print('pc=', pc, hex(pamiec[pc]), 'akumulator=', akumulator, '\n'
-              'X=', X, 'Y=', Y, flagi, '\n')
+        print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n'
+              'X=', hex(X), 'Y=', hex(Y), flagi, '\n')
         rozkazy[pamiec[pc]]()
 
 
