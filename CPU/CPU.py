@@ -631,7 +631,7 @@ def ADC_imm():
     # 0-127 to odpowiednik liczb ujemnych od -128 do 0,
     # 128 to odpowiednik 0
     # 129-255 to odpowiednik liczb dodatnik od 0 do 127
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
 
@@ -661,7 +661,7 @@ def ADC_abs():
     pc = pc + 3
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -678,15 +678,8 @@ def ADC_abs():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def ADC_zpg():
@@ -698,7 +691,7 @@ def ADC_zpg():
     pc = pc + 2
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -714,15 +707,8 @@ def ADC_zpg():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def ADC_abs_x():
@@ -734,7 +720,7 @@ def ADC_abs_x():
     pc = pc + 3
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -752,15 +738,8 @@ def ADC_abs_x():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def ADC_abs_y():
@@ -772,7 +751,7 @@ def ADC_abs_y():
     pc = pc + 3
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -789,15 +768,8 @@ def ADC_abs_y():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def ADC_zpg_x():
@@ -809,7 +781,7 @@ def ADC_zpg_x():
     pc = pc + 2
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -826,15 +798,8 @@ def ADC_zpg_x():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 
@@ -848,7 +813,7 @@ def ADC_ind_x():
     pc = pc + 2
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -862,17 +827,9 @@ def ADC_ind_x():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def ADC_ind_y():
@@ -885,7 +842,7 @@ def ADC_ind_y():
     pc = pc + 2
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -901,16 +858,10 @@ def ADC_ind_y():
     else:
         flagi.update(Z=1)
 
-    # Overflow
-    if akumulator >= 127:
-        akumulator = 127
-        flagi.update(V=1)
+    #  Overflow
 
-    elif akumulator < -128:
-        akumulator = -128
+    if akumulator > 255:
         flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 # endregion
 # region SBC
@@ -923,7 +874,7 @@ def SBC_imm():
     pc = pc + 2
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -937,16 +888,9 @@ def SBC_imm():
         flagi.update(Z=0)
     else:
         flagi.update(Z=1)
-
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def SBC_abs():
@@ -958,7 +902,7 @@ def SBC_abs():
     pc = pc + 3
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -974,14 +918,8 @@ def SBC_abs():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def SBC_zpg():
@@ -994,7 +932,7 @@ def SBC_zpg():
     pc = pc + 2
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -1010,14 +948,8 @@ def SBC_zpg():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def SBC_abs_x():
@@ -1029,7 +961,7 @@ def SBC_abs_x():
     pc = pc + 3
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -1045,14 +977,8 @@ def SBC_abs_x():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def SBC_abs_y():
@@ -1064,7 +990,7 @@ def SBC_abs_y():
     pc = pc + 3
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -1080,14 +1006,8 @@ def SBC_abs_y():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 def SBC_zpg_x():
@@ -1098,7 +1018,7 @@ def SBC_zpg_x():
     akumulator = akumulator - pamiec[pamiec[pc + 1] + X] - Complement(flagi.get('C'))
     pc = pc + 2
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -1114,14 +1034,8 @@ def SBC_zpg_x():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 
@@ -1136,7 +1050,7 @@ def SBC_ind_y():
 
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -1152,14 +1066,8 @@ def SBC_ind_y():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 def SBC_ind_x():
     global akumulator
@@ -1172,7 +1080,7 @@ def SBC_ind_x():
 
 
     # Negative
-    if akumulator < 128:
+    if akumulator > 128:
         flagi.update(N=1)
 
     # Carry
@@ -1188,14 +1096,8 @@ def SBC_ind_x():
         flagi.update(Z=1)
 
     # Overflow
-    if akumulator >= 127:
-        akumulator = 127
+    if akumulator > 255:
         flagi.update(V=1)
-    elif akumulator < -128:
-        akumulator = -128
-        flagi.update(V=1)
-    else:
-        flagi.update(V=0)
 
 
 # endregion
