@@ -41,6 +41,24 @@ def get_processor_status():  # zczytuje flagi do ciągu 8 bitów
            flagi.get('C')
 
 
+def push_word(n):  # wpycha na stos
+    global sp
+
+    pamiec[0x0100 + sp] = n
+    sp -= 1
+    if sp < 0:
+        sp = 0xff
+
+
+def pull_word():  # wypycha ze stosu
+    global sp
+
+    sp += 1
+    if sp >= 0xff:
+        sp = 0
+    return pamiec[0x100 + sp]
+
+
 def get_index_abs():  # zczytuje 2 liczby jako indeks listy pamiec.
     return pamiec[pc + 2] * 256 + pamiec[pc + 1]
 
@@ -1215,7 +1233,10 @@ def TSX():  # Transfer z sp do X
 # region JMP
 def JMP_abs():
     global pc
-    pc = pamiec[pc + 1]
+    a = pamiec[pc + 1]
+    b = 255 - a
+    c = pc - b
+    pc = c + 1
 
 
 def JMP_ind():
@@ -1231,7 +1252,10 @@ def BCS():  # skok jeśli C=1
     global pc
     global flagi
     if flagi.get('C') == 1:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1240,7 +1264,10 @@ def BCC():  # skok jeśli C=0
     global pc
     global flagi
     if flagi.get('C') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1248,8 +1275,12 @@ def BCC():  # skok jeśli C=0
 def BEQ():  # skok jeśli Z=1
     global pc
     global flagi
+    global a
     if flagi.get('Z') == 1:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1257,8 +1288,14 @@ def BEQ():  # skok jeśli Z=1
 def BNE():  # skok jeśli Z=0
     global pc
     global flagi
+    global a
+    global b
+    global c
     if flagi.get('Z') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1276,7 +1313,10 @@ def BPL():  # skok jeśli N=0
     global pc
     global flagi
     if flagi.get('N') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1285,7 +1325,10 @@ def BVS():  # skok jeśli V=1
     global pc
     global flagi
     if flagi.get('V') == 1:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1294,7 +1337,10 @@ def BVC():  # skok jeśli V=0
     global pc
     global flagi
     if flagi.get('V') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -2857,49 +2903,52 @@ def BIT_zpg():
 # endregion
 
 
-# region Potrzebne do całego stosu oraz JSR, RTS i RTI
-def push_word(n):  # wpycha na stos
-    global sp
-
-    pamiec[0x0100 + sp] = n
-    sp -= 1
-    if sp < 0:
-        sp = 0xff
-
-
-def pull_word():  # wypycha ze stosu
-    global sp
-
-    sp += 1
-    if sp >= 0xff:
-        sp = 0
-    return pamiec[0x100 + sp]
-
-
-# endregion
-
-
-# region JSR, RTS, RTI  # nw chyba takie cos moze? nie wiem nie wiem
+# region Subroutines
 def JSR_abs():
     global pc
-    global sp
-    Push_Word()
-    pc = pc + 3
+
+    push_word(int((pc + 2) / 0x0100))
+    push_word((pc + 2) % 0x0100)
+    pc = get_index_abs()
 
 
 def RTS():
     global pc
-    global sp
-    Pull_Word()
-    pc = pc + 1
+
+    pc = pull_word() + pull_word()*0x0100
+    pc += 1
 
 
 def RTI():
-    global flagi
     global pc
     global sp
+    global flagi
 
-    pc = pc + 1
+    pc = pull_word() + pull_word()*0x0100
+    processor_status = pull_word()
+    if processor_status > 127:
+        flagi.update(N=1)
+        processor_status -= 128
+    if processor_status > 63:
+        flagi.update(V=1)
+        processor_status -= 64
+    processor_status -= 32
+    if processor_status > 15:
+        flagi.update(B=1)
+        processor_status -= 16
+    if processor_status > 7:
+        flagi.update(D=1)
+        processor_status -= 8
+    if processor_status > 3:
+        flagi.update(I=1)
+        processor_status -= 4
+    if processor_status > 1:
+        flagi.update(Z=1)
+        processor_status -= 2
+    if processor_status > 0:
+        flagi.update(C=1)
+        processor_status -= 1
+    pc += 1
 
 
 # endregion
@@ -2940,7 +2989,8 @@ rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
 # 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
 # sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
-program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
+# program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
+program=[0xa2, 0x08, 0xca, 0x8e, 0x00, 0x02, 0xe0, 0x03, 0xd0, 0xf8, 0x8e, 0x01, 0x02, 0xea, 0xea] # dziala
 
 def main():
     global pamiec
