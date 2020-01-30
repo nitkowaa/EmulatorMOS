@@ -64,7 +64,7 @@ def Complement(num):
         return 1
 
 
-# region LDA, LDX, LDY                                DO POPRAWY - Paweł
+# region LDA, LDX, LDY
 # region LDA
 # Wczytaj podaną wartość do zmiennej Akumaltora
 def LDA_imm():
@@ -365,7 +365,7 @@ def LDY_zpg_x():
 # endregion
 
 
-# region STA, STX, STY                                      DO POPRAWY - Paweł
+# region STA, STX, STY
 # region STA
 def STA_abs():
     global akumulator
@@ -383,30 +383,38 @@ def STA_zpg():
 
 def STA_abs_x():
     global akumulator
-    global X
     global pc
-    pamiec[get_index_abs_x()] = akumulator + X
+    pamiec[get_index_abs_x()] = akumulator
     pc = pc + 3
 
 
 def STA_abs_y():
     global akumulator
-    global X
     global pc
-    pamiec[get_index_abs_y()] = akumulator + X
+    pamiec[get_index_abs_y()] = akumulator
     pc = pc + 3
 
 
 def STA_zpg_x():
-    pass
+    global akumulator
+    global pc
+    global X
+    pamiec[(pamiec[pc + 1] + X) % 256] = akumulator
+    pc = pc + 2
 
 
 def STA_ind_y():
-    pass
+    global akumulator
+    global pc
+    pamiec[get_index_ind_y()] = akumulator
+    pc = pc + 2
 
 
 def STA_ind_x():
-    pass
+    global akumulator
+    global pc
+    pamiec[get_index_ind_x()] = akumulator
+    pc = pc + 2
 
 
 # endregion
@@ -428,7 +436,11 @@ def STX_zpg():
 
 
 def STX_zpg_y():
-    pass
+    global X
+    global Y
+    global pc
+    pamiec[(pamiec[pc + 1] + Y) % 256] = X
+    pc = pc + 2
 
 
 # endregion
@@ -450,7 +462,11 @@ def STY_zpg():
 
 
 def STY_zpg_x():
-    pass
+    global X
+    global Y
+    global pc
+    pamiec[(pamiec[pc + 1] + X) % 256] = Y
+    pc = pc + 2
 
 
 # endregion
