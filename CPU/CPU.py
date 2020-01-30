@@ -1608,32 +1608,25 @@ def PHA():
     global pamiec
     global sp
 
-    pamiec[sp] = akumulator
-    sp -= 1
+    push_word(akumulator)
 
 
 def PHP():
     global flagi
-    global sp
 
-    pamiec[sp] = get_processor_status()
-    sp -= 1
+    push_word(get_processor_status())
 
 
 def PLA():
     global akumulator
-    global sp
 
-    sp += 1
-    akumulator = pamiec[sp]
+    akumulator = pull_word()
 
 
 def PLP():
     global flagi
-    global sp
 
-    sp += 1
-    processor_status = pamiec[sp]
+    processor_status = pull_word()
     if processor_status > 127:
         flagi.update(N=1)
         processor_status -= 128
@@ -1955,11 +1948,20 @@ def ROR_abs_x():
 #   endregion
 
 
-# DO SPRAWDZENIA - Paweł
+# region BRK
 def BRK():
     global pc
-    pc = pc + 1
+    global flagi
 
+    flagi.update(B=1)
+    pc = pc + 1
+    push_word(int(sp / 0x0100))
+    push_word(sp % 0x0100)
+    push_word(get_processor_status())
+    pc = pamiec[0xfffe]*0x0100 + pamiec[0xffff]
+
+
+# endregion
 
 # słownik rozkazów
 '''rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,      0x08: PHP,
@@ -2850,22 +2852,22 @@ def BIT_zpg():
 
 
 # region Potrzebne do całego stosu oraz JSR, RTS i RTI
-def Push_Word(n):  # wpycha na stos
+def push_word(n):  # wpycha na stos
     global sp
-    pamiec[0x100 + sp] = n
-    sp = sp + 1
-    if sp >= 256:
-        sp = 0
 
-
-def Pull_Word():  # wypycha ze stosu
-    global sp
-    global pc
-    pc = pamiec[(0x100 + sp) - 1]
-    sp = sp - 1
+    pamiec[0x0100 + sp] = n
+    sp -= 1
     if sp < 0:
+        sp = 0xff
+
+
+def pull_word():  # wypycha ze stosu
+    global sp
+
+    sp += 1
+    if sp >= 0xff:
         sp = 0
-    return pc
+    return pamiec[0x100 + sp]
 
 
 # endregion
