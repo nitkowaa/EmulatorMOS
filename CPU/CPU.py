@@ -3087,8 +3087,9 @@ def runcode():
         label.pack()
 
 
-canvas = tk.Canvas(root, height=300, width=300, bg="#263D42")
+canvas = tk.Canvas(root, height=400, width=600, bg="#263D42")
 canvas.pack()
+
 
 
 def run6502():
@@ -3104,14 +3105,27 @@ def run6502():
         main()
         print('wykonalem sie')
         f.close()
+        plot_pamiec()
 
 
 frame = tk.Frame(root, bg="white")
-frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1)
+frame.place(relwidth=0.3, relheight=0.2, relx=0.1, rely=0.1)
+
+frameDisplayPamiec = tk.Frame(root, bg="white")
+frameDisplayPamiec.place(relwidth=0.5, relheight=0.7, relx=0.45, rely=0.1)
+
 openFile = tk.Button(root, text="Open File", padx=10, pady=5, fg="white", bg="#263D42", command=runcode)
 openFile.pack()
 runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
 runcode.pack()
+
+def plot_pamiec():
+    for row in range(10):
+        zmienna = 8
+        print(row)
+        label = tk.Label(frameDisplayPamiec, text=pamiec[pc-zmienna-row*8:pc-row*8])
+        label.pack()
+    root.mainloop()
 
 for programs in programs_names:
     label = tk.Label(frame, text=programs)
