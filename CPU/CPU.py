@@ -57,7 +57,7 @@ def load_program():
         pamiec[1536 + i] = program[i]
 
 
-def Complement(num):
+def complement(num):
     if num == 1:
         return 0
     if num == 0:
@@ -1928,9 +1928,6 @@ def BRK():
 
 
 # słownik rozkazów
-
-# TODO: AND, ASL, BIT, EOR, JSR, LSR, ORA, ROL, ROR, RTI, RTS
-
 '''rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,      0x08: PHP,
            0x09: ORA_imm,     0x0a: ASL_acc,      0x0d: ORA_abs,      0x0e: ASL_abs,      0x10: BPL,
            0x11: ORA_ind_y,     0x15: ORA_zpg_x,    0x16: ASL_zpg_x,    0x18: CLC,          0x19: ORA_abs_y,
@@ -2814,11 +2811,6 @@ def BIT_zpg():
         flagi.update(Z=0)
     pc = pc + 2
 
-
-# endregion
-
-
-# region STOS
 
 # endregion
 
