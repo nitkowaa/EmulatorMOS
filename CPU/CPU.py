@@ -3070,6 +3070,7 @@ def run6502():
         main()
         print('wykonalem sie')
         f.close()
+        plot_pamiec()
 
 
 frame = tk.Frame(root, bg="white")
@@ -3085,9 +3086,9 @@ runcode.pack()
 
 def plot_pamiec():
     for row in range(10):
-        zmienna = row * 8
+        zmienna = 8
         print(row)
-        label = tk.Label(frameDisplayPamiec, text=pamiec[pc-zmienna:pc])
+        label = tk.Label(frameDisplayPamiec, text=pamiec[pc-zmienna-row*8:pc-row*8])
         label.pack()
     root.mainloop()
 
