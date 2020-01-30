@@ -3029,7 +3029,7 @@ def runcode():
     for programs in programs_names:
         label = tk.Label(frame,text=programs,bg="gray")
         label.pack()
-canvas = tk.Canvas(root, height=700, width=700, bg="#263D42")
+canvas = tk.Canvas(root, height=300, width=300, bg="#263D42")
 canvas.pack()
 
 def run6502():
