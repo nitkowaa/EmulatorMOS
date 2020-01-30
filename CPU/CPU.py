@@ -1,5 +1,11 @@
 # coding=utf-8
-
+import tkinter as tk
+from tkinter import filedialog,Text
+import gui
+import os
+global program
+programs_names = []
+root = tk.Tk()
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
@@ -2936,11 +2942,21 @@ rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
 
 program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
 
-
 def main():
     global pamiec
     global pc
-
+    global X
+    global Y
+    global akumulator
+    global pc
+    global pamiec
+    global flagi
+    flagi = {'N': 0, 'V': 0, 'B': 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
+    akumulator = 0
+    X = 0
+    Y = 0
+    pc = 0x0600
+    pamiec = [0 for bit in range(256 * 256)]
     load_program()
     while pamiec[pc] != 0:
         print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n',
@@ -2948,5 +2964,53 @@ def main():
         rozkazy[pamiec[pc]]()
 
 
-if __name__ == '__main__':
-    main()
+if os.path.isfile('save.txt'):
+    with open('save.txt','r') as f:
+        temp_programm_names = f.read()
+        temp_programm_names = temp_programm_names.split(',')
+        programs_names = [x for x in temp_programm_names if x.strip()]
+def runcode():
+
+    for widget in frame.winfo_children():
+        widget.destroy()
+    filename = filedialog.askopenfilename(initialdir="/",title="Select File",filetypes =(("text files","*.txt"),("all files","*.*")))
+    programs_names.append(filename)
+    print(filename)
+    for programs in programs_names:
+        label = tk.Label(frame,text=programs,bg="gray")
+        label.pack()
+canvas = tk.Canvas(root, height=700, width=700, bg="#263D42")
+canvas.pack()
+
+def run6502():
+    global program
+    for programs_counter,programs in enumerate(programs_names):
+        print(programs_counter,programs)
+        os.startfile(programs)
+        f = open(programs, 'r')
+        code = f.read().split(" ")
+        for i in range(len(code)):
+            code[i] = int(code[i], 16)
+        program = code
+        main()
+        print('wykonalem sie')
+        f.close()
+
+
+frame = tk.Frame(root, bg="white")
+frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1)
+openFile = tk.Button(root, text="Open File", padx=10, pady=5, fg="white", bg="#263D42", command=runcode)
+openFile.pack()
+runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
+runcode.pack()
+
+
+for programs in programs_names:
+    label = tk.Label(frame, text=programs)
+    label.pack()
+root.mainloop()
+
+with open('save.txt', 'w') as f:
+    for programs in programs_names:
+        f.write(programs + ',')
+
