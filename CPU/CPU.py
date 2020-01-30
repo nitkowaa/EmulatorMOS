@@ -940,7 +940,7 @@ def SBC_zpg():
     global flagi
     global pc
 
-    akumulator = akumulator +(255- pamiec[pamiec[pc + 1]]) + flagi.get('C')
+    akumulator = akumulator + (255 - pamiec[pamiec[pc + 1]]) + flagi.get('C')
     pc = pc + 2
 
     # Negative
@@ -994,7 +994,7 @@ def SBC_abs_y():
     global flagi
     global pc
 
-    akumulator = akumulator + (255- pamiec[get_index_abs_y()]) + flagi.get('C')
+    akumulator = akumulator + (255 - pamiec[get_index_abs_y()]) + flagi.get('C')
     pc = pc + 3
 
     # Negative
@@ -1077,7 +1077,7 @@ def SBC_ind_x():
     global pc
     global X
 
-    akumulator = akumulator + (255 - pamiec[pamiec[pamiec[pc + 1]] + X] ) + flagi.get('C')
+    akumulator = akumulator + (255 - pamiec[pamiec[pamiec[pc + 1]] + X]) + flagi.get('C')
     pc = pc + 2
 
     # Negative
@@ -1598,8 +1598,8 @@ def PLA():
 def PLP():
     global flagi
     global sp
-    sp = sp - flagi.get("N") - flagi.get("V") - flagi.get("B") - flagi.get("D") - flagi.get("I") - flagi.get("Z")
-    - flagi.get("C")
+    sp = sp - flagi.get("N") - flagi.get("V") - flagi.get("B") - flagi.get("D") - flagi.get("I") - flagi.get("Z") - \
+        flagi.get("C")
 
 
 # endregion
