@@ -10,7 +10,7 @@ pamiec = [0 for bit in range(256 * 256)]
 # program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
 # 1536=0x600 tu jest test branchy
 
-# NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
+# NEGATIVE, OVERFLOW, BREAK, DECIMAL, IRQ DISABLE, ZERO, CARRY
 flagi = {'N': 0, 'V': 0, 'B': 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
 
 # Stack Pointer
