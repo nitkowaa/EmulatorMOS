@@ -1269,9 +1269,13 @@ def BCS():  # skok jeśli C=1
     global flagi
     if flagi.get('C') == 1:
         a = pamiec[pc + 1]
-        b = 255 - a
-        c = pc - b
-        pc = c + 1
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
@@ -1281,9 +1285,13 @@ def BCC():  # skok jeśli C=0
     global flagi
     if flagi.get('C') == 0:
         a = pamiec[pc + 1]
-        b = 255 - a
-        c = pc - b
-        pc = c + 1
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
@@ -1294,9 +1302,13 @@ def BEQ():  # skok jeśli Z=1
     global a
     if flagi.get('Z') == 1:
         a = pamiec[pc + 1]
-        b = 255 - a
-        c = pc - b
-        pc = c + 1
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
@@ -1309,9 +1321,13 @@ def BNE():  # skok jeśli Z=0
     global c
     if flagi.get('Z') == 0:
         a = pamiec[pc + 1]
-        b = 255 - a
-        c = pc - b
-        pc = c + 1
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
@@ -1320,7 +1336,14 @@ def BMI():  # skok jeśli N=1
     global pc
     global flagi
     if flagi.get('N') == 1:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
@@ -1330,9 +1353,13 @@ def BPL():  # skok jeśli N=0
     global flagi
     if flagi.get('N') == 0:
         a = pamiec[pc + 1]
-        b = 255 - a
-        c = pc - b
-        pc = c + 1
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
@@ -1342,9 +1369,13 @@ def BVS():  # skok jeśli V=1
     global flagi
     if flagi.get('V') == 1:
         a = pamiec[pc + 1]
-        b = 255 - a
-        c = pc - b
-        pc = c + 1
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
@@ -1354,9 +1385,13 @@ def BVC():  # skok jeśli V=0
     global flagi
     if flagi.get('V') == 0:
         a = pamiec[pc + 1]
-        b = 255 - a
-        c = pc - b
-        pc = c + 1
+        if a > 127:
+            b = 255 - a
+            c = pc - b
+            print(c)
+            pc = c + 1
+        else:
+            pc = pc + a
     else:
         pc = pc + 2
 
