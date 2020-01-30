@@ -1,11 +1,13 @@
 # coding=utf-8
 import tkinter as tk
-from tkinter import filedialog,Text
-import gui
+from tkinter import filedialog, Text
 import os
+
 global program
+
 programs_names = []
 root = tk.Tk()
+
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
@@ -31,13 +33,13 @@ pc = 0x0600
 
 
 def get_processor_status():  # zczytuje flagi do ciągu 8 bitów
-    return flagi.get('N')*128 + \
-           flagi.get('V')*64 + \
+    return flagi.get('N') * 128 + \
+           flagi.get('V') * 64 + \
            32 + \
-           flagi.get('B')*16 + \
-           flagi.get('D')*8 + \
-           flagi.get('I')*4 + \
-           flagi.get('Z')*2 + \
+           flagi.get('B') * 16 + \
+           flagi.get('D') * 8 + \
+           flagi.get('I') * 4 + \
+           flagi.get('Z') * 2 + \
            flagi.get('C')
 
 
@@ -405,6 +407,7 @@ def LDY_zpg_x():
 def STA_abs():
     global akumulator
     global pc
+    global pamiec
     pamiec[get_index_abs()] = akumulator
     pc = pc + 3
 
@@ -412,13 +415,15 @@ def STA_abs():
 def STA_zpg():
     global akumulator
     global pc
-    pamiec[pc + 1] = akumulator
+    global pamiec
+    pamiec[pamiec[pc + 1]] = akumulator
     pc = pc + 2
 
 
 def STA_abs_x():
     global akumulator
     global pc
+    global pamiec
     pamiec[get_index_abs_x()] = akumulator
     pc = pc + 3
 
@@ -426,6 +431,7 @@ def STA_abs_x():
 def STA_abs_y():
     global akumulator
     global pc
+    global pamiec
     pamiec[get_index_abs_y()] = akumulator
     pc = pc + 3
 
@@ -434,6 +440,7 @@ def STA_zpg_x():
     global akumulator
     global pc
     global X
+    global pamiec
     pamiec[(pamiec[pc + 1] + X) % 256] = akumulator
     pc = pc + 2
 
@@ -441,6 +448,7 @@ def STA_zpg_x():
 def STA_ind_y():
     global akumulator
     global pc
+    global pamiec
     pamiec[get_index_ind_y()] = akumulator
     pc = pc + 2
 
@@ -448,6 +456,7 @@ def STA_ind_y():
 def STA_ind_x():
     global akumulator
     global pc
+    global pamiec
     pamiec[get_index_ind_x()] = akumulator
     pc = pc + 2
 
@@ -459,6 +468,7 @@ def STA_ind_x():
 def STX_abs():
     global X
     global pc
+    global pamiec
     pamiec[get_index_abs()] = X
     pc = pc + 3
 
@@ -466,7 +476,8 @@ def STX_abs():
 def STX_zpg():
     global X
     global pc
-    pamiec[pc + 1] = X
+    global pamiec
+    pamiec[pamiec[pc + 1]] = X
     pc = pc + 2
 
 
@@ -474,6 +485,7 @@ def STX_zpg_y():
     global X
     global Y
     global pc
+    global pamiec
     pamiec[(pamiec[pc + 1] + Y) % 256] = X
     pc = pc + 2
 
@@ -485,6 +497,7 @@ def STX_zpg_y():
 def STY_abs():
     global Y
     global pc
+    global pamiec
     pamiec[get_index_abs()] = Y
     pc = pc + 3
 
@@ -492,7 +505,8 @@ def STY_abs():
 def STY_zpg():
     global Y
     global pc
-    pamiec[pc + 1] = Y
+    global pamiec
+    pamiec[pamiec[pc + 1]] = Y
     pc = pc + 2
 
 
@@ -500,6 +514,7 @@ def STY_zpg_x():
     global X
     global Y
     global pc
+    global pamiec
     pamiec[(pamiec[pc + 1] + X) % 256] = Y
     pc = pc + 2
 
@@ -1241,7 +1256,8 @@ def JMP_abs():
 
 def JMP_ind():
     global pc
-    pc = pamiec[get_index_abs()+1]*256 + pamiec[get_index_abs()]
+
+    pc = pamiec[get_index_abs() + 1] * 256 + pamiec[get_index_abs()]
 
 
 # endregion
@@ -2010,7 +2026,7 @@ def BRK():
     push_word(int(sp / 0x0100))
     push_word(sp % 0x0100)
     push_word(get_processor_status())
-    pc = pamiec[0xfffe]*0x0100 + pamiec[0xffff]
+    pc = pamiec[0xfffe] * 0x0100 + pamiec[0xffff]
 
 
 # endregion
@@ -2915,7 +2931,7 @@ def JSR_abs():
 def RTS():
     global pc
 
-    pc = pull_word() + pull_word()*0x0100
+    pc = pull_word() + pull_word() * 0x0100
     pc += 1
 
 
@@ -2924,7 +2940,7 @@ def RTI():
     global sp
     global flagi
 
-    pc = pull_word() + pull_word()*0x0100
+    pc = pull_word() + pull_word() * 0x0100
     processor_status = pull_word()
     if processor_status > 127:
         flagi.update(N=1)
@@ -2990,7 +3006,8 @@ rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
 # sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
 # program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
-program=[0xa2, 0x08, 0xca, 0x8e, 0x00, 0x02, 0xe0, 0x03, 0xd0, 0xf8, 0x8e, 0x01, 0x02, 0xea, 0xea] # dziala
+program = [0xa9, 0x01, 0x85, 0xf0, 0xa9, 0xcc, 0x85, 0xf1, 0x6c, 0xf0, 0x00]  # dziala
+
 
 def main():
     global pamiec
@@ -3010,32 +3027,39 @@ def main():
     load_program()
     while pamiec[pc] != 0:
         print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n',
-              'X=', hex(X), 'Y=', hex(Y), flagi, '\n')
+              'X=', hex(X), 'Y=', hex(Y), '\n', flagi, '\n')
         rozkazy[pamiec[pc]]()
+    print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n',
+          'X=', hex(X), 'Y=', hex(Y), '\n', flagi, '\n')
 
 
 if os.path.isfile('save.txt'):
-    with open('save.txt','r') as f:
+    with open('save.txt', 'r') as f:
         temp_programm_names = f.read()
         temp_programm_names = temp_programm_names.split(',')
         programs_names = [x for x in temp_programm_names if x.strip()]
-def runcode():
 
+
+def runcode():
     for widget in frame.winfo_children():
         widget.destroy()
-    filename = filedialog.askopenfilename(initialdir="/",title="Select File",filetypes =(("text files","*.txt"),("all files","*.*")))
+    filename = filedialog.askopenfilename(initialdir="/", title="Select File",
+                                          filetypes=(("text files", "*.txt"), ("all files", "*.*")))
     programs_names.append(filename)
     print(filename)
     for programs in programs_names:
-        label = tk.Label(frame,text=programs,bg="gray")
+        label = tk.Label(frame, text=programs, bg="gray")
         label.pack()
+
+
 canvas = tk.Canvas(root, height=700, width=700, bg="#263D42")
 canvas.pack()
 
+
 def run6502():
     global program
-    for programs_counter,programs in enumerate(programs_names):
-        print(programs_counter,programs)
+    for programs_counter, programs in enumerate(programs_names):
+        print(programs_counter, programs)
         os.startfile(programs)
         f = open(programs, 'r')
         code = f.read().split(" ")
@@ -3054,7 +3078,6 @@ openFile.pack()
 runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
 runcode.pack()
 
-
 for programs in programs_names:
     label = tk.Label(frame, text=programs)
     label.pack()
@@ -3063,4 +3086,3 @@ root.mainloop()
 with open('save.txt', 'w') as f:
     for programs in programs_names:
         f.write(programs + ',')
-
