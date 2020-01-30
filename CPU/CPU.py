@@ -1227,7 +1227,10 @@ def TSX():  # Transfer z sp do X
 # region JMP
 def JMP_abs():
     global pc
-    pc = pamiec[pc + 1]
+    a = pamiec[pc + 1]
+    b = 255 - a
+    c = pc - b
+    pc = c + 1
 
 
 def JMP_ind():
@@ -1243,7 +1246,10 @@ def BCS():  # skok jeśli C=1
     global pc
     global flagi
     if flagi.get('C') == 1:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1252,7 +1258,10 @@ def BCC():  # skok jeśli C=0
     global pc
     global flagi
     if flagi.get('C') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1260,8 +1269,12 @@ def BCC():  # skok jeśli C=0
 def BEQ():  # skok jeśli Z=1
     global pc
     global flagi
+    global a
     if flagi.get('Z') == 1:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1269,8 +1282,14 @@ def BEQ():  # skok jeśli Z=1
 def BNE():  # skok jeśli Z=0
     global pc
     global flagi
+    global a
+    global b
+    global c
     if flagi.get('Z') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1288,7 +1307,10 @@ def BPL():  # skok jeśli N=0
     global pc
     global flagi
     if flagi.get('N') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1297,7 +1319,10 @@ def BVS():  # skok jeśli V=1
     global pc
     global flagi
     if flagi.get('V') == 1:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -1306,7 +1331,10 @@ def BVC():  # skok jeśli V=0
     global pc
     global flagi
     if flagi.get('V') == 0:
-        pc = pamiec[pc + 1]
+        a = pamiec[pc + 1]
+        b = 255 - a
+        c = pc - b
+        pc = c + 1
     else:
         pc = pc + 2
 
@@ -2955,8 +2983,8 @@ rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
 # 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
 # sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
-program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
-
+# program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
+program=[0xa2, 0x08, 0xca, 0x8e, 0x00, 0x02, 0xe0, 0x03, 0xd0, 0xf8, 0x8e, 0x01, 0x02, 0xea, 0xea] # dziala
 
 def main():
     global pamiec
