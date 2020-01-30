@@ -7,7 +7,7 @@ global program
 
 programs_names = []
 root = tk.Tk()
-
+root.resizable(width=False, height=False)
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
@@ -3033,6 +3033,25 @@ def main():
           'X=', hex(X), 'Y=', hex(Y), '\n', flagi, '\n')
 
 
+def main_step_by_step():
+    global pamiec
+    global pc
+    global X
+    global Y
+    global akumulator
+    global pc
+    global pamiec
+    global flagi
+    flagi = {'N': 0, 'V': 0, 'B': 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
+    akumulator = 0
+    X = 0
+    Y = 0
+    pc = 0x0600
+    pamiec = [0 for bit in range(256 * 256)]
+    load_program()
+    rozkazy[pamiec[pc + step_counter]]()
+
+
 if os.path.isfile('save.txt'):
     with open('save.txt', 'r') as f:
         temp_programm_names = f.read()
@@ -3056,21 +3075,43 @@ canvas = tk.Canvas(root, height=400, width=600, bg="#263D42")
 canvas.pack()
 
 
-
 def run6502():
     global program
     for programs_counter, programs in enumerate(programs_names):
         print(programs_counter, programs)
-        os.startfile(programs)
         f = open(programs, 'r')
         code = f.read().split(" ")
         for i in range(len(code)):
             code[i] = int(code[i], 16)
         program = code
+        f.closed
         main()
         print('wykonalem sie')
         f.close()
+        for widget in frameDisplayPamiec.winfo_children():
+            widget.destroy()
         plot_pamiec()
+
+
+step_counter = 0
+
+
+def run6502_step_by_step():
+    global program
+    global step_counter
+    for programs_counter, programs in enumerate(programs_names):
+        programs = programs_names[0]  # Jeśli jest więcej niż 1 program, to zmienia kolejne programy na 1 z listy.
+        f = open(programs, 'r')
+        code = f.read().split(" ")
+        for i in range(len(code)):
+            code[i] = int(code[i], 16)
+        program = code
+        main_step_by_step()
+        step_counter = step_counter + 1
+        f.close()
+        for widget in frameDisplayPamiec.winfo_children():
+            widget.destroy()
+        plot_pamiec_step_by_step()
 
 
 frame = tk.Frame(root, bg="white")
@@ -3081,16 +3122,35 @@ frameDisplayPamiec.place(relwidth=0.5, relheight=0.7, relx=0.45, rely=0.1)
 
 openFile = tk.Button(root, text="Open File", padx=10, pady=5, fg="white", bg="#263D42", command=runcode)
 openFile.pack()
+RunOneStep = tk.Button(root, text="Run One Step", padx=10, pady=5, fg="white", bg="#263D42",
+                       command=run6502_step_by_step)
+RunOneStep.pack()
 runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
 runcode.pack()
 
+
 def plot_pamiec():
-    for row in range(10):
-        zmienna = 8
-        print(row)
-        label = tk.Label(frameDisplayPamiec, text=pamiec[pc-zmienna-row*8:pc-row*8])
-        label.pack()
+    label = tk.Label(frameDisplayPamiec, text=(
+                str(pamiec[0x0600:0x0608]) + str("\n") + str(pamiec[0x0608:0x0610]) + str("\n") + str(
+            pamiec[0x0608 + 8:0x0610 + 8]) + str("\n") + str(pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]) + str("\n") + str(
+            pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]) + str("\n") + str(pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]) + str(
+            "\n") + str(pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]) + str("\n") + str(
+            pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6])))
+    label.pack()
     root.mainloop()
+
+
+def plot_pamiec_step_by_step():
+    label = tk.Label(frameDisplayPamiec, text=(
+                str(pamiec[0x0600:0x0608]) + str("\n") + str(pamiec[0x0608:0x0610]) + str("\n") + str(
+            pamiec[0x0608 + 8:0x0610 + 8]) + str("\n") + str(pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]) + str("\n") + str(
+            pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]) + str("\n") + str(pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]) + str(
+            "\n") + str(pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]) + str("\n") + str(
+            pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6])))
+    label.pack()
+
+    root.mainloop()
+
 
 for programs in programs_names:
     label = tk.Label(frame, text=programs)
