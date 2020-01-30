@@ -35,6 +35,24 @@ def get_processor_status():  # zczytuje flagi do ciągu 8 bitów
            flagi.get('C')
 
 
+def push_word(n):  # wpycha na stos
+    global sp
+
+    pamiec[0x0100 + sp] = n
+    sp -= 1
+    if sp < 0:
+        sp = 0xff
+
+
+def pull_word():  # wypycha ze stosu
+    global sp
+
+    sp += 1
+    if sp >= 0xff:
+        sp = 0
+    return pamiec[0x100 + sp]
+
+
 def get_index_abs():  # zczytuje 2 liczby jako indeks listy pamiec.
     return pamiec[pc + 2] * 256 + pamiec[pc + 1]
 
@@ -2851,49 +2869,52 @@ def BIT_zpg():
 # endregion
 
 
-# region Potrzebne do całego stosu oraz JSR, RTS i RTI
-def push_word(n):  # wpycha na stos
-    global sp
-
-    pamiec[0x0100 + sp] = n
-    sp -= 1
-    if sp < 0:
-        sp = 0xff
-
-
-def pull_word():  # wypycha ze stosu
-    global sp
-
-    sp += 1
-    if sp >= 0xff:
-        sp = 0
-    return pamiec[0x100 + sp]
-
-
-# endregion
-
-
-# region JSR, RTS, RTI  # nw chyba takie cos moze? nie wiem nie wiem
+# region Subroutines
 def JSR_abs():
     global pc
-    global sp
-    Push_Word()
-    pc = pc + 3
+
+    push_word(int((pc + 2) / 0x0100))
+    push_word((pc + 2) % 0x0100)
+    pc = get_index_abs()
 
 
 def RTS():
     global pc
-    global sp
-    Pull_Word()
-    pc = pc + 1
+
+    pc = pull_word() + pull_word()*0x0100
+    pc += 1
 
 
 def RTI():
-    global flagi
     global pc
     global sp
+    global flagi
 
-    pc = pc + 1
+    pc = pull_word() + pull_word()*0x0100
+    processor_status = pull_word()
+    if processor_status > 127:
+        flagi.update(N=1)
+        processor_status -= 128
+    if processor_status > 63:
+        flagi.update(V=1)
+        processor_status -= 64
+    processor_status -= 32
+    if processor_status > 15:
+        flagi.update(B=1)
+        processor_status -= 16
+    if processor_status > 7:
+        flagi.update(D=1)
+        processor_status -= 8
+    if processor_status > 3:
+        flagi.update(I=1)
+        processor_status -= 4
+    if processor_status > 1:
+        flagi.update(Z=1)
+        processor_status -= 2
+    if processor_status > 0:
+        flagi.update(C=1)
+        processor_status -= 1
+    pc += 1
 
 
 # endregion
