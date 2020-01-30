@@ -1195,20 +1195,21 @@ def TSX():  # Transfer z sp do X
 # endregion
 
 
-# region BCS & JMP
+# region JMP
 def JMP_abs():
     global pc
-    global flagi
     pc = pamiec[pc + 1]
 
 
 def JMP_ind():
     global pc
-    global flagi
-    global pamiec
-    pc = pc + pamiec[pamiec[pamiec[pc + 1]]]
+    pc = pamiec[get_index_abs()+1]*256 + pamiec[get_index_abs()]
 
 
+# endregion
+
+
+# region BCS                    DO POPRAWY - ANITA
 def BCS():  # skok jeśli C=1
     global pc
     global flagi
@@ -1284,7 +1285,7 @@ def BVC():  # skok jeśli V=0
 # endregion
 
 
-# region CMP         DO SPRAWDZENIA - Anita
+# region CMP
 def CMP_imm():  # porównuje miejsce w pamieci do akumulatora
     global pc
     global akumulator
@@ -1591,25 +1592,6 @@ def CPY_abs():  # porównuje wartosc do Y
 
 
 # region STOS               DO POPRAWY - Kamil
-def TXS():
-    global X
-    global sp
-    if X == 0:
-        sp = sp
-    else:
-        sp = sp + X
-
-
-def TSX():
-    global X
-    global sp
-    if sp == 0:
-        X = X
-    else:
-        X = X + sp
-        sp = sp - 1
-
-
 def PHA():
     global akumulator
     global sp
