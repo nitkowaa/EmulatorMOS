@@ -11,17 +11,28 @@ pamiec = [0 for bit in range(256 * 256)]
 # 1536=0x600 tu jest test branchy
 
 # NEGATIVE, ZERO, CARRY, IRQ DISABLE, DECIMAL, OVERFLOW
-flagi = {'N': 0, 'Z': 0, 'C': 0, 'I': 0, 'D': 0, 'V': 0}
+flagi = {'N': 0, 'V': 0, 'B': 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
 
 # Stack Pointer
-sp = 0
+sp = 0xff
 
 akumulator = 0
 X = 0
 Y = 0
 
 # program counter: przechowuje indeks czytanej komórki pamięci
-pc = 1536
+pc = 0x0600
+
+
+def get_processor_status():  # zczytuje flagi do ciągu 8 bitów
+    return flagi.get('N')*128 + \
+           flagi.get('V')*64 + \
+           32 + \
+           flagi.get('B')*16 + \
+           flagi.get('D')*8 + \
+           flagi.get('I')*4 + \
+           flagi.get('Z')*2 + \
+           flagi.get('C')
 
 
 def get_index_abs():  # zczytuje 2 liczby jako indeks listy pamiec.
@@ -1591,37 +1602,60 @@ def CPY_abs():  # porównuje wartosc do Y
 # endregion
 
 
-# region STOS               DO POPRAWY - Kamil
+# region STOS
 def PHA():
     global akumulator
+    global pamiec
     global sp
-    if akumulator == 0:
-        sp = sp
-    else:
-        sp = sp + akumulator
-        sp = sp - 1
+
+    pamiec[sp] = akumulator
+    sp -= 1
 
 
 def PHP():
     global flagi
     global sp
-    sp = sp + flagi.get("N") + flagi.get("Z")
+
+    pamiec[sp] = get_processor_status()
+    sp -= 1
 
 
 def PLA():
     global akumulator
     global sp
-    if akumulator == 0:
-        sp = sp
-    else:
-        sp = sp - akumulator
+
+    sp += 1
+    akumulator = pamiec[sp]
 
 
 def PLP():
     global flagi
     global sp
-    sp = sp - flagi.get("N") - flagi.get("V") - flagi.get("B") - flagi.get("D") - flagi.get("I") - flagi.get("Z") - \
-        flagi.get("C")
+
+    sp += 1
+    processor_status = pamiec[sp]
+    if processor_status > 127:
+        flagi.update(N=1)
+        processor_status -= 128
+    if processor_status > 63:
+        flagi.update(V=1)
+        processor_status -= 64
+    processor_status -= 32
+    if processor_status > 15:
+        flagi.update(B=1)
+        processor_status -= 16
+    if processor_status > 7:
+        flagi.update(D=1)
+        processor_status -= 8
+    if processor_status > 3:
+        flagi.update(I=1)
+        processor_status -= 4
+    if processor_status > 1:
+        flagi.update(Z=1)
+        processor_status -= 2
+    if processor_status > 0:
+        flagi.update(C=1)
+        processor_status -= 1
 
 
 # endregion
@@ -2907,8 +2941,8 @@ def main():
 
     load_program()
     while pamiec[pc] != 0:
-        print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n'
-                                                                               'X=', hex(X), 'Y=', hex(Y), flagi, '\n')
+        print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n',
+              'X=', hex(X), 'Y=', hex(Y), flagi, '\n')
         rozkazy[pamiec[pc]]()
 
 
