@@ -3133,6 +3133,8 @@ def run6502():
         f.close()
         for widget in frameDisplayPamiec.winfo_children():
             widget.destroy()
+        for widget in frameDisplayRejestry.winfo_children():
+            widget.destroy()
         plot_pamiec()
 
 
@@ -3154,6 +3156,8 @@ def run6502_step_by_step():
         f.close()
         for widget in frameDisplayPamiec.winfo_children():
             widget.destroy()
+        for widget in frameDisplayRejestry.winfo_children():
+            widget.destroy()
         plot_pamiec_step_by_step()
 
 
@@ -3161,7 +3165,10 @@ frame = tk.Frame(root, bg="white")
 frame.place(relwidth=0.3, relheight=0.2, relx=0.1, rely=0.1)
 
 frameDisplayPamiec = tk.Frame(root, bg="white")
-frameDisplayPamiec.place(relwidth=0.5, relheight=0.7, relx=0.45, rely=0.1)
+frameDisplayPamiec.place(relwidth=0.5, relheight=0.45, relx=0.45, rely=0.1)
+
+frameDisplayRejestry= tk.Frame(root, bg="white")
+frameDisplayRejestry.place(relwidth=0.5, relheight=0.15, relx=0.45, rely=0.60)
 
 openFile = tk.Button(root, text="Open File", padx=10, pady=5, fg="white", bg="#263D42", command=runcode)
 openFile.pack()
@@ -3174,23 +3181,30 @@ runcode.pack()
 
 def plot_pamiec():
     label = tk.Label(frameDisplayPamiec, text=(
-                str(pamiec[0x0600:0x0608]) + str("\n") + str(pamiec[0x0608:0x0610]) + str("\n") + str(
-            pamiec[0x0608 + 8:0x0610 + 8]) + str("\n") + str(pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]) + str("\n") + str(
-            pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]) + str("\n") + str(pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]) + str(
-            "\n") + str(pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]) + str("\n") + str(
-            pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6])))
+
+            str([hex(x) for x in pamiec[0x0600:0x0608]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608:0x0610]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8:0x0610 + 8]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]]) + str(
+        "\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6]])))
+    label2 = tk.Label(frameDisplayRejestry, text=("\nAkumulator: " +str(hex(akumulator)) + "\nprogram counter:  " + str(hex(pc))+  "\nX: " + str(hex(X)) +"  Y: " + str(hex(Y))))
+    label2.pack()
     label.pack()
     root.mainloop()
 
 
 def plot_pamiec_step_by_step():
     label = tk.Label(frameDisplayPamiec, text=(
-                str(pamiec[0x0600:0x0608]) + str("\n") + str(pamiec[0x0608:0x0610]) + str("\n") + str(
-            pamiec[0x0608 + 8:0x0610 + 8]) + str("\n") + str(pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]) + str("\n") + str(
-            pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]) + str("\n") + str(pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]) + str(
-            "\n") + str(pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]) + str("\n") + str(
-            pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6])))
+
+                str([hex(x) for x in pamiec[0x0600:0x0608]]) + str("\n") + str([hex(x) for x in pamiec[0x0608:0x0610]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8:0x0610 + 8]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]]) + str("\n") + str(
+            [hex(x) for x in pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]]) + str(
+            "\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6]])))
+    label2 = tk.Label(frameDisplayRejestry, text=("\nAkumulator: " +str(hex(akumulator)) + "\nprogram counter:  " + str(hex(pc))+  "\nX: " + str(hex(X)) +"  Y: " + str(hex(Y))))
     label.pack()
+    label2.pack()
 
     root.mainloop()
 
