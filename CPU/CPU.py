@@ -2084,12 +2084,10 @@ def AND_imm():
     global flagi
     global pamiec
     global pc
-    #  global b
 
-    b = pamiec[pc + 1]
-    b = bin(b[2:])  # str
-    b = str(b)
-    akumulator = str(bin(akumulator)[2:])  # str
+    b = bin(pamiec[pc + 1])[2:]  # str
+    # b = str(b)
+    akumulator = bin(akumulator)[2:]  # str
     wynik = ""  # str
     while len(b) <= 7:
         b = "0" + b
@@ -2104,10 +2102,11 @@ def AND_imm():
         flagi.update(N=1)
     else:
         flagi.update(N=0)
-    if int(wynik) == 0:
+    if int(wynik, 2) == 0:
         flagi.update(Z=1)
-    akumulator = bin(int(wynik, 2))[2:]
-    akumulator = int(str(akumulator), 2)
+    akumulator = int(wynik, 2)
+    # akumulator = bin(int(wynik, 2))[2:]
+    # akumulator = int(str(akumulator), 2)
     pc = pc + 2
 
 
@@ -2976,7 +2975,7 @@ def RTI():
     if processor_status > 0:
         flagi.update(C=1)
         processor_status -= 1
-    pc += 1
+    pc = pc + 1
 
 
 # endregion
@@ -3019,7 +3018,7 @@ rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: AS
            0x11: ORA_ind_y,     0x15: ORA_zpg_x,    0x16: ASL_zpg_x,    0x18: CLC,          0x19: ORA_abs_y,
            0x1d: ORA_abs_x,     0x1e: ASL_abs_x,    0x20: JSR_abs,      0x21: AND_ind_x,    0x24: BIT_zpg,
            0x25: AND_zpg,       0x26: ROL_zpg,      0x28: PLP,          0x29: AND_imm,      0x2a: ROL_acc,
-           0x2c: BIT_abs,       0x2d: AND_abs,      0x2e: ROL_abs,      0x30: BMI,          0x31: AND_imm,
+           0x2c: BIT_abs,       0x2d: AND_abs,      0x2e: ROL_abs,      0x30: BMI,          0x31: AND_ind_y,
            0x35: AND_zpg_x,     0x36: ROL_zpg_x,    0x38: SEC,          0x39: AND_abs_y,    0x3d: AND_abs_x,
            0x3e: ROL_abs_x,     0x40: RTI,          0x41: EOR_ind_x,    0x45: EOR_zpg,      0x48: PHA,
            0x49: EOR_imm,       0x4a: LSR_acc,      0x4c: JMP_abs,      0x4d: EOR_abs,      0x4e: LSR_abs,
