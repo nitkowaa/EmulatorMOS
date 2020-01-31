@@ -9,7 +9,7 @@ programs_names = []
 root = tk.Tk()
 root.resizable(width=False, height=False)
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
-pamiec = [0 for bit in range(256 * 256)]
+pamiec = [-1 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
 
 # program = [0x78, 0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05,
@@ -79,14 +79,14 @@ def get_index_ind_x():  # zczytuje 2 liczby jako indeks listy pamiec + X.
     global X
     low = (pamiec[pc + 1] + X) % 256
     high = (low + 1) % 256
-    return high * 256 + low
+    return pamiec[high] * 256 + pamiec[low]
 
 
 def get_index_ind_y():  # zczytuje 2 liczby jako indeks listy pamiec + Y.
     global Y
-    low = (pamiec[pamiec[pc + 1]]) % 256
-    high = (pamiec[low + 1]) % 256
-    return high * 256 + low + Y
+    low = pamiec[pc + 1] % 256
+    high = low + 1
+    return pamiec[high] * 256 + pamiec[low] + Y
 
 
 def load_program():
@@ -203,8 +203,7 @@ def LDA_zpg_x():
 def LDA_ind_y():
     global akumulator
     global pc
-    akumulator = get_index_ind_y()
-    akumulator = pamiec[akumulator]
+    akumulator = pamiec[get_index_ind_y()]
     if akumulator > 128:
         flagi.update(N=1)
     else:
@@ -219,8 +218,7 @@ def LDA_ind_y():
 def LDA_ind_x():
     global akumulator
     global pc
-    akumulator = get_index_ind_x()
-    akumulator = pamiec[akumulator]
+    akumulator = pamiec[get_index_ind_x()]
     if akumulator > 128:
         flagi.update(N=1)
     else:
@@ -2074,39 +2072,6 @@ def BRK():
 
 # endregion
 
-# słownik rozkazów
-'''rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,      0x08: PHP,
-           0x09: ORA_imm,     0x0a: ASL_acc,      0x0d: ORA_abs,      0x0e: ASL_abs,      0x10: BPL,
-           0x11: ORA_ind_y,     0x15: ORA_zpg_x,    0x16: ASL_zpg_x,    0x18: CLC,          0x19: ORA_abs_y,
-           0x1d: ORA_abs_x,     0x1e: ASL_abs_x,    0x20: JSR,          0x21: AND_ind_x,    0x24: BIT_zpg,
-           0x25: AND_zpg,       0x26: ROL_zpg,      0x28: PLP,          0x29: AND_imm,      0x2a: ROL_acc,
-           0x2c: BIT_abs,       0x2d: AND_abs,      0x2e: ROL_abs,      0x30: BMI,          0x31: AND,
-           0x35: AND_zpg_x,     0x36: ROL_zpg_x,    0x38: SEC,          0x39: AND_abs_y,    0x3d: AND_abs_x,
-           0x3e: ROL_abs_x,     0x40: RTI,          0x41: EOR_ind_x,    0x45: EOR_zpg,      0x48: PHA,
-           0x49: EOR_imm,       0x4a: LSR_acc,      0x4c: JMP_abs,      0x4d: EOR_abs,      0x4e: LSR_abs,
-           0x50: BVC,           0x51: EOR_ind_y,    0x55: EOR_zpg_x,    0x56: LSR_zpg_x,    0x58: CLI,
-           0x59: EOR_abs_y,     0x5d: EOR_abs_x,    0x5e: LSR_abs_x,    0x60: RTS,          0x61: ADC_ind_x,
-           0x65: ADC_zpg,       0x66: ROR_zpg,      0x68: PLA,          0x69: ADC_imm,      0x6a: ROR_acc,
-           0x6c: JMP_ind,       0x6d: ADC_abs,      0x6e: ROR_abs,      0x70: BVS,          0x71: ADC_ind_y,
-           0x75: ADC_zpg_x,     0x76: ROR_zpg_x,    0x78: SEI,          0x79: ADC_abs_y,    0x7d: ADS_abs_x,
-           0x7e: ROR_abs_x,     0x81: STA_ind_x,    0x84: STY_zpg,      0x85: STA_zpg,      0x86: STX_zpg,
-           0x88: DEY,           0x8a: TXA,          0x8c: STY_abs,      0x8d: STA_abs,      0x8e: STX_abs,
-           0x90: BCC,           0x91: STA_ind_y,    0x94: STY_zpg_x,    0x95: STA_zpg_x,    0x96: STX_zpg_y,
-           0x98: TYA,           0x99: STA_abs_y,    0x9a: TXS,          0x9d: STA_abs_x,    0xa0: LDY_imm,
-           0xa1: LDA_ind_x,     0xa2: LDX_imm,      0xa4: LDY_zpg,      0xa5: LDA_zpg,      0xa6: LDX_zpg,
-           0xa8: TAY,           0xa9: LDA_imm,      0xaa: TAX,          0xac: LDY_abs,      0xad: LDA_abs,
-           0xae: LDX_abs,       0xb0: BCS,          0xb1: LDA_ind_y,    0xb4: LDY_zpg_x,    0xb5: LDA_zpg_x,
-           0xb6: LDX_zpg_y,     0xb8: CLV,          0xb9: LDA_abs_y,    0xba: TSX,          0xbc: LDY_abs_x,
-           0xbd: LDA_abs_x,     0xbe: LDX_abs_y,    0xc0: CPY_imm,      0xc1: CMP_ind_x,    0xc4: CPY_zpg,
-           0xc5: CMP_zpg,       0xc6: DEC,          0xc8: INY,          0xc9: CMP_imm,      0xca: DEX,
-           0xcc: CPY_abs,       0xcd: CMP_abs,      0xce: DEC_abs,      0xd0: BNE,          0xd1: CMP_ind_y,
-           0xd5: CMP_zpg_x,     0xd6: DEC_zpg_x,    0xd8: CLD,          0xd9: CMP_abs_y,    0xdd: CMP_abs_x,
-           0xde: DEC_abs_x,     0xe0: CPX_imm,      0xe1: SBC_ind_x,    0xe4: CPX_zpg,      0xe5: SBC_zpg,
-           0xe6: INC_zpg,       0xe8: INC_zpg,      0xe9: SBC_imm,      0xea: NOP,          0xec: CPX_abs,
-           0xed: SBC_abs,       0xee: INC_abs,      0xf0: BEQ,          0xf1: SBC_ind_y,    0xf5: SBC_zpg_x,
-           0xf6: INC_zpg_x,     0xf8: SED,          0xf9: SBC_abs_y,    0xfd: SBC_abs_x,    0xfe: INC_abs_x}
-'''
-
 
 # region AND, EOR, ORA
 # akumulator = int(bin(int(akumulator, 2) + int(wynik, 2))[2:])
@@ -3013,43 +2978,75 @@ def RTI():
 # endregion
 
 
-rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
-           0x09: ORA_imm, 0x0a: ASL_acc, 0x0d: ORA_abs, 0x0e: ASL_abs, 0x10: BPL,
-           0x11: ORA_ind_y, 0x15: ORA_zpg_x, 0x16: ASL_zpg_x, 0x18: CLC, 0x19: ORA_abs_y,
-           0x1d: ORA_abs_x, 0x1e: ASL_abs_x, 0x20: JSR_abs, 0x21: AND_ind_x, 0x24: BIT_zpg,
-           0x25: AND_zpg, 0x26: ROL_zpg, 0x29: AND_imm, 0x2a: ROL_acc,
-           0x2c: BIT_abs, 0x2d: AND_abs, 0x2e: ROL_abs, 0x30: BMI, 0x31: AND_ind_y,
-           0x35: AND_zpg_x, 0x36: ROL_zpg_x, 0x38: SEC, 0x39: AND_abs_y, 0x3d: AND_abs_x,
-           0x3e: ROL_abs_x, 0x40: RTI, 0x41: EOR_ind_x, 0x45: EOR_zpg,
-           0x49: EOR_imm, 0x4a: LSR_acc, 0x4c: JMP_abs, 0x4d: EOR_abs, 0x4e: LSR_abs,
-           0x50: BVC, 0x51: EOR_ind_y, 0x55: EOR_zpg_x, 0x56: LSR_zpg_x, 0x58: CLI,
-           0x59: EOR_abs_y, 0x5d: EOR_abs_x, 0x5e: LSR_abs_x, 0x60: RTS, 0x61: ADC_ind_x,
-           0x65: ADC_zpg, 0x66: ROR_zpg, 0x69: ADC_imm, 0x6a: ROR_acc,
-           0x6c: JMP_ind, 0x6d: ADC_abs, 0x6e: ROR_abs, 0x70: BVS, 0x71: ADC_ind_y,
-           0x75: ADC_zpg_x, 0x76: ROR_zpg_x, 0x78: SEI, 0x79: ADC_abs_y,
-           0x7e: ROR_abs_x, 0x84: STY_zpg, 0x85: STA_zpg, 0x86: STX_zpg,
-           0x88: DEY, 0x8a: TXA, 0x8c: STY_abs, 0x8d: STA_abs, 0x8e: STX_abs,
-           0x90: BCC,
-           0x98: TYA, 0x99: STA_abs_y, 0x9d: STA_abs_x, 0xa0: LDY_imm,
-           0xa2: LDX_imm, 0xa4: LDY_zpg, 0xa5: LDA_zpg, 0xa6: LDX_zpg,
-           0xa8: TAY, 0xa9: LDA_imm, 0xaa: TAX, 0xac: LDY_abs, 0xad: LDA_abs,
-           0xae: LDX_abs, 0xb0: BCS, 0xb5: LDA_zpg_x,
-           0xb8: CLV, 0xb9: LDA_abs_y, 0xbc: LDY_abs_x,
-           0xbd: LDA_abs_x, 0xbe: LDX_abs_y, 0xc0: CPY_imm, 0xc1: CMP_ind_x, 0xc4: CPY_zpg,
-           0xc5: CMP_zpg, 0xc8: INY, 0xc9: CMP_imm, 0xca: DEX,
-           0xcc: CPY_abs, 0xcd: CMP_abs, 0xce: DEC_abs, 0xd0: BNE, 0xd1: CMP_ind_y,
-           0xd5: CMP_zpg_x, 0xd6: DEC_zpg_x, 0xd8: CLD, 0xd9: CMP_abs_y, 0xdd: CMP_abs_x,
-           0xde: DEC_abs_x, 0xe0: CPX_imm, 0xe1: SBC_ind_x, 0xe4: CPX_zpg, 0xe5: SBC_zpg,
-           0xe6: INC_zpg, 0xe8: INX, 0xe9: SBC_imm, 0xea: NOP, 0xec: CPX_abs,
-           0xed: SBC_abs, 0xee: INC_abs, 0xf0: BEQ, 0xf1: SBC_ind_y, 0xf5: SBC_zpg_x,
-           0xf6: INC_zpg_x, 0xf8: SED, 0xf9: SBC_abs_y, 0xfd: SBC_abs_x, 0xfe: INC_abs_x}
+# rozkazy = {0x00: BRK, 0x01: ORA_ind_x, 0x05: ORA_zpg, 0x06: ASL_zpg,
+#            0x09: ORA_imm, 0x0a: ASL_acc, 0x0d: ORA_abs, 0x0e: ASL_abs, 0x10: BPL,
+#            0x11: ORA_ind_y, 0x15: ORA_zpg_x, 0x16: ASL_zpg_x, 0x18: CLC, 0x19: ORA_abs_y,
+#            0x1d: ORA_abs_x, 0x1e: ASL_abs_x, 0x20: JSR_abs, 0x21: AND_ind_x, 0x24: BIT_zpg,
+#            0x25: AND_zpg, 0x26: ROL_zpg, 0x29: AND_imm, 0x2a: ROL_acc,
+#            0x2c: BIT_abs, 0x2d: AND_abs, 0x2e: ROL_abs, 0x30: BMI, 0x31: AND_ind_y,
+#            0x35: AND_zpg_x, 0x36: ROL_zpg_x, 0x38: SEC, 0x39: AND_abs_y, 0x3d: AND_abs_x,
+#            0x3e: ROL_abs_x, 0x40: RTI, 0x41: EOR_ind_x, 0x45: EOR_zpg,
+#            0x49: EOR_imm, 0x4a: LSR_acc, 0x4c: JMP_abs, 0x4d: EOR_abs, 0x4e: LSR_abs,
+#            0x50: BVC, 0x51: EOR_ind_y, 0x55: EOR_zpg_x, 0x56: LSR_zpg_x, 0x58: CLI,
+#            0x59: EOR_abs_y, 0x5d: EOR_abs_x, 0x5e: LSR_abs_x, 0x60: RTS, 0x61: ADC_ind_x,
+#            0x65: ADC_zpg, 0x66: ROR_zpg, 0x69: ADC_imm, 0x6a: ROR_acc,
+#            0x6c: JMP_ind, 0x6d: ADC_abs, 0x6e: ROR_abs, 0x70: BVS, 0x71: ADC_ind_y,
+#            0x75: ADC_zpg_x, 0x76: ROR_zpg_x, 0x78: SEI, 0x79: ADC_abs_y,
+#            0x7e: ROR_abs_x, 0x84: STY_zpg, 0x85: STA_zpg, 0x86: STX_zpg,
+#            0x88: DEY, 0x8a: TXA, 0x8c: STY_abs, 0x8d: STA_abs, 0x8e: STX_abs,
+#            0x90: BCC,
+#            0x98: TYA, 0x99: STA_abs_y, 0x9d: STA_abs_x, 0xa0: LDY_imm,
+#            0xa2: LDX_imm, 0xa4: LDY_zpg, 0xa5: LDA_zpg, 0xa6: LDX_zpg,
+#            0xa8: TAY, 0xa9: LDA_imm, 0xaa: TAX, 0xac: LDY_abs, 0xad: LDA_abs,
+#            0xae: LDX_abs, 0xb0: BCS, 0xb5: LDA_zpg_x,
+#            0xb8: CLV, 0xb9: LDA_abs_y, 0xbc: LDY_abs_x,
+#            0xbd: LDA_abs_x, 0xbe: LDX_abs_y, 0xc0: CPY_imm, 0xc1: CMP_ind_x, 0xc4: CPY_zpg,
+#            0xc5: CMP_zpg, 0xc8: INY, 0xc9: CMP_imm, 0xca: DEX,
+#            0xcc: CPY_abs, 0xcd: CMP_abs, 0xce: DEC_abs, 0xd0: BNE, 0xd1: CMP_ind_y,
+#            0xd5: CMP_zpg_x, 0xd6: DEC_zpg_x, 0xd8: CLD, 0xd9: CMP_abs_y, 0xdd: CMP_abs_x,
+#            0xde: DEC_abs_x, 0xe0: CPX_imm, 0xe1: SBC_ind_x, 0xe4: CPX_zpg, 0xe5: SBC_zpg,
+#            0xe6: INC_zpg, 0xe8: INX, 0xe9: SBC_imm, 0xea: NOP, 0xec: CPX_abs,
+#            0xed: SBC_abs, 0xee: INC_abs, 0xf0: BEQ, 0xf1: SBC_ind_y, 0xf5: SBC_zpg_x,
+#            0xf6: INC_zpg_x, 0xf8: SED, 0xf9: SBC_abs_y, 0xfd: SBC_abs_x, 0xfe: INC_abs_x}
+
+# słownik rozkazów
+rozkazy = {0x00: BRK,           0x01: ORA_ind_x,    0x05: ORA_zpg,      0x06: ASL_zpg,      0x08: PHP,
+           0x09: ORA_imm,       0x0a: ASL_acc,      0x0d: ORA_abs,      0x0e: ASL_abs,      0x10: BPL,
+           0x11: ORA_ind_y,     0x15: ORA_zpg_x,    0x16: ASL_zpg_x,    0x18: CLC,          0x19: ORA_abs_y,
+           0x1d: ORA_abs_x,     0x1e: ASL_abs_x,    0x20: JSR_abs,      0x21: AND_ind_x,    0x24: BIT_zpg,
+           0x25: AND_zpg,       0x26: ROL_zpg,      0x28: PLP,          0x29: AND_imm,      0x2a: ROL_acc,
+           0x2c: BIT_abs,       0x2d: AND_abs,      0x2e: ROL_abs,      0x30: BMI,          0x31: AND_imm,
+           0x35: AND_zpg_x,     0x36: ROL_zpg_x,    0x38: SEC,          0x39: AND_abs_y,    0x3d: AND_abs_x,
+           0x3e: ROL_abs_x,     0x40: RTI,          0x41: EOR_ind_x,    0x45: EOR_zpg,      0x48: PHA,
+           0x49: EOR_imm,       0x4a: LSR_acc,      0x4c: JMP_abs,      0x4d: EOR_abs,      0x4e: LSR_abs,
+           0x50: BVC,           0x51: EOR_ind_y,    0x55: EOR_zpg_x,    0x56: LSR_zpg_x,    0x58: CLI,
+           0x59: EOR_abs_y,     0x5d: EOR_abs_x,    0x5e: LSR_abs_x,    0x60: RTS,          0x61: ADC_ind_x,
+           0x65: ADC_zpg,       0x66: ROR_zpg,      0x68: PLA,          0x69: ADC_imm,      0x6a: ROR_acc,
+           0x6c: JMP_ind,       0x6d: ADC_abs,      0x6e: ROR_abs,      0x70: BVS,          0x71: ADC_ind_y,
+           0x75: ADC_zpg_x,     0x76: ROR_zpg_x,    0x78: SEI,          0x79: ADC_abs_y,    0x7d: ADC_abs_x,
+           0x7e: ROR_abs_x,     0x81: STA_ind_x,    0x84: STY_zpg,      0x85: STA_zpg,      0x86: STX_zpg,
+           0x88: DEY,           0x8a: TXA,          0x8c: STY_abs,      0x8d: STA_abs,      0x8e: STX_abs,
+           0x90: BCC,           0x91: STA_ind_y,    0x94: STY_zpg_x,    0x95: STA_zpg_x,    0x96: STX_zpg_y,
+           0x98: TYA,           0x99: STA_abs_y,    0x9a: TXS,          0x9d: STA_abs_x,    0xa0: LDY_imm,
+           0xa1: LDA_ind_x,     0xa2: LDX_imm,      0xa4: LDY_zpg,      0xa5: LDA_zpg,      0xa6: LDX_zpg,
+           0xa8: TAY,           0xa9: LDA_imm,      0xaa: TAX,          0xac: LDY_abs,      0xad: LDA_abs,
+           0xae: LDX_abs,       0xb0: BCS,          0xb1: LDA_ind_y,    0xb4: LDY_zpg_x,    0xb5: LDA_zpg_x,
+           0xb6: LDX_zpg_y,     0xb8: CLV,          0xb9: LDA_abs_y,    0xba: TSX,          0xbc: LDY_abs_x,
+           0xbd: LDA_abs_x,     0xbe: LDX_abs_y,    0xc0: CPY_imm,      0xc1: CMP_ind_x,    0xc4: CPY_zpg,
+           0xc5: CMP_zpg,       0xc6: DEC_zpg,      0xc8: INY,          0xc9: CMP_imm,      0xca: DEX,
+           0xcc: CPY_abs,       0xcd: CMP_abs,      0xce: DEC_abs,      0xd0: BNE,          0xd1: CMP_ind_y,
+           0xd5: CMP_zpg_x,     0xd6: DEC_zpg_x,    0xd8: CLD,          0xd9: CMP_abs_y,    0xdd: CMP_abs_x,
+           0xde: DEC_abs_x,     0xe0: CPX_imm,      0xe1: SBC_ind_x,    0xe4: CPX_zpg,      0xe5: SBC_zpg,
+           0xe6: INC_zpg,       0xe8: INX,          0xe9: SBC_imm,      0xea: NOP,          0xec: CPX_abs,
+           0xed: SBC_abs,       0xee: INC_abs,      0xf0: BEQ,          0xf1: SBC_ind_y,    0xf5: SBC_zpg_x,
+           0xf6: INC_zpg_x,     0xf8: SED,          0xf9: SBC_abs_y,    0xfd: SBC_abs_x,    0xfe: INC_abs_x}
 
 # program=[0xa9, 0x01, 0x8d, 0x00, 0x02, 0xa9, 0x05, 0x8d,
 # 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]  # pierwszy test z Easy6502 PC=$0601=1537  A=8
 # sprawdź przesuniecie po ostatnim rozkazie- w easy 1537, u nas 1548
 
 # program = [0xa9, 0xc0, 0xaa, 0xe8, 0xe9, 0xc4, 0xea]  # drugi test z Easy6502 PC=0607 A=84 X=c1,
-program = [0xa9, 0x01, 0x85, 0xf0, 0xa9, 0xcc, 0x85, 0xf1, 0x6c, 0xf0, 0x00]  # dziala
+program = [0xa0, 0x01, 0xa9, 0x03, 0x85, 0x01, 0xa9, 0x07, 0x85, 0x02, 0xa2, 0x0a, 0x8e, 0x04, 0x07, 0xb1, 0x01]
 
 
 def main():
@@ -3066,9 +3063,9 @@ def main():
     X = 0
     Y = 0
     pc = 0x0600
-    pamiec = [0 for bit in range(256 * 256)]
+    pamiec = [-1 for bit in range(256 * 256)]
     load_program()
-    while pamiec[pc] != 0:
+    while pamiec[pc] > -1:
         print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n',
               'X=', hex(X), 'Y=', hex(Y), '\n', flagi, '\n')
         rozkazy[pamiec[pc]]()
