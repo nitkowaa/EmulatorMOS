@@ -7,7 +7,7 @@ global program
 
 programs_names = []
 root = tk.Tk()
-
+root.resizable(width=False, height=False)
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [-1 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
@@ -1261,7 +1261,7 @@ def JMP_ind():
 # endregion
 
 
-# region BCS                    DO POPRAWY - ANITA
+# region BCS
 def BCS():  # skok jeśli C=1
     global pc
     global flagi
@@ -1778,9 +1778,11 @@ def ASL_zpg():
     a = a * 2
     if a >= 256:
         a = a % 256
+        pamiec[pamiec[pc + 1]] = a
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+        pamiec[pamiec[pc + 1]] = a
     pc = pc + 2
 
 
@@ -1794,8 +1796,10 @@ def ASL_zpg_x():
     a = a * 2
     if a >= 256:
         a = a % 256
+        pamiec[pamiec[pc + 1]] = a
         flagi.update(C=1)
     else:
+        pamiec[pamiec[pc + 1]] = a
         flagi.update(C=0)
     pc = pc + 2
 
@@ -1808,9 +1812,11 @@ def ASL_abs():
     a = a * 2
     if a >= 256:
         a = a % 256
+        pamiec[pamiec[pc + 1]] = a
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+        pamiec[pamiec[pc + 1]] = a
     pc = pc + 3
 
 
@@ -1822,8 +1828,10 @@ def ASL_abs_x():
     a = a * 2
     if a >= 256:
         a = a % 256
+        pamiec[pamiec[pc + 1]] = a
         flagi.update(C=1)
     else:
+        pamiec[pamiec[pc + 1]] = a
         flagi.update(C=0)
     pc = pc + 3
 
@@ -1835,11 +1843,11 @@ def ASL_abs_x():
 def LSR_acc():
     global akumulator
     global pc
-    akumulator = akumulator / 2
     if akumulator % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    akumulator = akumulator / 2
     pc = pc + 1
 
 
@@ -1849,11 +1857,11 @@ def LSR_zpg():
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 2
 
 
@@ -1864,11 +1872,11 @@ def LSR_zpg_x():
     global X
     a = pamiec[[pc + 1] + X]  # adres do pobrania
     a = pamiec[a]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 2
 
 
@@ -1878,11 +1886,11 @@ def LSR_abs():
     global pamiec
     a = pamiec[get_index_abs()]
     a = pamiec[a]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 3
 
 
@@ -1891,11 +1899,11 @@ def LSR_abs_x():
     #  global a
     global pamiec
     a = pamiec[get_index_abs_x()]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 3
 
 
@@ -1906,12 +1914,12 @@ def LSR_abs_x():
 def ROL_acc():
     global akumulator
     global pc
-    akumulator = 2 * akumulator
     if akumulator >= 256:
         akumulator = akumulator % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    akumulator = 2 * akumulator
     pc = pc + 1
 
 
@@ -1921,12 +1929,12 @@ def ROL_zpg():
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a * 2
     pc = pc + 2
 
 
@@ -1937,12 +1945,12 @@ def ROL_zpg_x():
     global X
     a = pamiec[[pc + 1] + X]  # adres do pobrania
     a = pamiec[a]
-    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a * 2
     pc = pc + 2
 
 
@@ -1951,12 +1959,12 @@ def ROL_abs():
     #  global a
     global pamiec
     a = pamiec[get_index_abs()]
-    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a * 2
     pc = pc + 3
 
 
@@ -1965,12 +1973,12 @@ def ROL_abs_x():
     #  global a
     global pamiec
     a = pamiec[get_index_abs_x()]
-    a = a * 2
     if a >= 256:
         a = a % 256
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a * 2
     pc = pc + 3
 
 
@@ -1981,11 +1989,11 @@ def ROL_abs_x():
 def ROR_acc():
     global akumulator
     global pc
-    akumulator = akumulator / 2
     if akumulator % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    akumulator = akumulator / 2
     pc = pc + 1
 
 
@@ -1995,11 +2003,11 @@ def ROR_zpg():
     global pamiec
     a = pamiec[pc + 1]  # adres do pobrania
     a = pamiec[a]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 2
 
 
@@ -2010,11 +2018,11 @@ def ROR_zpg_x():
     global X
     a = pamiec[[pc + 1] + X]  # adres do pobrania
     a = pamiec[a]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 2
 
 
@@ -2024,11 +2032,11 @@ def ROR_abs():
     global pamiec
     a = pamiec[get_index_abs()]
     a = pamiec[a]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 3
 
 
@@ -2037,11 +2045,11 @@ def ROR_abs_x():
     #  global a
     global pamiec
     a = pamiec[get_index_abs_x()]
-    a = a / 2
     if a % 2 == 1:
         flagi.update(C=1)
     else:
         flagi.update(C=0)
+    a = a / 2
     pc = pc + 3
 
 
@@ -3065,6 +3073,25 @@ def main():
           'X=', hex(X), 'Y=', hex(Y), '\n', flagi, '\n')
 
 
+def main_step_by_step():
+    global pamiec
+    global pc
+    global X
+    global Y
+    global akumulator
+    global pc
+    global pamiec
+    global flagi
+    flagi = {'N': 0, 'V': 0, 'B': 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
+    akumulator = 0
+    X = 0
+    Y = 0
+    pc = 0x0600
+    pamiec = [0 for bit in range(256 * 256)]
+    load_program()
+    rozkazy[pamiec[pc + step_counter]]()
+
+
 if os.path.isfile('save.txt'):
     with open('save.txt', 'r') as f:
         temp_programm_names = f.read()
@@ -3080,7 +3107,7 @@ def runcode():
     programs_names.append(filename)
     print(filename)
     for programs in programs_names:
-        label = tk.Label(frame, text=programs, bg="gray")
+        label = tk.Label(frame, text=programs, bg="gray",wraplength=100)
         label.pack()
 
 
@@ -3088,44 +3115,99 @@ canvas = tk.Canvas(root, height=400, width=600, bg="#263D42")
 canvas.pack()
 
 
-
 def run6502():
     global program
     for programs_counter, programs in enumerate(programs_names):
         print(programs_counter, programs)
-        os.startfile(programs)
         f = open(programs, 'r')
         code = f.read().split(" ")
         for i in range(len(code)):
             code[i] = int(code[i], 16)
         program = code
+        f.closed
         main()
         print('wykonalem sie')
         f.close()
+        for widget in frameDisplayPamiec.winfo_children():
+            widget.destroy()
+        for widget in frameDisplayRejestry.winfo_children():
+            widget.destroy()
         plot_pamiec()
+
+
+step_counter = 0
+
+
+def run6502_step_by_step():
+    global program
+    global step_counter
+    for programs_counter, programs in enumerate(programs_names):
+        programs = programs_names[0]  # Jeśli jest więcej niż 1 program, to zmienia kolejne programy na 1 z listy.
+        f = open(programs, 'r')
+        code = f.read().split(" ")
+        for i in range(len(code)):
+            code[i] = int(code[i], 16)
+        program = code
+        main_step_by_step()
+        step_counter = step_counter + 1
+        f.close()
+        for widget in frameDisplayPamiec.winfo_children():
+            widget.destroy()
+        for widget in frameDisplayRejestry.winfo_children():
+            widget.destroy()
+        plot_pamiec_step_by_step()
 
 
 frame = tk.Frame(root, bg="white")
 frame.place(relwidth=0.3, relheight=0.2, relx=0.1, rely=0.1)
 
 frameDisplayPamiec = tk.Frame(root, bg="white")
-frameDisplayPamiec.place(relwidth=0.5, relheight=0.7, relx=0.45, rely=0.1)
+frameDisplayPamiec.place(relwidth=0.5, relheight=0.45, relx=0.45, rely=0.1)
+
+frameDisplayRejestry= tk.Frame(root, bg="white")
+frameDisplayRejestry.place(relwidth=0.5, relheight=0.15, relx=0.45, rely=0.60)
 
 openFile = tk.Button(root, text="Open File", padx=10, pady=5, fg="white", bg="#263D42", command=runcode)
 openFile.pack()
+RunOneStep = tk.Button(root, text="Run One Step", padx=10, pady=5, fg="white", bg="#263D42",
+                       command=run6502_step_by_step)
+RunOneStep.pack()
 runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
 runcode.pack()
 
+
 def plot_pamiec():
-    for row in range(10):
-        zmienna = 8
-        print(row)
-        label = tk.Label(frameDisplayPamiec, text=pamiec[pc-zmienna-row*8:pc-row*8])
-        label.pack()
+    label = tk.Label(frameDisplayPamiec, text=(
+
+            str([hex(x) for x in pamiec[0x0600:0x0608]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608:0x0610]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8:0x0610 + 8]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]]) + str(
+        "\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]]) + str("\n") + str(
+        [hex(x) for x in pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6]])))
+    label2 = tk.Label(frameDisplayRejestry, text=("\nAkumulator: " +str(hex(akumulator)) + "\nprogram counter:  " + str(hex(pc))+  "\nX: " + str(hex(X)) +"  Y: " + str(hex(Y))))
+    label2.pack()
+    label.pack()
     root.mainloop()
 
+
+def plot_pamiec_step_by_step():
+    label = tk.Label(frameDisplayPamiec, text=(
+
+                str([hex(x) for x in pamiec[0x0600:0x0608]]) + str("\n") + str([hex(x) for x in pamiec[0x0608:0x0610]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8:0x0610 + 8]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]]) + str("\n") + str(
+            [hex(x) for x in pamiec[0x0608 + 8 * 3:0x0610 + 8 * 3]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 4:0x0610 + 8 * 4]]) + str(
+            "\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 5:0x0610 + 8 * 5]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 6:0x0610 + 8 * 6]])))
+    label2 = tk.Label(frameDisplayRejestry, text=("\nAkumulator: " +str(hex(akumulator)) + "\nprogram counter:  " + str(hex(pc))+  "\nX: " + str(hex(X)) +"  Y: " + str(hex(Y))))
+    label.pack()
+    label2.pack()
+
+    root.mainloop()
+
+
 for programs in programs_names:
-    label = tk.Label(frame, text=programs)
+    label = tk.Label(frame, text=programs,wraplength=100)
     label.pack()
 root.mainloop()
 
