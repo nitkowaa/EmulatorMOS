@@ -9,7 +9,7 @@ programs_names = []
 root = tk.Tk()
 root.resizable(width=False, height=False)
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
-pamiec = [-1 for bit in range(256 * 256)]
+pamiec = [0 for bit in range(256 * 256)]
 # https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
 
 # program = [0x78, 0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05,
@@ -3068,9 +3068,9 @@ def main():
     X = 0
     Y = 0
     pc = 0x0600
-    pamiec = [-1 for bit in range(256 * 256)]
+    pamiec = [0 for bit in range(256 * 256)]
     load_program()
-    while pamiec[pc] > -1:
+    while pamiec[pc] > 0:
         print('pc=', hex(pc), hex(pamiec[pc]), 'akumulator=', hex(akumulator), '\n',
               'X=', hex(X), 'Y=', hex(Y), '\n', flagi, '\n')
         rozkazy[pamiec[pc]]()
