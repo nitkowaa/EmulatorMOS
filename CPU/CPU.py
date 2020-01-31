@@ -3168,7 +3168,7 @@ frameDisplayPamiec = tk.Frame(root, bg="white")
 frameDisplayPamiec.place(relwidth=0.5, relheight=0.45, relx=0.45, rely=0.1)
 
 frameDisplayRejestry= tk.Frame(root, bg="white")
-frameDisplayRejestry.place(relwidth=0.5, relheight=0.15, relx=0.45, rely=0.60)
+frameDisplayRejestry.place(relwidth=0.5, relheight=0.17, relx=0.45, rely=0.57)
 
 openFile = tk.Button(root, text="Open File", padx=10, pady=5, fg="white", bg="#263D42", command=runcode)
 openFile.pack()
@@ -3176,7 +3176,7 @@ RunOneStep = tk.Button(root, text="Run One Step", padx=10, pady=5, fg="white", b
                        command=run6502_step_by_step)
 RunOneStep.pack()
 runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
-runcode.pack()
+runcode.pack(pady = 10)
 
 
 def plot_pamiec():

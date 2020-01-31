@@ -1,1 +1,1 @@
-C:/test.txt,C:/test.txt,C:/Users/Hubert/Documents/Paradox Interactive/Crusader Kings II/pdx_login.txt,
+C:/stack_test.txt,
