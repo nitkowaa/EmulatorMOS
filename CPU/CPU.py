@@ -3110,7 +3110,7 @@ def runcode():
     programs_names.append(filename)
     print(filename)
     for programs in programs_names:
-        label = tk.Label(frame, text=programs, bg="gray")
+        label = tk.Label(frame, text=programs, bg="gray",wraplength=100)
         label.pack()
 
 
@@ -3210,7 +3210,7 @@ def plot_pamiec_step_by_step():
 
 
 for programs in programs_names:
-    label = tk.Label(frame, text=programs)
+    label = tk.Label(frame, text=programs,wraplength=100)
     label.pack()
 root.mainloop()
 
