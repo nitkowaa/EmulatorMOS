@@ -1246,10 +1246,8 @@ def TSX():  # Transfer z sp do X
 # region JMP
 def JMP_abs():
     global pc
-    a = pamiec[pc + 1]
-    b = 255 - a
-    c = pc - b
-    pc = c + 1
+    global pamiec
+    pc = get_index_abs()
 
 
 def JMP_ind():
@@ -2088,7 +2086,8 @@ def AND_imm():
     global pc
     #  global b
 
-    b = bin(pamiec[pc + 1][2:])  # str
+    b = pamiec[pc + 1]
+    b = bin(b[2:])  # str
     b = str(b)
     akumulator = str(bin(akumulator)[2:])  # str
     wynik = ""  # str
