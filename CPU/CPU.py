@@ -1708,20 +1708,24 @@ def PHA():
     global akumulator
     global pamiec
     global sp
+    global pc
 
     push_word(akumulator)
+    pc = pc +1
 
 
 def PHP():
     global flagi
+    global pc
 
     push_word(get_processor_status())
-
+    pc = pc + 1
 
 def PLA():
     global akumulator
-
+    global pc
     akumulator = pull_word()
+    pc = pc + 1
 
 
 def PLP():
@@ -1750,6 +1754,7 @@ def PLP():
     if processor_status > 0:
         flagi.update(C=1)
         processor_status -= 1
+    pc = pc + 1
 
 
 # endregion
@@ -3207,7 +3212,7 @@ def plot_pamiec_step_by_step():
 
 
 for programs in programs_names:
-    label = tk.Label(frame, text=programs,wraplength=100)
+    label = tk.Label(frame, text=programs,wraplength=130)
     label.pack()
 root.mainloop()
 
