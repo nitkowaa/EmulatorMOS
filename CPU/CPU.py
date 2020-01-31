@@ -3173,7 +3173,7 @@ RunOneStep = tk.Button(root, text="Run One Step", padx=10, pady=5, fg="white", b
                        command=run6502_step_by_step)
 RunOneStep.pack()
 runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
-runcode.pack(pady = 10)
+runcode.pack()
 
 
 def plot_pamiec():
