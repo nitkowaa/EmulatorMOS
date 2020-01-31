@@ -10,14 +10,6 @@ root = tk.Tk()
 root.resizable(width=False, height=False)
 # lista o długości 65,536‬ (każdy element ma wielkość 1B, w sumie 64kB)
 pamiec = [0 for bit in range(256 * 256)]
-# https://skilldrick.github.io/easy6502/#first-program + ustawienie flagi I dla testów
-
-# program = [0x78, 0xa9, 0x05, 0x8d, 0x00, 0x02, 0xa9, 0x05,
-#            0x8d, 0x01, 0x02, 0xa9, 0x08, 0x8d, 0x02, 0x02]
-
-# program = [0xa9, 0x05,0xa9,0x08,0xea,0x50,0x600,0xa9,0x09,0xea]
-# 1536=0x600 tu jest test branchy
-
 # NEGATIVE, OVERFLOW, BREAK, DECIMAL, IRQ DISABLE, ZERO, CARRY
 flagi = {'N': 0, 'V': 0, 'B': 0, 'D': 0, 'I': 0, 'Z': 0, 'C': 0}
 
@@ -3105,7 +3097,7 @@ def main():
           'X=', hex(X), 'Y=', hex(Y), '\n', flagi, '\n')
 
 
-def main_step_by_step():
+'''def main_step_by_step():
     global pamiec
     global pc
     global X
@@ -3121,7 +3113,7 @@ def main_step_by_step():
     pc = 0x0600
     pamiec = [0 for bit in range(256 * 256)]
     load_program()
-    rozkazy[pamiec[pc + step_counter]]()
+    rozkazy[pamiec[pc + step_counter]]()'''
 
 
 if os.path.isfile('save.txt'):
@@ -3167,10 +3159,10 @@ def run6502():
         plot_pamiec()
 
 
-step_counter = 0
+#step_counter = 0
 
 
-def run6502_step_by_step():
+'''def run6502_step_by_step():
     global program
     global step_counter
     for programs_counter, programs in enumerate(programs_names):
@@ -3189,7 +3181,7 @@ def run6502_step_by_step():
             widget.destroy()
         plot_pamiec_step_by_step()
 
-
+'''
 frame = tk.Frame(root, bg="white")
 frame.place(relwidth=0.3, relheight=0.2, relx=0.1, rely=0.1)
 
@@ -3201,9 +3193,9 @@ frameDisplayRejestry.place(relwidth=0.5, relheight=0.17, relx=0.45, rely=0.57)
 
 openFile = tk.Button(root, text="Open File", padx=10, pady=5, fg="white", bg="#263D42", command=runcode)
 openFile.pack()
-RunOneStep = tk.Button(root, text="Run One Step", padx=10, pady=5, fg="white", bg="#263D42",
-                       command=run6502_step_by_step)
-RunOneStep.pack()
+#RunOneStep = tk.Button(root, text="Run One Step", padx=10, pady=5, fg="white", bg="#263D42",
+ #                      command=run6502_step_by_step)
+#RunOneStep.pack()
 runcode = tk.Button(root, text="Run Code", padx=10, pady=5, fg="white", bg="#263D42", command=run6502)
 runcode.pack()
 
@@ -3225,7 +3217,7 @@ def plot_pamiec():
     root.mainloop()
 
 
-def plot_pamiec_step_by_step():
+'''def plot_pamiec_step_by_step():
     label = tk.Label(frameDisplayPamiec, text=(
 
                 str([hex(x) for x in pamiec[0x0600:0x0608]]) + str("\n") + str([hex(x) for x in pamiec[0x0608:0x0610]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8:0x0610 + 8]]) + str("\n") + str([hex(x) for x in pamiec[0x0608 + 8 * 2:0x0610 + 8 * 2]]) + str("\n") + str(
@@ -3235,7 +3227,7 @@ def plot_pamiec_step_by_step():
     label.pack()
     label2.pack()
 
-    root.mainloop()
+    root.mainloop()'''
 
 
 for programs in programs_names:
